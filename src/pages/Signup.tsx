@@ -30,7 +30,7 @@ const Signup = () => {
     try {
       await signup(email, password);
       toast.success("Account created successfully");
-      navigate("/");
+      navigate("/onboarding");
     } catch (error) {
       console.error(error);
       toast.error("Failed to create account");

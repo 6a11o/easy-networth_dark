@@ -23,7 +23,15 @@ const Login = () => {
     try {
       await login(email, password);
       toast.success("Successfully logged in");
-      navigate("/");
+      
+      // Check if user has completed onboarding
+      const onboardingComplete = localStorage.getItem('onboardingComplete');
+      
+      if (onboardingComplete === 'true') {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboarding");
+      }
     } catch (error) {
       console.error(error);
       toast.error("Failed to login. Please check your credentials.");

@@ -16,6 +16,7 @@ import Signup from "@/pages/Signup";
 import NotFound from "@/pages/NotFound";
 import LandingPage from "@/pages/LandingPage";
 import Index from "@/pages/Index";
+import Onboarding from "@/pages/Onboarding";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => (
                   <Signup />
                 </Layout>
               } />
+              <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/landing" element={<LandingPage />} />
               <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<Navigate to="/404" replace />} />
