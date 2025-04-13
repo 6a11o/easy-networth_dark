@@ -36,9 +36,10 @@ export const NetWorthSummary = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {/* Net Worth Card */}
-      <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+      <Card className="bg-[#2A2F42] border-white/10">
         <CardHeader className="pb-2">
-          <CardTitle className="text-md font-medium text-muted-foreground">
+          <CardTitle className="text-md font-medium text-muted-foreground flex items-center">
+            <DollarSign className="mr-2 h-4 w-4 text-[#9b87f5]" />
             Net Worth
           </CardTitle>
         </CardHeader>
@@ -63,31 +64,37 @@ export const NetWorthSummary = () => {
       </Card>
       
       {/* Total Assets Card */}
-      <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+      <Card className="bg-[#2A2F42] border-white/10">
         <CardHeader className="pb-2">
-          <CardTitle className="text-md font-medium text-muted-foreground">
+          <CardTitle className="text-md font-medium text-muted-foreground flex items-center">
+            <DollarSign className="mr-2 h-4 w-4 text-[#33C3F0]" />
             Total Assets
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
             <div className="text-3xl font-bold text-green-500">{formatCurrency(totalAssets)}</div>
-            <DollarSign className="h-5 w-5 text-muted-foreground" />
+            <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
+              <ArrowUp className="h-4 w-4 text-green-500" />
+            </div>
           </div>
         </CardContent>
       </Card>
       
       {/* Total Liabilities Card */}
-      <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+      <Card className="bg-[#2A2F42] border-white/10">
         <CardHeader className="pb-2">
-          <CardTitle className="text-md font-medium text-muted-foreground">
+          <CardTitle className="text-md font-medium text-muted-foreground flex items-center">
+            <DollarSign className="mr-2 h-4 w-4 text-[#F97316]" />
             Total Liabilities
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
             <div className="text-3xl font-bold text-red-500">{formatCurrency(totalLiabilities)}</div>
-            <DollarSign className="h-5 w-5 text-muted-foreground" />
+            <div className="h-8 w-8 rounded-full bg-red-500/10 flex items-center justify-center">
+              <ArrowDown className="h-4 w-4 text-red-500" />
+            </div>
           </div>
         </CardContent>
       </Card>

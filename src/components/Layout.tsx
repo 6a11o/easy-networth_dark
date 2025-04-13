@@ -20,7 +20,7 @@ export const Layout = ({ children, requireAuth = true }: LayoutProps) => {
   // Basic layout for auth pages
   if (!requireAuth) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#1A1F2C] flex items-center justify-center p-4">
         {children}
       </div>
     );
@@ -30,7 +30,7 @@ export const Layout = ({ children, requireAuth = true }: LayoutProps) => {
   return (
     <div className="flex h-screen">
       <SidebarNav />
-      <div className="flex-1 overflow-auto p-6">
+      <div className="flex-1 overflow-auto p-6 bg-[#1A1F2C]">
         {children}
       </div>
     </div>

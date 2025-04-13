@@ -5,25 +5,25 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
+    --background: 220 20% 14%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 3.9%;
+    --card: 220 20% 18%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 3.9%;
+    --popover: 220 20% 14%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 250 91% 67%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 240 3.7% 15.9%;
+    --secondary: 219 14% 22%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 3.7% 15.9%;
+    --muted: 219 14% 22%;
     --muted-foreground: 240 5% 64.9%;
 
-    --accent: 240 3.7% 15.9%;
+    --accent: 219 14% 22%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -31,11 +31,11 @@
 
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --ring: 250 91% 67%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 240 5.9% 10%;
+    --sidebar-background: 220 20% 14%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 250 91% 67%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -55,14 +55,14 @@
   }
   
   /* Financial category colors */
-  .asset-bank { @apply text-asset-bank border-asset-bank; }
-  .asset-stocks { @apply text-asset-stocks border-asset-stocks; }
-  .asset-crypto { @apply text-asset-crypto border-asset-crypto; }
-  .asset-investment { @apply text-asset-investment border-asset-investment; }
-  .asset-realestate { @apply text-asset-realestate border-asset-realestate; }
+  .asset-bank { @apply text-[#33C3F0] border-[#33C3F0]; }
+  .asset-stocks { @apply text-green-400 border-green-400; }
+  .asset-crypto { @apply text-purple-400 border-purple-400; }
+  .asset-investment { @apply text-yellow-400 border-yellow-400; }
+  .asset-realestate { @apply text-orange-400 border-orange-400; }
   
-  .liability-mortgage { @apply text-liability-mortgage border-liability-mortgage; }
-  .liability-creditcard { @apply text-liability-creditcard border-liability-creditcard; }
-  .liability-loan { @apply text-liability-loan border-liability-loan; }
-  .liability-other { @apply text-liability-other border-liability-other; }
+  .liability-mortgage { @apply text-red-400 border-red-400; }
+  .liability-creditcard { @apply text-pink-400 border-pink-400; }
+  .liability-loan { @apply text-indigo-400 border-indigo-400; }
+  .liability-other { @apply text-blue-400 border-blue-400; }
 }

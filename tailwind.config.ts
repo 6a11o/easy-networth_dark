@@ -22,15 +22,15 @@ export default {
       colors: {
         border: "hsl(240 3.7% 15.9%)",
         input: "hsl(240 3.7% 15.9%)",
-        ring: "hsl(240 4.9% 83.9%)",
-        background: "hsl(240 10% 3.9%)",
+        ring: "hsl(250 91% 67%)",
+        background: "hsl(220 20% 14%)",
         foreground: "hsl(0 0% 98%)",
         primary: {
           DEFAULT: "hsl(250 91% 67%)",
           foreground: "hsl(0 0% 98%)",
         },
         secondary: {
-          DEFAULT: "hsl(240 3.7% 15.9%)",
+          DEFAULT: "hsl(219 14% 22%)",
           foreground: "hsl(0 0% 98%)",
         },
         destructive: {
@@ -38,23 +38,23 @@ export default {
           foreground: "hsl(0 0% 98%)",
         },
         muted: {
-          DEFAULT: "hsl(240 3.7% 15.9%)",
+          DEFAULT: "hsl(219 14% 22%)",
           foreground: "hsl(240 5% 64.9%)",
         },
         accent: {
-          DEFAULT: "hsl(240 3.7% 15.9%)",
+          DEFAULT: "hsl(219 14% 22%)",
           foreground: "hsl(0 0% 98%)",
         },
         popover: {
-          DEFAULT: "hsl(240 10% 3.9%)",
+          DEFAULT: "hsl(220 20% 14%)",
           foreground: "hsl(0 0% 98%)",
         },
         card: {
-          DEFAULT: "hsl(240 10% 3.9%)",
+          DEFAULT: "hsl(220 20% 18%)",
           foreground: "hsl(0 0% 98%)",
         },
         sidebar: {
-          DEFAULT: "hsl(240 5.9% 10%)",
+          DEFAULT: "hsl(220 20% 14%)",
           foreground: "hsl(240 4.8% 95.9%)",
           primary: "hsl(250 91% 67%)",
           "primary-foreground": "hsl(0 0% 100%)",
@@ -64,17 +64,17 @@ export default {
           ring: "hsl(217.2 91.2% 59.8%)",
         },
         asset: {
-          bank: "hsl(180 80% 80%)",
-          stocks: "hsl(140 80% 80%)",
-          crypto: "hsl(260 80% 80%)",
-          investment: "hsl(40 80% 80%)",
-          realestate: "hsl(15 80% 80%)",
+          bank: "hsl(199 89% 57%)",
+          stocks: "hsl(142 76% 66%)",
+          crypto: "hsl(269 91% 79%)",
+          investment: "hsl(43 96% 69%)",
+          realestate: "hsl(28 96% 61%)",
         },
         liability: {
-          mortgage: "hsl(0 80% 80%)",
-          creditcard: "hsl(320 80% 80%)",
-          loan: "hsl(280 80% 80%)",
-          other: "hsl(200 80% 80%)",
+          mortgage: "hsl(0 91% 71%)",
+          creditcard: "hsl(330 84% 71%)",
+          loan: "hsl(262 83% 72%)",
+          other: "hsl(214 95% 70%)",
         },
       },
       borderRadius: {
