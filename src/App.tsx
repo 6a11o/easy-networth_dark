@@ -8,7 +8,6 @@ import { AuthProvider } from "@/context/AuthContext";
 import { FinancialProvider } from "@/context/FinancialContext";
 import { Layout } from "@/components/Layout";
 import Dashboard from "@/pages/Dashboard";
-import NetWorthPage from "@/pages/NetWorthPage";
 import AccountsPage from "@/pages/AccountsPage";
 import SettingsPage from "@/pages/SettingsPage";
 import Login from "@/pages/Login";
@@ -35,11 +34,6 @@ const App = () => (
                   <Dashboard />
                 </Layout>
               } />
-              <Route path="/networth" element={
-                <Layout>
-                  <NetWorthPage />
-                </Layout>
-              } />
               <Route path="/accounts" element={
                 <Layout>
                   <AccountsPage />
@@ -63,6 +57,8 @@ const App = () => (
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/landing" element={<LandingPage />} />
               <Route path="/404" element={<NotFound />} />
+              {/* Redirect /networth to /dashboard since we've merged them */}
+              <Route path="/networth" element={<Navigate to="/dashboard" replace />} />
               <Route path="*" element={<Navigate to="/404" replace />} />
             </Routes>
           </BrowserRouter>
