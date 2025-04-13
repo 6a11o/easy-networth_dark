@@ -23,7 +23,7 @@ export default {
         border: "hsl(240 3.7% 15.9%)",
         input: "hsl(240 3.7% 15.9%)",
         ring: "hsl(250 91% 67%)",
-        background: "hsl(220 20% 14%)",
+        background: "hsl(230 24% 8%)",
         foreground: "hsl(0 0% 98%)",
         primary: {
           DEFAULT: "hsl(250 91% 67%)",
@@ -46,15 +46,15 @@ export default {
           foreground: "hsl(0 0% 98%)",
         },
         popover: {
-          DEFAULT: "hsl(220 20% 14%)",
+          DEFAULT: "hsl(230 24% 8%)",
           foreground: "hsl(0 0% 98%)",
         },
         card: {
-          DEFAULT: "hsl(220 20% 18%)",
+          DEFAULT: "hsl(230 24% 12%)",
           foreground: "hsl(0 0% 98%)",
         },
         sidebar: {
-          DEFAULT: "hsl(220 20% 14%)",
+          DEFAULT: "hsl(230 24% 8%)",
           foreground: "hsl(240 4.8% 95.9%)",
           primary: "hsl(250 91% 67%)",
           "primary-foreground": "hsl(0 0% 100%)",

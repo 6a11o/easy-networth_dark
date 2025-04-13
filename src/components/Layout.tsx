@@ -20,7 +20,7 @@ export const Layout = ({ children, requireAuth = true }: LayoutProps) => {
   // Basic layout for auth pages
   if (!requireAuth) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-[#1D2235] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#0F1119] flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           {children}
         </div>
@@ -30,7 +30,7 @@ export const Layout = ({ children, requireAuth = true }: LayoutProps) => {
   
   // Dashboard layout with sidebar
   return (
-    <div className="flex min-h-screen w-full bg-gradient-to-b from-[#1A1F2C] to-[#1D2235]">
+    <div className="flex min-h-screen w-full bg-[#0F1119]">
       <SidebarNav />
       <div className="flex-1 overflow-auto p-4 sm:p-6 overflow-x-hidden">
         <div className="max-w-screen-2xl mx-auto">

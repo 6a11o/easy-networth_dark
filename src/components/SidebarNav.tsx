@@ -6,8 +6,7 @@ import {
   Settings, 
   LogOut,
   ChevronLeft,
-  ChevronRight,
-  DollarSign
+  ChevronRight
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -63,73 +62,67 @@ export const SidebarNav = () => {
   return (
     <div 
       className={cn(
-        "h-screen bg-gradient-to-b from-[#1A1F2C] to-[#1D2235] border-r border-white/10 flex flex-col transition-all duration-300 relative",
-        collapsed ? "w-20" : "w-64"
+        "h-screen bg-[#0F1119] border-r border-[#1A1F2C]/50 flex flex-col transition-all duration-300 relative",
+        collapsed ? "w-16" : "w-64"
       )}
     >
+      {/* Collapse button */}
+      <div className="absolute -right-3 top-6">
+        <Button
+          onClick={() => setCollapsed(!collapsed)}
+          size="icon"
+          variant="outline"
+          className="h-6 w-6 rounded-full border border-[#1A1F2C] bg-[#0F1119] shadow-md hover:bg-[#1A1F2C]"
+        >
+          {collapsed ? (
+            <ChevronRight className="h-3 w-3" />
+          ) : (
+            <ChevronLeft className="h-3 w-3" />
+          )}
+        </Button>
+      </div>
+      
       {/* Logo section */}
       <div className={cn(
-        "py-6 flex items-center justify-center border-b border-white/10",
+        "py-6 flex items-center justify-center border-b border-[#1A1F2C]/50",
         collapsed ? "px-2" : "px-6"
       )}>
-        {collapsed ? (
-          <div className="bg-gradient-to-r from-[#9b87f5] to-[#33C3F0] rounded-full p-2">
-            <DollarSign className="h-6 w-6 text-white" />
-          </div>
-        ) : (
-          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#9b87f5] to-[#33C3F0]">
+        <Wallet className={cn(
+          "h-6 w-6 text-[#9b87f5]",
+          !collapsed && "mr-2"
+        )} />
+        {!collapsed && (
+          <h1 className="text-lg font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#9b87f5] to-[#33C3F0]">
             EasyNetWorth
           </h1>
         )}
       </div>
       
-      {/* Collapse button - now more visible */}
-      <Button
-        onClick={() => setCollapsed(!collapsed)}
-        variant="ghost"
-        size="sm"
-        className="absolute -right-4 top-24 h-8 w-8 rounded-full bg-[#1A1F2C] border border-white/10 flex items-center justify-center z-50 shadow-lg hover:bg-[#2A2F3C]"
-        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-      >
-        {collapsed ? (
-          <ChevronRight className="h-4 w-4 text-white" />
-        ) : (
-          <ChevronLeft className="h-4 w-4 text-white" />
-        )}
-      </Button>
-      
       {/* Navigation items */}
-      <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
+      <nav className="flex-1 px-2 py-4 overflow-y-auto">
         {navItems.map((item) => (
           <Tooltip key={item.path}>
             <TooltipTrigger asChild>
               <button
                 onClick={() => navigate(item.path)}
                 className={cn(
-                  "flex items-center w-full px-3 py-3 text-sm font-medium rounded-lg transition-all",
+                  "flex items-center w-full py-2.5 text-sm font-medium rounded-md transition-all mb-1",
+                  collapsed ? "justify-center px-2" : "px-3",
                   location.pathname === item.path
-                    ? "bg-gradient-to-r from-[#9b87f5]/80 to-[#33C3F0]/80 text-white shadow-md"
-                    : "text-gray-300 hover:bg-white/10 hover:text-white"
+                    ? "bg-[#1A1F2C] text-[#9b87f5]"
+                    : "text-gray-300 hover:bg-[#1A1F2C]/50 hover:text-white"
                 )}
               >
                 <item.icon className={cn(
                   "h-5 w-5",
-                  collapsed ? "mx-auto" : "mr-3"
+                  collapsed ? "" : "mr-3"
                 )} />
-                {!collapsed && (
-                  <div>
-                    <div>{item.label}</div>
-                    <div className="text-xs text-gray-400 font-normal">{item.description}</div>
-                  </div>
-                )}
+                {!collapsed && item.label}
               </button>
             </TooltipTrigger>
             {collapsed && (
-              <TooltipContent side="right" className="bg-[#1D2235] border border-white/10">
-                <div className="flex flex-col">
-                  <span>{item.label}</span>
-                  <span className="text-xs text-gray-400">{item.description}</span>
-                </div>
+              <TooltipContent side="right" className="bg-[#1A1F2C] border border-[#1A1F2C]/80">
+                {item.label}
               </TooltipContent>
             )}
           </Tooltip>
@@ -137,14 +130,14 @@ export const SidebarNav = () => {
       </nav>
       
       {/* Footer with logout */}
-      <div className="mt-auto pb-4 px-4">
+      <div className="mt-auto pb-4 px-2">
         <Tooltip>
           <TooltipTrigger asChild>
             <button
               onClick={() => logout()}
               className={cn(
-                "flex items-center w-full px-3 py-3 text-sm font-medium rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-all",
-                collapsed ? "justify-center" : ""
+                "flex items-center w-full py-2.5 text-sm font-medium rounded-md text-gray-300 hover:bg-[#1A1F2C]/50 hover:text-white transition-all",
+                collapsed ? "justify-center px-2" : "px-3"
               )}
             >
               <LogOut className={cn(
@@ -155,7 +148,7 @@ export const SidebarNav = () => {
             </button>
           </TooltipTrigger>
           {collapsed && (
-            <TooltipContent side="right" className="bg-[#1D2235] border border-white/10">
+            <TooltipContent side="right" className="bg-[#1A1F2C] border border-[#1A1F2C]/80">
               Log Out
             </TooltipContent>
           )}

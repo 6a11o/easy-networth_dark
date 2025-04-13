@@ -57,8 +57,6 @@ const App = () => (
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/landing" element={<LandingPage />} />
               <Route path="/404" element={<NotFound />} />
-              {/* Redirect /networth to /dashboard since we've merged them */}
-              <Route path="/networth" element={<Navigate to="/dashboard" replace />} />
               <Route path="*" element={<Navigate to="/404" replace />} />
             </Routes>
           </BrowserRouter>

@@ -5,13 +5,13 @@
 
 @layer base {
   :root {
-    --background: 220 20% 14%;
+    --background: 230 24% 8%;
     --foreground: 0 0% 98%;
 
-    --card: 220 20% 18%;
+    --card: 230 24% 12%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 220 20% 14%;
+    --popover: 230 24% 8%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 250 91% 67%;
@@ -33,9 +33,9 @@
     --input: 240 3.7% 15.9%;
     --ring: 250 91% 67%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    --sidebar-background: 220 20% 14%;
+    --sidebar-background: 230 24% 8%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 250 91% 67%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -65,4 +65,22 @@
   .liability-creditcard { @apply text-pink-400 border-pink-400; }
   .liability-loan { @apply text-indigo-400 border-indigo-400; }
   .liability-other { @apply text-blue-400 border-blue-400; }
+
+  /* Chart customization for better visibility */
+  .recharts-pie-sector {
+    @apply opacity-90 hover:opacity-100 transition-opacity;
+  }
+  
+  .recharts-tooltip-wrapper {
+    @apply border border-white/10 rounded-md overflow-hidden shadow-lg;
+  }
+  
+  .recharts-default-tooltip {
+    @apply bg-[#0F1119]/90 backdrop-blur-md border-none text-white !important;
+  }
+  
+  /* Smooth transitions */
+  .transition-all {
+    @apply duration-300 ease-in-out;
+  }
 }
