@@ -35,65 +35,72 @@ export const NetWorthSummary = () => {
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {/* Net Worth Card */}
-      <Card className="bg-[#2A2F42] border-white/10">
+      {/* Assets Card */}
+      <Card className="bg-[#1A1F2C]/90 shadow-lg border-[#33C3F0]/10 overflow-hidden">
         <CardHeader className="pb-2">
-          <CardTitle className="text-md font-medium text-muted-foreground flex items-center">
-            <DollarSign className="mr-2 h-4 w-4 text-[#9b87f5]" />
-            Net Worth
+          <CardTitle className="text-md font-medium text-[#A0AEC0] flex items-center">
+            <div className="mr-2 h-8 w-8 rounded-full bg-[#33C3F0]/10 flex items-center justify-center">
+              <DollarSign className="h-4 w-4 text-[#33C3F0]" />
+            </div>
+            Total Assets
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-baseline justify-between">
-            <div className="text-3xl font-bold">{formatCurrency(netWorth)}</div>
+          <div className="flex items-center justify-between">
+            <div className="text-2xl sm:text-3xl font-bold text-green-400">{formatCurrency(totalAssets)}</div>
+            <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
+              <ArrowUp className="h-5 w-5 text-green-500" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Net Worth Change Card */}
+      <Card className="bg-[#1A1F2C]/90 shadow-lg border-[#33C3F0]/10 overflow-hidden">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-md font-medium text-[#A0AEC0] flex items-center">
+            <div className="mr-2 h-8 w-8 rounded-full bg-[#9b87f5]/10 flex items-center justify-center">
+              <DollarSign className="h-4 w-4 text-[#9b87f5]" />
+            </div>
+            Change
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div className="flex items-baseline">
+              <span className="text-2xl sm:text-3xl font-bold">{percentChange !== 0 ? `${percentChange >= 0 ? '+' : ''}${percentChange.toFixed(1)}%` : '—'}</span>
+            </div>
             {percentChange !== 0 && (
               <div className={cn(
-                "flex items-center text-sm",
-                percentChange >= 0 ? "text-green-500" : "text-red-500"
+                "h-10 w-10 rounded-full flex items-center justify-center",
+                percentChange >= 0 ? "bg-green-500/10" : "bg-red-500/10" 
               )}>
                 {percentChange >= 0 ? (
-                  <ArrowUp className="mr-1 h-4 w-4" />
+                  <ArrowUp className="h-5 w-5 text-green-500" />
                 ) : (
-                  <ArrowDown className="mr-1 h-4 w-4" />
+                  <ArrowDown className="h-5 w-5 text-red-500" />
                 )}
-                {Math.abs(percentChange).toFixed(1)}%
               </div>
             )}
           </div>
         </CardContent>
       </Card>
       
-      {/* Total Assets Card */}
-      <Card className="bg-[#2A2F42] border-white/10">
+      {/* Liabilities Card */}
+      <Card className="bg-[#1A1F2C]/90 shadow-lg border-[#33C3F0]/10 overflow-hidden">
         <CardHeader className="pb-2">
-          <CardTitle className="text-md font-medium text-muted-foreground flex items-center">
-            <DollarSign className="mr-2 h-4 w-4 text-[#33C3F0]" />
-            Total Assets
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-green-500">{formatCurrency(totalAssets)}</div>
-            <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
-              <ArrowUp className="h-4 w-4 text-green-500" />
+          <CardTitle className="text-md font-medium text-[#A0AEC0] flex items-center">
+            <div className="mr-2 h-8 w-8 rounded-full bg-[#F97316]/10 flex items-center justify-center">
+              <DollarSign className="h-4 w-4 text-[#F97316]" />
             </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      {/* Total Liabilities Card */}
-      <Card className="bg-[#2A2F42] border-white/10">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-md font-medium text-muted-foreground flex items-center">
-            <DollarSign className="mr-2 h-4 w-4 text-[#F97316]" />
             Total Liabilities
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-red-500">{formatCurrency(totalLiabilities)}</div>
-            <div className="h-8 w-8 rounded-full bg-red-500/10 flex items-center justify-center">
-              <ArrowDown className="h-4 w-4 text-red-500" />
+            <div className="text-2xl sm:text-3xl font-bold text-red-400">{formatCurrency(totalLiabilities)}</div>
+            <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center">
+              <ArrowDown className="h-5 w-5 text-red-500" />
             </div>
           </div>
         </CardContent>
