@@ -1,8 +1,43 @@
-
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
-  <path d="M10 10H42V42H10V10Z" stroke="#33C3F0" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M42 10H54V54H10V42" stroke="#33C3F0" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M47 16C48.6569 16 50 14.6569 50 13C50 11.3431 48.6569 10 47 10C45.3431 10 44 11.3431 44 13C44 14.6569 45.3431 16 47 16Z" fill="#33C3F0"/>
-  <path d="M42 28.5L47 16" stroke="#33C3F0" stroke-width="4" stroke-linecap="round"/>
-  <path d="M29 42L34 28" stroke="#33C3F0" stroke-width="4" stroke-linecap="round"/>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with subtle gradient -->
+  <circle cx="256" cy="256" r="240" fill="url(#bg-gradient)" />
+  
+  <!-- The "E" letter stylized as a financial bar chart/growth -->
+  <path d="M140 160H300" stroke="url(#line-gradient)" stroke-width="32" stroke-linecap="round" />
+  <path d="M140 256H260" stroke="url(#line-gradient)" stroke-width="32" stroke-linecap="round" />
+  <path d="M140 352H320" stroke="url(#line-gradient)" stroke-width="32" stroke-linecap="round" />
+  
+  <!-- Upward trending line representing financial growth -->
+  <path d="M180 340L230 280L290 240L350 170" stroke="white" stroke-width="16" stroke-linecap="round" />
+  
+  <!-- Dollar sign to clearly indicate financial context -->
+  <path d="M350 220C350 198.909 332.091 182 310 182H290C267.909 182 250 198.909 250 220C250 241.091 267.909 258 290 258H320C342.091 258 360 274.909 360 296C360 317.091 342.091 334 320 334H290C267.909 334 250 317.091 250 296" 
+        stroke="url(#dollar-gradient)" stroke-width="18" stroke-linecap="round" />
+  <line x1="320" y1="150" x2="320" y2="360" stroke="url(#dollar-gradient)" stroke-width="18" stroke-linecap="round" />
+  
+  <!-- Coin/circle to emphasize wealth/value -->
+  <circle cx="180" cy="256" r="45" stroke="url(#coin-gradient)" stroke-width="16" fill="#0F1119" fill-opacity="0.3" />
+  
+  <!-- Definitions for gradients -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="100" y1="100" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#131620" />
+      <stop offset="1" stop-color="#0A0C14" />
+    </linearGradient>
+    
+    <linearGradient id="line-gradient" x1="140" y1="256" x2="320" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#33C3F0" />
+      <stop offset="1" stop-color="#66EACE" />
+    </linearGradient>
+    
+    <linearGradient id="dollar-gradient" x1="250" y1="150" x2="360" y2="360" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#66EACE" />
+      <stop offset="1" stop-color="#33C3F0" />
+    </linearGradient>
+    
+    <linearGradient id="coin-gradient" x1="135" y1="211" x2="225" y2="301" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#66EACE" />
+      <stop offset="1" stop-color="#33C3F0" />
+    </linearGradient>
+  </defs>
 </svg>

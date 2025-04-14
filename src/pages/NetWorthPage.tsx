@@ -1,25 +1,17 @@
-
 import { NetWorthChart } from "@/components/NetWorthChart";
 import { AllocationCharts } from "@/components/AllocationCharts";
 import { NetWorthSummary } from "@/components/NetWorthSummary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useFinancial } from "@/context/FinancialContext";
+import { useCurrency } from "@/context/CurrencyContext";
 
 const NetWorthPage = () => {
   const { getHistoricalNetWorth, getHistoricalDates, isPremium, setIsPremium } = useFinancial();
+  const { formatAmount } = useCurrency();
   
   const netWorthHistory = getHistoricalNetWorth();
   const dates = getHistoricalDates();
-  
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: 'USD',
-      maximumFractionDigits: 0 
-    }).format(amount);
-  };
   
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -81,9 +73,9 @@ const NetWorthPage = () => {
                       return (
                         <tr key={item.date} className="border-b border-white/5">
                           <td className="py-2 px-4">{formatDate(item.date)}</td>
-                          <td className="text-right py-2 px-4">{formatCurrency(item.netWorth)}</td>
+                          <td className="text-right py-2 px-4">{formatAmount(item.netWorth)}</td>
                           <td className={`text-right py-2 px-4 ${change.value >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                            {index === 0 ? '—' : formatCurrency(change.value)}
+                            {index === 0 ? '—' : formatAmount(change.value)}
                           </td>
                           <td className={`text-right py-2 px-4 ${change.value >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                             {index === 0 ? '—' : `${change.percent.toFixed(1)}%`}
@@ -122,7 +114,7 @@ const NetWorthPage = () => {
                 You've reached the limit of 3 historical data points in the free version. 
                 Upgrade to premium for unlimited historical data tracking.
               </p>
-              <Button onClick={handleUpgradeToPremium} className="bg-primary hover:bg-primary/90 text-white">
+              <Button onClick={handleUpgradeToPremium} className="bg-primary hover:bg-primary/90 text-[#081924] font-semibold">
                 Upgrade to Premium - $19.99
               </Button>
             </div>

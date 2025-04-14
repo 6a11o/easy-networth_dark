@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,7 +93,7 @@ export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProp
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl mx-auto w-[calc(100%-2rem)] sm:w-auto">
         <DialogHeader>
           <DialogTitle>Update Balances</DialogTitle>
           <DialogDescription>
@@ -107,25 +106,25 @@ export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProp
             <TabsTrigger value="today">Today's Balance</TabsTrigger>
             <TabsTrigger value="historical" disabled={!isPremium && assets.length + liabilities.length > 0}>
               Historical Data
-              {!isPremium && <span className="ml-1 text-xs text-yellow-400">(Premium)</span>}
+              {!isPremium && <span className="ml-1 text-xs text-yellow-300 font-medium">Premium</span>}
             </TabsTrigger>
           </TabsList>
           
           {/* Today's Balance Tab */}
           <TabsContent value="today">
-            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+            <div className="space-y-5 max-h-[min(60vh,500px)] overflow-y-auto pr-2">
               {/* Assets */}
-              <div className="space-y-2">
-                <h3 className="font-medium text-primary">Assets</h3>
+              <div className="space-y-3">
+                <h3 className="font-medium text-primary text-base">Assets</h3>
                 {assets.length > 0 ? (
                   assets.map(asset => (
-                    <div key={asset.id} className="flex items-center space-x-4">
+                    <div key={asset.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                       <Label className="flex-grow">{asset.name}</Label>
                       <Input
                         type="number"
                         value={todayBalances.find(b => b.id === asset.id)?.balance || 0}
                         onChange={(e) => handleTodayBalanceChange(asset.id, e.target.value)}
-                        className="w-32"
+                        className="w-full sm:w-32"
                       />
                     </div>
                   ))
@@ -135,17 +134,17 @@ export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProp
               </div>
               
               {/* Liabilities */}
-              <div className="space-y-2">
-                <h3 className="font-medium text-primary">Liabilities</h3>
+              <div className="space-y-3">
+                <h3 className="font-medium text-primary text-base">Liabilities</h3>
                 {liabilities.length > 0 ? (
                   liabilities.map(liability => (
-                    <div key={liability.id} className="flex items-center space-x-4">
+                    <div key={liability.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                       <Label className="flex-grow">{liability.name}</Label>
                       <Input
                         type="number"
                         value={todayBalances.find(b => b.id === liability.id)?.balance || 0}
                         onChange={(e) => handleTodayBalanceChange(liability.id, e.target.value)}
-                        className="w-32"
+                        className="w-full sm:w-32"
                       />
                     </div>
                   ))
@@ -160,7 +159,7 @@ export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProp
           <TabsContent value="historical">
             {isPremium ? (
               <>
-                <div className="mb-4">
+                <div className="mb-5">
                   <Label>Select Date</Label>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -187,19 +186,19 @@ export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProp
                   </Popover>
                 </div>
                 
-                <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                <div className="space-y-5 max-h-[min(50vh,400px)] overflow-y-auto pr-2">
                   {/* Assets */}
-                  <div className="space-y-2">
-                    <h3 className="font-medium text-primary">Assets</h3>
+                  <div className="space-y-3">
+                    <h3 className="font-medium text-primary text-base">Assets</h3>
                     {assets.length > 0 ? (
                       assets.map(asset => (
-                        <div key={asset.id} className="flex items-center space-x-4">
+                        <div key={asset.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                           <Label className="flex-grow">{asset.name}</Label>
                           <Input
                             type="number"
                             value={historicalBalances.find(b => b.id === asset.id)?.balance || 0}
                             onChange={(e) => handleHistoricalBalanceChange(asset.id, e.target.value)}
-                            className="w-32"
+                            className="w-full sm:w-32"
                           />
                         </div>
                       ))
@@ -209,17 +208,17 @@ export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProp
                   </div>
                   
                   {/* Liabilities */}
-                  <div className="space-y-2">
-                    <h3 className="font-medium text-primary">Liabilities</h3>
+                  <div className="space-y-3">
+                    <h3 className="font-medium text-primary text-base">Liabilities</h3>
                     {liabilities.length > 0 ? (
                       liabilities.map(liability => (
-                        <div key={liability.id} className="flex items-center space-x-4">
+                        <div key={liability.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                           <Label className="flex-grow">{liability.name}</Label>
                           <Input
                             type="number"
                             value={historicalBalances.find(b => b.id === liability.id)?.balance || 0}
                             onChange={(e) => handleHistoricalBalanceChange(liability.id, e.target.value)}
-                            className="w-32"
+                            className="w-full sm:w-32"
                           />
                         </div>
                       ))
@@ -241,7 +240,7 @@ export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProp
           </TabsContent>
         </Tabs>
         
-        <DialogFooter>
+        <DialogFooter className="sm:justify-end gap-2 pt-2">
           <Button variant="outline" onClick={onClose}>Cancel</Button>
           <Button onClick={handleSubmit}>Save Changes</Button>
         </DialogFooter>

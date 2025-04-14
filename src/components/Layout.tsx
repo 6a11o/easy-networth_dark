@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import { TopBar } from "./TopBar";
 import { useAuth } from "@/context/AuthContext";
@@ -59,8 +58,8 @@ export const Layout = ({ children, requireAuth = true }: LayoutProps) => {
       <div className="absolute bottom-1/3 left-1/4 w-72 h-72 bg-[#9b87f5]/5 rounded-full blur-[120px] animate-pulse z-0" style={{animationDuration: '8s'}}></div>
       
       <TopBar />
-      <div className="flex-1 overflow-auto pt-20 px-4 sm:px-6 lg:px-8 pb-8 relative z-10">
-        <div className="max-w-screen-2xl mx-auto">
+      <div className="flex-1 overflow-auto pt-20 px-3 sm:px-5 md:px-6 lg:px-8 pb-6 sm:pb-8 relative z-10">
+        <div className="max-w-screen-2xl mx-auto w-full">
           {children}
         </div>
       </div>

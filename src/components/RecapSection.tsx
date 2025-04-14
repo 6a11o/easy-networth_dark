@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { useFinancial } from "@/context/FinancialContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowDownRight, ArrowUpRight, TrendingDown, TrendingUp } from "lucide-react";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 export const RecapSection = () => {
   const { getHistoricalDates, getHistoricalNetWorth, getTotalAssets, getTotalLiabilities } = useFinancial();
+  const { formatAmount } = useCurrency();
   
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
@@ -89,15 +90,6 @@ export const RecapSection = () => {
     }
   }, [startDate, endDate, getHistoricalNetWorth, getTotalAssets, getTotalLiabilities]);
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: 'USD',
-      maximumFractionDigits: 0 
-    }).format(amount);
-  };
-
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold">Historical Analysis</h2>
@@ -152,7 +144,7 @@ export const RecapSection = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold mb-1">
-              {formatCurrency(comparison.netWorthChange)}
+              {formatAmount(comparison.netWorthChange)}
             </div>
             <div className={cn(
               "text-sm flex items-center",
@@ -180,7 +172,7 @@ export const RecapSection = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold mb-1 text-green-500">
-              {formatCurrency(comparison.assetsChange)}
+              {formatAmount(comparison.assetsChange)}
             </div>
             <div className={cn(
               "text-sm flex items-center",
@@ -208,7 +200,7 @@ export const RecapSection = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold mb-1 text-red-500">
-              {formatCurrency(comparison.liabilitiesChange)}
+              {formatAmount(comparison.liabilitiesChange)}
             </div>
             <div className={cn(
               "text-sm flex items-center",

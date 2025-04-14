@@ -17,7 +17,7 @@ import { useCurrency } from "@/context/CurrencyContext";
 export const NetWorthChart = () => {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("ALL");
   const { getHistoricalNetWorth } = useFinancial();
-  const { currency } = useCurrency();
+  const { currency, formatAmount } = useCurrency();
   
   // Get net worth history
   const netWorthHistory = getHistoricalNetWorth();
@@ -65,20 +65,11 @@ export const NetWorthChart = () => {
   // Time period options
   const periods: TimePeriod[] = ["1M", "3M", "6M", "1Y", "ALL"];
   
-  // Format axis/tooltip value WITHOUT currency symbol
+  // Format axis value WITHOUT currency symbol
   const formatValue = (value: number) => {
-    return new Intl.NumberFormat(undefined, {
+    return `${currency.symbol}${new Intl.NumberFormat(undefined, {
       maximumFractionDigits: 0
-    }).format(value);
-  };
-
-  // Format value WITH currency symbol (for change display)
-  const formatValueWithCurrency = (value: number) => {
-    return new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency: currency.code,
-      maximumFractionDigits: 0,
-    }).format(value);
+    }).format(value)}`;
   };
   
   const getTimeRangeLabel = (period: TimePeriod) => {
@@ -145,7 +136,7 @@ export const NetWorthChart = () => {
               "flex items-center gap-1 text-sm font-medium",
               netWorthChange.value >= 0 ? "text-green-400" : "text-red-400"
             )}>
-              {formatValueWithCurrency(netWorthChange.value)}
+              {formatAmount(netWorthChange.value)}
               <span className="text-xs">
                 ({netWorthChange.value >= 0 ? "+" : ""}{netWorthChange.percentage.toFixed(1)}%)
               </span>
@@ -198,7 +189,7 @@ export const NetWorthChart = () => {
                         <div className="bg-gray-950/90 backdrop-blur-lg border border-[#33C3F0]/20 text-gray-100 shadow-xl rounded-lg p-3">
                           <p className="text-sm text-gray-300 mb-1">Date: {label}</p>
                           <p className="text-base font-medium">
-                            Net Worth: {formatValueWithCurrency(payload[0].value as number)}
+                            {currency.name}: {formatAmount(payload[0].value as number)}
                           </p>
                         </div>
                       );

@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -39,7 +38,7 @@ export default {
         },
         muted: {
           DEFAULT: "hsl(219 14% 22%)",
-          foreground: "hsl(240 5% 64.9%)",
+          foreground: "hsl(240 5% 75%)",
         },
         accent: {
           DEFAULT: "hsl(219 14% 22%)",
@@ -110,6 +109,20 @@ export default {
         "shimmer": {
           "0%": { backgroundPosition: "-500px 0" },
           "100%": { backgroundPosition: "500px 0" }
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0) translateX(0)" },
+          "25%": { transform: "translateY(-10px) translateX(5px)" },
+          "50%": { transform: "translateY(0) translateX(10px)" },
+          "75%": { transform: "translateY(10px) translateX(5px)" }
+        },
+        "sweep": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" }
+        },
+        "pulse": {
+          "0%, 100%": { opacity: "0.1" },
+          "50%": { opacity: "0.3" }
         }
       },
       animation: {
@@ -119,7 +132,10 @@ export default {
         "slide-down": "slide-down 0.3s ease-out",
         "slide-up": "slide-up 0.3s ease-out",
         "slide-in-right": "slide-in-right 0.3s ease-out",
-        "shimmer": "shimmer 2s infinite linear"
+        "shimmer": "shimmer 2s infinite linear",
+        "float": "float 15s ease-in-out infinite",
+        "sweep": "sweep 8s ease-in-out infinite",
+        "pulse": "pulse 4s ease-in-out infinite"
       },
     },
   },

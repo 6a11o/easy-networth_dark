@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useFinancial } from "@/context/FinancialContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +8,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { ArrowDownRight, ArrowUpRight, TrendingDown, TrendingUp, Clock, CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useCurrency } from "@/context/CurrencyContext";
 
 export const EnhancedRecapSection = () => {
   const { 
@@ -20,6 +20,8 @@ export const EnhancedRecapSection = () => {
     liabilities,
     balanceHistory
   } = useFinancial();
+  
+  const { formatAmount } = useCurrency();
   
   // State for historical analysis
   const [startDate, setStartDate] = useState<string>("");
@@ -290,15 +292,6 @@ export const EnhancedRecapSection = () => {
   const sortedDates = Object.keys(balanceUpdatesByDate).sort((a, b) => 
     new Date(b).getTime() - new Date(a).getTime()
   );
-  
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: 'USD',
-      maximumFractionDigits: 0 
-    }).format(amount);
-  };
 
   return (
     <Tabs defaultValue="historical" className="w-full space-y-6">
@@ -358,7 +351,7 @@ export const EnhancedRecapSection = () => {
             </CardHeader>
             <CardContent>
               <div className="text-xl font-bold mb-1">
-                {formatCurrency(comparison.netWorthChange)}
+                {formatAmount(comparison.netWorthChange)}
               </div>
               <div className={cn(
                 "text-sm flex items-center",
@@ -386,7 +379,7 @@ export const EnhancedRecapSection = () => {
             </CardHeader>
             <CardContent>
               <div className="text-xl font-bold mb-1 text-green-500">
-                {formatCurrency(comparison.assetsChange)}
+                {formatAmount(comparison.assetsChange)}
               </div>
               <div className={cn(
                 "text-sm flex items-center",
@@ -414,7 +407,7 @@ export const EnhancedRecapSection = () => {
             </CardHeader>
             <CardContent>
               <div className="text-xl font-bold mb-1 text-red-500">
-                {formatCurrency(comparison.liabilitiesChange)}
+                {formatAmount(comparison.liabilitiesChange)}
               </div>
               <div className={cn(
                 "text-sm flex items-center",
@@ -447,10 +440,10 @@ export const EnhancedRecapSection = () => {
               
               <div className="flex items-center gap-4">
                 <div className="text-sm text-muted-foreground">
-                  From: {formatCurrency(account.startBalance)}
+                  From: {formatAmount(account.startBalance)}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  To: {formatCurrency(account.endBalance)}
+                  To: {formatAmount(account.endBalance)}
                 </div>
                 <div className={cn(
                   "flex items-center",
@@ -458,7 +451,7 @@ export const EnhancedRecapSection = () => {
                     ? "text-green-500" 
                     : "text-red-500"
                 )}>
-                  {account.change >= 0 ? "+" : ""}{formatCurrency(account.change)} ({Math.abs(account.changePercent).toFixed(1)}%)
+                  {account.change >= 0 ? "+" : ""}{formatAmount(account.change)} ({Math.abs(account.changePercent).toFixed(1)}%)
                 </div>
               </div>
             </div>
@@ -565,7 +558,7 @@ export const EnhancedRecapSection = () => {
                       border: '1px solid #2A2F42',
                       borderRadius: '8px'
                     }} 
-                    formatter={(value: number) => [formatCurrency(value)]}
+                    formatter={(value: number) => [formatAmount(value)]}
                   />
                   <Legend />
                   {selectedMetrics.includes('netWorth') && (
@@ -611,7 +604,7 @@ export const EnhancedRecapSection = () => {
                   <div className="flex items-center gap-3">
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     <div className="text-sm text-muted-foreground">
-                      {formatCurrency(update.balance)}
+                      {formatAmount(update.balance)}
                     </div>
                   </div>
                 </div>

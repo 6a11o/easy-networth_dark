@@ -148,7 +148,7 @@ export const AddAccountForm = () => {
           <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-900/70 border border-gray-700/80 rounded-lg p-1 h-auto shadow-inner">
             <TabsTrigger
               value="asset"
-              className="data-[state=active]:bg-primary/90 data-[state=active]:text-white data-[state=active]:shadow-md text-gray-300 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out"
+              className="data-[state=active]:bg-primary/90 data-[state=active]:text-[#081924] data-[state=active]:font-semibold data-[state=active]:shadow-md text-gray-300 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out"
             >
               Asset
             </TabsTrigger>

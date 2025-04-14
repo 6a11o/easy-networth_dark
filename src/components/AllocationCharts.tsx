@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useFinancial } from "@/context/FinancialContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, Sector } from "recharts";
 import { assetCategoryColors, liabilityCategoryColors, assetCategoryLabels, liabilityCategoryLabels } from "@/types";
 import { useState } from "react";
@@ -11,6 +12,7 @@ interface AllocationChartsProps {
 
 export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps) => {
   const { assets, liabilities } = useFinancial();
+  const { formatAmount, currency } = useCurrency();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   
   // Group assets by category
@@ -49,15 +51,6 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
         value,
         color: liabilityCategoryColors[category as keyof typeof liabilityCategoryColors] || "#cccccc",
     }));
-  
-  // Format tooltip values
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: 'USD',
-      maximumFractionDigits: 0 
-    }).format(value);
-  };
   
   // Add percentage to the tooltip
   const formatPercentage = (value: number, total: number) => {
@@ -145,7 +138,7 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
       return (
         <div className="bg-gray-950/80 backdrop-blur-md border border-white/10 p-3 rounded-lg shadow-xl">
           <p className="text-sm font-semibold text-gray-100 mb-1">{data.name}</p>
-          <p className="text-xs text-gray-300 mb-1">{formatCurrency(data.value)}</p>
+          <p className="text-xs text-gray-300 mb-1">{formatAmount(data.value)}</p>
           <p className="text-xs text-gray-400">{formatPercentage(data.value, totalValue)} of Total</p>
         </div>
       );

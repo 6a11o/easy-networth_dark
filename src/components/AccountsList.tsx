@@ -1,6 +1,6 @@
-
-import { Edit, Trash, DollarSign } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import { useFinancial } from "@/context/FinancialContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -38,6 +38,7 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
     deleteAsset, 
     deleteLiability 
   } = useFinancial();
+  const { formatAmount, currency } = useCurrency();
   
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -48,15 +49,6 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
   const [name, setName] = useState("");
   const [balance, setBalance] = useState("");
   const [category, setCategory] = useState("");
-  
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: 'USD',
-      maximumFractionDigits: 0 
-    }).format(amount);
-  };
   
   // Handle edit dialog open
   const handleEdit = (item: Asset | Liability, type: "asset" | "liability") => {
@@ -158,7 +150,7 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
               </div>
               <div className="flex items-center gap-2">
                 <span className={`font-medium ${isAssetType ? 'text-green-400' : 'text-red-400'}`}>
-                  {formatCurrency(item.balance)}
+                  {formatAmount(item.balance)}
                 </span>
                 <Button 
                   variant="ghost" 
@@ -179,7 +171,7 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
           ))
         ) : (
           <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-            <DollarSign className="h-8 w-8 mb-2 opacity-20" />
+            <span className="text-3xl mb-2 opacity-20">{currency.symbol}</span>
             <p>No {isAssetType ? 'assets' : 'liabilities'} added yet.</p>
             <p className="text-sm">Add {isAssetType ? 'assets' : 'liabilities'} to track your net worth.</p>
           </div>
