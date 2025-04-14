@@ -28,7 +28,8 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={<Navigate to="/landing" replace />} />
+              <Route path="/landing" element={<LandingPage />} />
               <Route path="/dashboard" element={
                 <Layout>
                   <Dashboard />
@@ -55,7 +56,6 @@ const App = () => (
                 </Layout>
               } />
               <Route path="/onboarding" element={<Onboarding />} />
-              <Route path="/landing" element={<LandingPage />} />
               <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<Navigate to="/404" replace />} />
             </Routes>

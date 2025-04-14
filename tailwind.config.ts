@@ -22,11 +22,11 @@ export default {
       colors: {
         border: "hsl(240 3.7% 15.9%)",
         input: "hsl(240 3.7% 15.9%)",
-        ring: "hsl(250 91% 67%)",
+        ring: "hsl(186 86% 53%)",
         background: "hsl(230 24% 8%)",
         foreground: "hsl(0 0% 98%)",
         primary: {
-          DEFAULT: "hsl(250 91% 67%)",
+          DEFAULT: "hsl(186 86% 53%)",
           foreground: "hsl(0 0% 98%)",
         },
         secondary: {
@@ -56,12 +56,12 @@ export default {
         sidebar: {
           DEFAULT: "hsl(230 24% 8%)",
           foreground: "hsl(240 4.8% 95.9%)",
-          primary: "hsl(250 91% 67%)",
+          primary: "hsl(186 86% 53%)",
           "primary-foreground": "hsl(0 0% 100%)",
           accent: "hsl(240 3.7% 15.9%)",
           "accent-foreground": "hsl(240 4.8% 95.9%)",
           border: "hsl(240 3.7% 15.9%)",
-          ring: "hsl(217.2 91.2% 59.8%)",
+          ring: "hsl(186 86% 53%)",
         },
         asset: {
           bank: "hsl(199 89% 57%)",

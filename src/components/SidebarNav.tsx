@@ -6,7 +6,9 @@ import {
   Settings, 
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  BarChart3, 
+  DollarSign
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -66,13 +68,13 @@ export const SidebarNav = () => {
         collapsed ? "w-16" : "w-64"
       )}
     >
-      {/* Collapse button */}
+      {/* Collapse button - redesigned to be more visible */}
       <div className="absolute -right-3 top-6">
         <Button
           onClick={() => setCollapsed(!collapsed)}
           size="icon"
           variant="outline"
-          className="h-6 w-6 rounded-full border border-[#1A1F2C] bg-[#0F1119] shadow-md hover:bg-[#1A1F2C]"
+          className="h-6 w-6 rounded-full border border-[#1A1F2C] bg-[#0F1119] shadow-md hover:bg-[#1A1F2C] text-primary"
         >
           {collapsed ? (
             <ChevronRight className="h-3 w-3" />
@@ -82,20 +84,19 @@ export const SidebarNav = () => {
         </Button>
       </div>
       
-      {/* Logo section */}
+      {/* Logo section with new SVG logo */}
       <div className={cn(
         "py-6 flex items-center justify-center border-b border-[#1A1F2C]/50",
         collapsed ? "px-2" : "px-6"
       )}>
-        <Wallet className={cn(
-          "h-6 w-6 text-[#9b87f5]",
-          !collapsed && "mr-2"
-        )} />
-        {!collapsed && (
-          <h1 className="text-lg font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#9b87f5] to-[#33C3F0]">
-            EasyNetWorth
-          </h1>
-        )}
+        <div className="flex items-center">
+          <img src="/logo.svg" alt="EasyNetWorth Logo" className="h-8 w-8" />
+          {!collapsed && (
+            <h1 className="ml-2 text-lg font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE]">
+              NetWorth
+            </h1>
+          )}
+        </div>
       </div>
       
       {/* Navigation items */}
@@ -109,7 +110,7 @@ export const SidebarNav = () => {
                   "flex items-center w-full py-2.5 text-sm font-medium rounded-md transition-all mb-1",
                   collapsed ? "justify-center px-2" : "px-3",
                   location.pathname === item.path
-                    ? "bg-[#1A1F2C] text-[#9b87f5]"
+                    ? "bg-[#1A1F2C] text-[#33C3F0]"
                     : "text-gray-300 hover:bg-[#1A1F2C]/50 hover:text-white"
                 )}
               >
