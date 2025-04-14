@@ -52,15 +52,15 @@ const Dashboard = () => {
         <NetWorthSummary />
       </div>
       
-      {/* Main Content with Equal Heights and Better Shadows */}
+      {/* Rearranged Layout - Accounts Summary and Net Worth Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-1">
           <div className="h-full bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg backdrop-blur-sm hover:shadow-xl transition-all">
             <h3 className="text-xl font-medium mb-4 text-[#E2E8F0]">Net Worth Trend</h3>
             <NetWorthChart />
           </div>
         </div>
-        <div className="h-full">
+        <div className="lg:col-span-2">
           <div className="h-full bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
             <h3 className="text-xl font-medium mb-4 text-[#E2E8F0]">Accounts Summary</h3>
             <AccountsList />
@@ -68,8 +68,8 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Asset Allocation with Shadow Depth */}
-      <div className="bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
+      {/* Asset Allocation with Shadow Depth - Made Smaller */}
+      <div className="max-w-3xl mx-auto bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
         <h3 className="text-xl font-medium mb-4 text-[#E2E8F0]">Asset Allocation</h3>
         <AllocationCharts />
       </div>

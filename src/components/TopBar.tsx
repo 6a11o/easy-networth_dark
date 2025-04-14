@@ -5,7 +5,6 @@ import {
   PlusCircle,
   Settings,
   LogOut,
-  BarChart3,
   Menu,
 } from "lucide-react";
 import { useState } from "react";
@@ -50,8 +49,8 @@ export const TopBar = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#1A1F2C]/30 bg-[#0F1119]/80 backdrop-blur-md">
-      <div className="flex h-16 items-center justify-between px-4 md:px-6">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#1A1F2C]/40 bg-[#0F1119]/90 backdrop-blur-md shadow-md">
+      <div className="flex h-16 items-center justify-between px-4 md:px-8 max-w-7xl mx-auto">
         {/* Logo */}
         <div className="flex items-center">
           <Link to="/dashboard" className="flex items-center">
@@ -62,17 +61,17 @@ export const TopBar = () => {
           </Link>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex md:items-center md:space-x-1">
+        {/* Desktop Navigation - Updated Styling */}
+        <nav className="hidden md:flex md:items-center md:space-x-2">
           {navItems.map((item) => (
             <Button
               key={item.path}
-              variant="ghost"
+              variant={location.pathname === item.path ? "secondary" : "ghost"}
               size="sm"
               className={cn(
-                "flex h-9 items-center gap-2 px-3",
+                "flex h-9 items-center gap-2 px-4 rounded-md transition-all",
                 location.pathname === item.path
-                  ? "bg-[#1A1F2C]/70 text-[#33C3F0]"
+                  ? "bg-[#1A1F2C] text-[#33C3F0] shadow-inner border border-[#33C3F0]/20"
                   : "text-gray-300 hover:bg-[#1A1F2C]/30 hover:text-white"
               )}
               onClick={() => navigate(item.path)}
@@ -90,7 +89,7 @@ export const TopBar = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="rounded-full h-9 w-9 border border-[#1A1F2C] bg-[#0F1119]"
+                className="rounded-full h-9 w-9 border border-[#1A1F2C] bg-[#0F1119] hover:bg-[#1A1F2C]/50 hover:border-[#33C3F0]/20"
               >
                 <span className="sr-only">User menu</span>
                 <div className="size-7 rounded-full bg-gradient-to-br from-[#33C3F0] to-[#66EACE] flex items-center justify-center text-white font-medium">
@@ -98,7 +97,7 @@ export const TopBar = () => {
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-[#0F1119] border border-[#1A1F2C]">
+            <DropdownMenuContent align="end" className="w-56 bg-[#0F1119]/95 backdrop-blur-md border border-[#1A1F2C]">
               <DropdownMenuItem
                 className="cursor-pointer hover:bg-[#1A1F2C]"
                 onClick={() => navigate("/settings")}
@@ -121,12 +120,12 @@ export const TopBar = () => {
         {/* Mobile Menu Trigger */}
         <Sheet>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="hover:bg-[#1A1F2C]/30">
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[240px] bg-[#0F1119] border-l border-[#1A1F2C]">
+          <SheetContent side="right" className="w-[240px] bg-[#0F1119]/95 backdrop-blur-md border-l border-[#1A1F2C]">
             <div className="flex flex-col h-full">
               <div className="flex-1 space-y-1 py-4">
                 {navItems.map((item) => (
@@ -136,7 +135,7 @@ export const TopBar = () => {
                     className={cn(
                       "w-full justify-start",
                       location.pathname === item.path
-                        ? "bg-[#1A1F2C]/70 text-[#33C3F0]"
+                        ? "bg-[#1A1F2C]/70 text-[#33C3F0] border-l-2 border-[#33C3F0]"
                         : "text-gray-300 hover:bg-[#1A1F2C]/30 hover:text-white"
                     )}
                     onClick={() => navigate(item.path)}
