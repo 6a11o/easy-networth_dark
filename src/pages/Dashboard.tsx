@@ -52,29 +52,43 @@ const Dashboard = () => {
         <NetWorthSummary />
       </div>
       
-      {/* Rearranged Layout - Accounts Summary and Net Worth Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1">
-          <div className="h-full bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg backdrop-blur-sm hover:shadow-xl transition-all">
-            <h3 className="text-xl font-medium mb-4 text-[#E2E8F0]">Net Worth Trend</h3>
-            <NetWorthChart />
-          </div>
+      {/* 1. Net Worth Trend - Enhanced for visual appeal and interaction */}
+      <div className="bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg backdrop-blur-sm mb-8">
+        <h3 className="text-xl font-medium mb-4 text-[#E2E8F0]">Net Worth Trend</h3>
+        <div className="h-[400px]"> {/* Increased height for better visualization */}
+          <NetWorthChart />
         </div>
-        <div className="lg:col-span-2">
-          <div className="h-full bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
-            <h3 className="text-xl font-medium mb-4 text-[#E2E8F0]">Accounts Summary</h3>
-            <AccountsList />
+      </div>
+      
+      {/* 2. Portfolio Allocation - Side by side donuts */}
+      <div className="mb-8">
+        <h3 className="text-xl font-medium mb-4 text-[#E2E8F0]">Portfolio Allocation</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
+            <AllocationCharts displayType="assets" />
+          </div>
+          <div className="bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
+            <AllocationCharts displayType="liabilities" />
           </div>
         </div>
       </div>
       
-      {/* Asset Allocation with Shadow Depth - Made Smaller */}
-      <div className="max-w-3xl mx-auto bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
-        <h3 className="text-xl font-medium mb-4 text-[#E2E8F0]">Asset Allocation</h3>
-        <AllocationCharts />
+      {/* 3. Account Summary - Assets and Liabilities side by side */}
+      <div className="mb-8">
+        <h3 className="text-xl font-medium mb-4 text-[#E2E8F0]">Accounts Summary</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
+            <h4 className="text-lg font-medium mb-3 text-[#33C3F0]">Assets</h4>
+            <AccountsList type="assets" />
+          </div>
+          <div className="bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
+            <h4 className="text-lg font-medium mb-3 text-red-400">Liabilities</h4>
+            <AccountsList type="liabilities" />
+          </div>
+        </div>
       </div>
       
-      {/* Collapsible Section with Enhanced Shadow */}
+      {/* 4. Recap Section */}
       <Collapsible
         open={isRecapOpen}
         onOpenChange={setIsRecapOpen}

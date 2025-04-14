@@ -5,7 +5,11 @@ import { useFinancial } from "@/context/FinancialContext";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import { assetCategoryColors, liabilityCategoryColors, assetCategoryLabels, liabilityCategoryLabels } from "@/types";
 
-export const AllocationCharts = () => {
+interface AllocationChartsProps {
+  displayType?: 'assets' | 'liabilities' | 'both';
+}
+
+export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps) => {
   const { assets, liabilities } = useFinancial();
   
   // Group assets by category
@@ -116,10 +120,155 @@ export const AllocationCharts = () => {
     return null;
   };
   
+  // Determine what to render based on displayType
+  const renderAssetsChart = () => (
+    <div className="h-full">
+      <div className="mb-4 text-center">
+        <span className="h-3 w-3 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 inline-block mr-2"></span>
+        <span className="text-lg font-medium">Assets</span>
+      </div>
+      {assetChartData.length > 0 ? (
+        <div className="h-[300px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <defs>
+                {assetChartData.map((entry) => (
+                  <linearGradient key={entry.gradientId} id={entry.gradientId} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={entry.color} stopOpacity={1} />
+                    <stop offset="100%" stopColor={entry.color} stopOpacity={0.7} />
+                  </linearGradient>
+                ))}
+              </defs>
+              <Pie
+                data={assetChartData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={renderCustomizedLabel}
+                outerRadius={100}
+                innerRadius={60}
+                dataKey="value"
+                strokeWidth={1}
+                stroke="#1A1F2C"
+                animationDuration={800}
+              >
+                {assetChartData.map((entry) => (
+                  <Cell 
+                    key={`cell-${entry.name}`} 
+                    fill={`url(#${entry.gradientId})`} 
+                    className="drop-shadow-lg"
+                  />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip totalValue={getTotalAssets()} />} />
+              <Legend 
+                layout="horizontal" 
+                verticalAlign="bottom" 
+                align="center"
+                formatter={(value) => <span className="text-xs text-gray-300">{value}</span>}
+                iconType="circle"
+                iconSize={8}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <div className="flex h-[300px] items-center justify-center bg-gradient-to-b from-transparent to-[#1A1F2C]/10 rounded-lg">
+          <div className="text-center">
+            <p className="text-muted-foreground mb-2">Add assets to see your allocation.</p>
+            <Button 
+              onClick={() => window.location.href="/accounts"} 
+              variant="outline" 
+              size="sm" 
+              className="border-white/10 hover:bg-white/5"
+            >
+              Add Assets
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+  
+  const renderLiabilitiesChart = () => (
+    <div className="h-full">
+      <div className="mb-4 text-center">
+        <span className="h-3 w-3 rounded-full bg-gradient-to-r from-red-400 to-pink-500 inline-block mr-2"></span>
+        <span className="text-lg font-medium">Liabilities</span>
+      </div>
+      {liabilityChartData.length > 0 ? (
+        <div className="h-[300px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <defs>
+                {liabilityChartData.map((entry) => (
+                  <linearGradient key={entry.gradientId} id={entry.gradientId} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={entry.color} stopOpacity={1} />
+                    <stop offset="100%" stopColor={entry.color} stopOpacity={0.7} />
+                  </linearGradient>
+                ))}
+              </defs>
+              <Pie
+                data={liabilityChartData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={renderCustomizedLabel}
+                outerRadius={100}
+                innerRadius={60}
+                dataKey="value"
+                strokeWidth={1}
+                stroke="#1A1F2C"
+                animationDuration={800}
+              >
+                {liabilityChartData.map((entry) => (
+                  <Cell 
+                    key={`cell-${entry.name}`} 
+                    fill={`url(#${entry.gradientId})`}
+                    className="drop-shadow-lg"
+                  />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip totalValue={getTotalLiabilities()} />} />
+              <Legend 
+                layout="horizontal" 
+                verticalAlign="bottom" 
+                align="center"
+                formatter={(value) => <span className="text-xs text-gray-300">{value}</span>}
+                iconType="circle"
+                iconSize={8}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <div className="flex h-[300px] items-center justify-center bg-gradient-to-b from-transparent to-[#1A1F2C]/10 rounded-lg">
+          <div className="text-center">
+            <p className="text-muted-foreground mb-2">Add liabilities to see your allocation.</p>
+            <Button 
+              onClick={() => window.location.href="/accounts"} 
+              variant="outline" 
+              size="sm" 
+              className="border-white/10 hover:bg-white/5"
+            >
+              Add Liabilities
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+  
+  // Render based on displayType
+  if (displayType === 'assets') {
+    return renderAssetsChart();
+  } else if (displayType === 'liabilities') {
+    return renderLiabilitiesChart();
+  }
+  
+  // If displayType is 'both', render both charts (original behavior)
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold">Portfolio Allocation</h2>
-      
       {/* Assets Allocation */}
       <Card className="bg-[#1D2235]/50 backdrop-blur-sm border-white/10 overflow-hidden">
         <CardHeader className="pb-2 border-b border-white/5">
