@@ -10,21 +10,14 @@ import { EnhancedRecapSection } from "@/components/EnhancedRecapSection";
 import { RefreshCw, ChevronDown, ChevronUp, TrendingUp } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useFinancial } from "@/context/FinancialContext";
+import { useCurrency } from "@/context/CurrencyContext";
 
 const Dashboard = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isRecapOpen, setIsRecapOpen] = useState(false);
   const { getNetWorth } = useFinancial();
+  const { formatAmount } = useCurrency();
   const netWorth = getNetWorth();
-  
-  // Format amount as currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: 'USD',
-      maximumFractionDigits: 0 
-    }).format(amount);
-  };
   
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-10">
@@ -34,7 +27,7 @@ const Dashboard = () => {
         <div className="relative flex flex-col items-center text-center mb-4">
           <h2 className="text-lg font-medium text-[#7A7F92]">Your Net Worth</h2>
           <div className="mt-2 text-5xl sm:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE]">
-            {formatCurrency(netWorth)}
+            {formatAmount(netWorth)}
           </div>
           <p className="mt-2 text-[#7A7F92]">Track, analyze, and grow your wealth</p>
           <Button

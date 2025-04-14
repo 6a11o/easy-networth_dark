@@ -5,14 +5,18 @@ import { Button } from "@/components/ui/button";
 import { AddAccountForm } from "@/components/AddAccountForm";
 import { NetWorthSummary } from "@/components/NetWorthSummary";
 import { useFinancial } from "@/context/FinancialContext";
+import { useCurrency, availableCurrencies } from "@/context/CurrencyContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { PlusCircle, TrendingUp, RefreshCw, CheckCircle } from "lucide-react";
+import { PlusCircle, TrendingUp, RefreshCw, CheckCircle, DollarSign } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 export const OnboardingFlow = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const { assets, liabilities } = useFinancial();
+  const { currency, setCurrency } = useCurrency();
   
   const hasAccounts = assets.length > 0 || liabilities.length > 0;
   
@@ -26,6 +30,13 @@ export const OnboardingFlow = () => {
     setStep(prev => prev + 1);
   };
   
+  const handleCurrencyChange = (currencyCode: string) => {
+    const selectedCurrency = availableCurrencies.find(curr => curr.code === currencyCode);
+    if (selectedCurrency) {
+      setCurrency(selectedCurrency);
+    }
+  };
+  
   const renderStepContent = () => {
     switch (step) {
       case 1:
@@ -34,22 +45,38 @@ export const OnboardingFlow = () => {
             <DialogHeader>
               <DialogTitle className="text-xl font-bold">Welcome to Easy Net Worth!</DialogTitle>
               <DialogDescription className="text-base">
-                Let's get started by adding your financial accounts.
+                Let's start by selecting your preferred currency.
               </DialogDescription>
             </DialogHeader>
             <div className="py-6">
               <div className="flex items-center justify-center mb-6">
                 <div className="bg-[#33C3F0]/20 p-4 rounded-full">
-                  <PlusCircle className="h-12 w-12 text-[#33C3F0]" />
+                  <DollarSign className="h-12 w-12 text-[#33C3F0]" />
                 </div>
               </div>
-              <p className="text-center mb-4">
-                Start by adding your assets (what you own) and liabilities (what you owe).
-              </p>
+              <div className="max-h-[300px] overflow-y-auto pr-2 space-y-2">
+                <RadioGroup 
+                  value={currency.code} 
+                  onValueChange={handleCurrencyChange}
+                  className="space-y-3"
+                >
+                  {availableCurrencies.map((curr) => (
+                    <div key={curr.code} className="flex items-center space-x-2 border border-[#1A1F2C]/40 rounded-md p-3 bg-[#0F1119]/60 hover:bg-[#1A1F2C]/40 transition-colors">
+                      <RadioGroupItem value={curr.code} id={curr.code} />
+                      <Label htmlFor={curr.code} className="flex flex-1 cursor-pointer">
+                        <div className="flex items-center justify-between w-full">
+                          <div className="font-medium">{curr.name}</div>
+                          <div className="text-[#33C3F0] font-bold">{curr.symbol}</div>
+                        </div>
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
             </div>
             <DialogFooter>
               <Button onClick={nextStep} className="w-full">
-                Let's Add Accounts
+                Continue
               </Button>
             </DialogFooter>
           </>

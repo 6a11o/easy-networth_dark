@@ -51,9 +51,9 @@ export const TopBar = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#1A1F2C]/40 bg-[#0F1119]/90 backdrop-blur-md shadow-md">
       <div className="flex h-16 items-center justify-between px-4 md:px-8 max-w-7xl mx-auto">
-        {/* Logo */}
+        {/* Logo - updated to navigate to landing page */}
         <div className="flex items-center">
-          <Link to="/dashboard" className="flex items-center">
+          <Link to="/landing" className="flex items-center">
             <img src="/logo.svg" alt="EASY NET WORTH" className="h-8 w-8" />
             <h1 className="ml-3 hidden text-lg font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE] sm:block">
               EASY NET WORTH
