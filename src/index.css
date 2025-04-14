@@ -34,15 +34,6 @@
     --ring: 186 86% 53%;
 
     --radius: 0.5rem;
-
-    --sidebar-background: 230 24% 8%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 186 86% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 186 86% 53%;
   }
 
   * {
@@ -52,6 +43,15 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+  }
+  
+  /* Glass effect helpers */
+  .glass-panel {
+    @apply bg-[#131620] bg-opacity-80 backdrop-blur-md border border-[#1A1F2C]/50 shadow-lg;
+  }
+  
+  .glass-panel-hover {
+    @apply hover:shadow-xl transition-all duration-300 hover:border-[#33C3F0]/20;
   }
   
   /* Financial category colors */
@@ -82,5 +82,33 @@
   /* Smooth transitions */
   .transition-all {
     @apply duration-300 ease-in-out;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-[#0F1119];
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[#1A1F2C] rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-[#33C3F0]/50;
+  }
+  
+  /* Data grid/card styling helpers */
+  .data-card {
+    @apply bg-[#131620] border border-[#1A1F2C]/40 rounded-xl p-5 hover:shadow-lg transition-all;
+  }
+  
+  /* Utility classes for text gradients */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE];
   }
 }

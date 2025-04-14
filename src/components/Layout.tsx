@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { SidebarNav } from "./SidebarNav";
+import { TopBar } from "./TopBar";
 import { useAuth } from "@/context/AuthContext";
 import { Navigate } from "react-router-dom";
 
@@ -28,11 +28,11 @@ export const Layout = ({ children, requireAuth = true }: LayoutProps) => {
     );
   }
   
-  // Dashboard layout with sidebar
+  // Dashboard layout with top bar
   return (
-    <div className="flex min-h-screen w-full bg-[#0F1119]">
-      <SidebarNav />
-      <div className="flex-1 overflow-auto p-4 sm:p-6 overflow-x-hidden">
+    <div className="flex min-h-screen w-full flex-col bg-[#0F1119]">
+      <TopBar />
+      <div className="flex-1 overflow-auto pt-20 p-4 sm:p-6 overflow-x-hidden">
         <div className="max-w-screen-2xl mx-auto">
           {children}
         </div>
