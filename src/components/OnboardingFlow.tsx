@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -95,8 +94,8 @@ export const OnboardingFlow = () => {
               <AddAccountForm />
             </div>
             <DialogFooter className="flex flex-col gap-2">
-              <Button 
-                onClick={nextStep} 
+              <Button
+                onClick={() => setStep(4)}
                 className="w-full"
                 disabled={!hasAccounts}
               >

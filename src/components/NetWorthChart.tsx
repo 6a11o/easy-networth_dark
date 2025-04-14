@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useFinancial } from "@/context/FinancialContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
@@ -13,10 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { useCurrency } from "@/context/CurrencyContext";
 
 export const NetWorthChart = () => {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("ALL");
   const { getHistoricalNetWorth } = useFinancial();
+  const { currency } = useCurrency();
   
   // Get net worth history
   const netWorthHistory = getHistoricalNetWorth();
@@ -53,9 +54,10 @@ export const NetWorthChart = () => {
   
   // Format chart data
   const chartData = filteredData().map(item => ({
-    date: new Date(item.date).toLocaleDateString('en-US', { 
+    date: new Date(item.date).toLocaleDateString(undefined, {
       month: 'short', 
-      day: 'numeric'
+      day: 'numeric',
+      year: timePeriod === '1Y' || timePeriod === 'ALL' ? 'numeric' : undefined
     }),
     netWorth: item.netWorth
   }));
@@ -63,12 +65,19 @@ export const NetWorthChart = () => {
   // Time period options
   const periods: TimePeriod[] = ["1M", "3M", "6M", "1Y", "ALL"];
   
-  // Format tooltip values
-  const formatTooltipValue = (value: number) => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: 'USD',
-      maximumFractionDigits: 0 
+  // Format axis/tooltip value WITHOUT currency symbol
+  const formatValue = (value: number) => {
+    return new Intl.NumberFormat(undefined, {
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
+  // Format value WITH currency symbol (for change display)
+  const formatValueWithCurrency = (value: number) => {
+    return new Intl.NumberFormat(undefined, {
+      style: 'currency',
+      currency: currency.code,
+      maximumFractionDigits: 0,
     }).format(value);
   };
   
@@ -97,6 +106,10 @@ export const NetWorthChart = () => {
   
   const netWorthChange = getNetWorthChange();
   
+  // Determine trend color and gradient
+  const trendColor = netWorthChange.value >= 0 ? '#4ade80' : '#f87171'; // green-400 or red-400
+  const gradientId = netWorthChange.value >= 0 ? 'url(#positiveGradient)' : 'url(#negativeGradient)';
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -132,7 +145,7 @@ export const NetWorthChart = () => {
               "flex items-center gap-1 text-sm font-medium",
               netWorthChange.value >= 0 ? "text-green-400" : "text-red-400"
             )}>
-              {formatTooltipValue(netWorthChange.value)}
+              {formatValueWithCurrency(netWorthChange.value)}
               <span className="text-xs">
                 ({netWorthChange.value >= 0 ? "+" : ""}{netWorthChange.percentage.toFixed(1)}%)
               </span>
@@ -142,52 +155,71 @@ export const NetWorthChart = () => {
       </div>
       
       {chartData.length >= 2 ? (
-        <div className="h-[350px] mt-6 luxury-shadow rounded-lg overflow-hidden">
-          <ChartContainer
-            config={{
-              netWorth: {
-                label: "Net Worth",
-                theme: { light: "#9b87f5", dark: "#9b87f5" },
-              },
-            }}
-            className="p-4 bg-gradient-to-b from-[#121825]/80 to-[#0A0C14]/95 border border-[#1A1F2C]/50 rounded-lg"
-          >
-            <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
-              <defs>
-                <linearGradient id="netWorthGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#9b87f5" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#9b87f5" stopOpacity={0.05} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis 
-                dataKey="date" 
-                stroke="rgba(255,255,255,0.5)"
-                tick={{ fill: 'rgba(255,255,255,0.7)' }}
-              />
-              <YAxis 
-                stroke="rgba(255,255,255,0.5)"
-                tick={{ fill: 'rgba(255,255,255,0.7)' }}
-                tickFormatter={formatTooltipValue}
-              />
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent 
-                    formatter={(value: number) => formatTooltipValue(value)}
-                  />
-                }
-              />
-              <Area 
-                type="monotone" 
-                dataKey="netWorth" 
-                name="netWorth"
-                stroke="#9b87f5" 
-                strokeWidth={2}
-                fill="url(#netWorthGradient)"
-                activeDot={{ r: 6, stroke: '#9b87f5', strokeWidth: 2, fill: '#131620' }}
-              />
-            </AreaChart>
-          </ChartContainer>
+        <div className="mt-6 luxury-shadow rounded-lg overflow-hidden" style={{ height: '400px' }}>
+          <div className="w-full h-full bg-gradient-to-b from-[#121825]/80 to-[#0A0C14]/95 border border-[#1A1F2C]/50 rounded-lg p-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 10, bottom: 20 }}>
+                <defs>
+                  {/* Green gradient for positive trend */}
+                  <linearGradient id="positiveGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#4ade80" stopOpacity={0.5} />
+                    <stop offset="95%" stopColor="#4ade80" stopOpacity={0.05} />
+                  </linearGradient>
+                  {/* Red gradient for negative trend */}
+                  <linearGradient id="negativeGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f87171" stopOpacity={0.5} />
+                    <stop offset="95%" stopColor="#f87171" stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  stroke="rgba(255, 255, 255, 0.4)"
+                  axisLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
+                  tickLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
+                  tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 11 }}
+                  dy={10}
+                  minTickGap={50}
+                />
+                <YAxis
+                  stroke="rgba(255, 255, 255, 0.4)"
+                  axisLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
+                  tickLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
+                  tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 11 }}
+                  tickFormatter={formatValue}
+                  domain={['auto', 'auto']}
+                  width={60}
+                />
+                <Tooltip
+                  cursor={{ stroke: trendColor, strokeWidth: 1.5, strokeDasharray: '4 4' }}
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-gray-950/90 backdrop-blur-lg border border-[#33C3F0]/20 text-gray-100 shadow-xl rounded-lg p-3">
+                          <p className="text-sm text-gray-300 mb-1">Date: {label}</p>
+                          <p className="text-base font-medium">
+                            Net Worth: {formatValueWithCurrency(payload[0].value as number)}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="netWorth"
+                  name="Net Worth"
+                  stroke={trendColor}
+                  strokeWidth={2.5}
+                  fillOpacity={0.6}
+                  fill={gradientId}
+                  activeDot={{ r: 6, strokeWidth: 1.5, fill: trendColor, stroke: '#fff' }}
+                  dot={false}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       ) : (
         <div className="flex h-[350px] items-center justify-center text-muted-foreground bg-[#1A1F2C]/30 rounded-lg border border-[#1A1F2C]/50 luxury-shadow">

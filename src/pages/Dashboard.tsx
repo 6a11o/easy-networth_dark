@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NetWorthSummary } from "@/components/NetWorthSummary";
@@ -48,7 +47,7 @@ const Dashboard = () => {
       {/* 1. Net Worth Trend - Enhanced for visual appeal and interaction */}
       <div className="bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg backdrop-blur-sm mb-8">
         <h3 className="text-xl font-medium mb-4 text-[#E2E8F0]">Net Worth Trend</h3>
-        <div className="h-[400px]"> {/* Increased height for better visualization */}
+        <div className="relative">
           <NetWorthChart />
         </div>
       </div>
