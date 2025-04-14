@@ -25,7 +25,11 @@ import {
 import { Asset, Liability, assetCategoryLabels, liabilityCategoryLabels } from "@/types";
 import { toast } from "sonner";
 
-export const AccountsList = () => {
+interface AccountsListProps {
+  type?: "assets" | "liabilities";
+}
+
+export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
   const { 
     assets, 
     liabilities, 
@@ -122,122 +126,64 @@ export const AccountsList = () => {
     setIsDeleteDialogOpen(true);
   };
   
+  // Determine which accounts to display based on the type prop
+  const accountsToDisplay = type === "assets" ? assets : liabilities;
+  const isAssetType = type === "assets";
+  
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        {/* Assets List */}
-        <Card className="bg-card/50 backdrop-blur-sm border-white/10">
-          <CardHeader>
-            <CardTitle className="text-lg font-medium">Assets</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {assets.length > 0 ? (
-              <div className="space-y-4">
-                {assets.map((asset) => (
-                  <div 
-                    key={asset.id}
-                    className="flex items-center justify-between p-3 bg-secondary/50 rounded-md border border-white/5"
-                  >
-                    <div className="flex items-center">
-                      <span className={cn(
-                        "w-2 h-8 mr-3 rounded-sm",
-                        `bg-asset-${asset.category}`
-                      )} />
-                      <div>
-                        <h4 className="font-medium">{asset.name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {assetCategoryLabels[asset.category as keyof typeof assetCategoryLabels]}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-green-400">
-                        {formatCurrency(asset.balance)}
-                      </span>
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={() => handleEdit(asset, "asset")}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={() => handleDeleteClick(asset, "asset")}
-                      >
-                        <Trash className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+      <div className="space-y-4">
+        {accountsToDisplay.length > 0 ? (
+          accountsToDisplay.map((item) => (
+            <div 
+              key={item.id}
+              className="flex items-center justify-between p-3 bg-secondary/50 rounded-md border border-white/5"
+            >
+              <div className="flex items-center">
+                <span className={cn(
+                  "w-2 h-8 mr-3 rounded-sm",
+                  isAssetType 
+                    ? `bg-asset-${item.category}` 
+                    : `bg-liability-${item.category}`
+                )} />
+                <div>
+                  <h4 className="font-medium">{item.name}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    {isAssetType 
+                      ? assetCategoryLabels[item.category as keyof typeof assetCategoryLabels]
+                      : liabilityCategoryLabels[item.category as keyof typeof liabilityCategoryLabels]
+                    }
+                  </p>
+                </div>
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-                <DollarSign className="h-8 w-8 mb-2 opacity-20" />
-                <p>No assets added yet.</p>
-                <p className="text-sm">Add assets to track your net worth.</p>
+              <div className="flex items-center gap-2">
+                <span className={`font-medium ${isAssetType ? 'text-green-400' : 'text-red-400'}`}>
+                  {formatCurrency(item.balance)}
+                </span>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => handleEdit(item, isAssetType ? "asset" : "liability")}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => handleDeleteClick(item, isAssetType ? "asset" : "liability")}
+                >
+                  <Trash className="h-4 w-4 text-destructive" />
+                </Button>
               </div>
-            )}
-          </CardContent>
-        </Card>
-        
-        {/* Liabilities List */}
-        <Card className="bg-card/50 backdrop-blur-sm border-white/10">
-          <CardHeader>
-            <CardTitle className="text-lg font-medium">Liabilities</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {liabilities.length > 0 ? (
-              <div className="space-y-4">
-                {liabilities.map((liability) => (
-                  <div 
-                    key={liability.id}
-                    className="flex items-center justify-between p-3 bg-secondary/50 rounded-md border border-white/5"
-                  >
-                    <div className="flex items-center">
-                      <span className={cn(
-                        "w-2 h-8 mr-3 rounded-sm",
-                        `bg-liability-${liability.category}`
-                      )} />
-                      <div>
-                        <h4 className="font-medium">{liability.name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {liabilityCategoryLabels[liability.category as keyof typeof liabilityCategoryLabels]}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-red-400">
-                        {formatCurrency(liability.balance)}
-                      </span>
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={() => handleEdit(liability, "liability")}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={() => handleDeleteClick(liability, "liability")}
-                      >
-                        <Trash className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-                <DollarSign className="h-8 w-8 mb-2 opacity-20" />
-                <p>No liabilities added yet.</p>
-                <p className="text-sm">Add liabilities to track your net worth.</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+            <DollarSign className="h-8 w-8 mb-2 opacity-20" />
+            <p>No {isAssetType ? 'assets' : 'liabilities'} added yet.</p>
+            <p className="text-sm">Add {isAssetType ? 'assets' : 'liabilities'} to track your net worth.</p>
+          </div>
+        )}
       </div>
       
       {/* Edit Dialog */}

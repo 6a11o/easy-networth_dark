@@ -79,11 +79,11 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
             <h4 className="text-lg font-medium mb-3 text-[#33C3F0]">Assets</h4>
-            <AccountsList type="assets" />
+            <AccountsList />
           </div>
           <div className="bg-[#131620]/90 border border-[#1A1F2C]/40 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
             <h4 className="text-lg font-medium mb-3 text-red-400">Liabilities</h4>
-            <AccountsList type="liabilities" />
+            <AccountsList />
           </div>
         </div>
       </div>
