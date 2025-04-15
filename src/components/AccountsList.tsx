@@ -1,7 +1,7 @@
-import { Edit, Trash } from "lucide-react";
+import { Edit, Trash, LockIcon } from "lucide-react";
 import { useFinancial } from "@/context/FinancialContext";
 import { useCurrency } from "@/context/CurrencyContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -36,9 +36,11 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
     updateAsset, 
     updateLiability, 
     deleteAsset, 
-    deleteLiability 
+    deleteLiability,
+    isPremium,
+    setIsPremium
   } = useFinancial();
-  const { formatAmount, currency } = useCurrency();
+  const { formatAmount } = useCurrency();
   
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -117,76 +119,146 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
     setEditingItem(item);
     setIsDeleteDialogOpen(true);
   };
+
+  // Handle premium upgrade
+  const handleUpgradeToPremium = () => {
+    setIsPremium(true);
+    toast.success("Upgraded to Pro successfully");
+  };
   
   // Determine which accounts to display based on the type prop
   const accountsToDisplay = type === "assets" ? assets : liabilities;
   const isAssetType = type === "assets";
   
+  // Check if the account limit is approaching or has been reached
+  const isApproachingLimit = isAssetType 
+    ? !isPremium && assets.length >= 2 && assets.length < 3
+    : !isPremium && liabilities.length >= 1 && liabilities.length < 2;
+  
+  const isAtLimit = isAssetType
+    ? !isPremium && assets.length >= 3
+    : !isPremium && liabilities.length >= 2;
+
+  // Get the color for each account category
+  const getCategoryColor = (category: string): string => {
+    if (isAssetType) {
+      switch(category) {
+        case 'bank': return '#33C3F0';
+        case 'stocks': return '#66EACE';
+        case 'crypto': return '#8b5cf6';
+        case 'realEstate': return '#4ade80';
+        case 'retirement': return '#f59e0b';
+        case 'other': return '#94a3b8';
+        default: return '#33C3F0';
+      }
+    } else {
+      switch(category) {
+        case 'creditcard': return '#f87171';
+        case 'loan': return '#ef4444';
+        case 'mortgage': return '#dc2626';
+        case 'other': return '#94a3b8';
+        default: return '#f87171';
+      }
+    }
+  };
+  
   return (
     <>
       <div className="space-y-4">
+        {/* Free Trial Limitation Warning */}
+        {!isPremium && (isApproachingLimit || isAtLimit) && (
+          <Card className="bg-primary/10 border border-primary/30 mb-4">
+            <CardContent className="py-6">
+              <div className="text-center">
+                <div className="flex justify-center mb-2">
+                  <LockIcon className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-medium text-lg mb-2">
+                  {isAtLimit ? "Free Trial Limit Reached" : "Free Trial Limit Approaching"}
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  {isAssetType
+                    ? `Free trial is limited to 3 asset accounts. ${isAtLimit ? "You've reached this limit." : "You're approaching this limit."}`
+                    : `Free trial is limited to 2 liability accounts. ${isAtLimit ? "You've reached this limit." : "You're approaching this limit."}`
+                  }
+                </p>
+                <Button onClick={handleUpgradeToPremium} className="bg-[#33C3F0] hover:bg-[#33C3F0]/90 text-[#081924] font-semibold">
+                  Upgrade to Pro - $19.99
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {accountsToDisplay.length > 0 ? (
-          accountsToDisplay.map((item) => (
-            <div 
-              key={item.id}
-              className="flex items-center justify-between p-3 bg-secondary/50 rounded-md border border-white/5"
-            >
-              <div className="flex items-center">
-                <span className={cn(
-                  "w-2 h-8 mr-3 rounded-sm",
-                  isAssetType 
-                    ? `bg-asset-${item.category}` 
-                    : `bg-liability-${item.category}`
-                )} />
-                <div>
-                  <h4 className="font-medium">{item.name}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {isAssetType 
-                      ? assetCategoryLabels[item.category as keyof typeof assetCategoryLabels]
-                      : liabilityCategoryLabels[item.category as keyof typeof liabilityCategoryLabels]
-                    }
-                  </p>
+          <div className="space-y-3">
+            {accountsToDisplay.map((item) => (
+              <div 
+                key={item.id}
+                className="flex justify-between items-center p-3 bg-[#1A1F2C]/60 rounded border border-[#1A1F2C]/90 shadow-md hover:shadow-lg transition-all hover:bg-[#1A1F2C]/80"
+              >
+                <div className="flex items-center">
+                  <div className="w-2 h-8 rounded-sm mr-3" style={{ backgroundColor: getCategoryColor(item.category) }}></div>
+                  <div>
+                    <h4 className="font-medium">{item.name}</h4>
+                    <p className="text-xs text-[#7A7F92]">
+                      {isAssetType 
+                        ? assetCategoryLabels[item.category as keyof typeof assetCategoryLabels]
+                        : liabilityCategoryLabels[item.category as keyof typeof liabilityCategoryLabels]
+                      }
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`font-medium ${isAssetType ? 'text-green-400' : 'text-red-400'}`}>
+                    {formatAmount(item.balance)}
+                  </span>
+                  <div className="flex space-x-1">
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => handleEdit(item, isAssetType ? "asset" : "liability")}
+                      className="h-8 w-8 rounded-full hover:bg-[#33C3F0]/10"
+                    >
+                      <Edit className="h-4 w-4 text-[#33C3F0]" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => handleDeleteClick(item, isAssetType ? "asset" : "liability")}
+                      className="h-8 w-8 rounded-full hover:bg-red-400/10"
+                    >
+                      <Trash className="h-4 w-4 text-red-400" />
+                    </Button>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className={`font-medium ${isAssetType ? 'text-green-400' : 'text-red-400'}`}>
-                  {formatAmount(item.balance)}
-                </span>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => handleEdit(item, isAssetType ? "asset" : "liability")}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => handleDeleteClick(item, isAssetType ? "asset" : "liability")}
-                >
-                  <Trash className="h-4 w-4 text-destructive" />
-                </Button>
-              </div>
-            </div>
-          ))
+            ))}
+          </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-            <span className="text-3xl mb-2 opacity-20">{currency.symbol}</span>
-            <p>No {isAssetType ? 'assets' : 'liabilities'} added yet.</p>
-            <p className="text-sm">Add {isAssetType ? 'assets' : 'liabilities'} to track your net worth.</p>
+          <div className="flex flex-col items-center justify-center py-12 text-[#7A7F92] bg-[#1A1F2C]/40 rounded-lg border border-[#1A1F2C]/90 shadow-inner">
+            <div className="h-16 w-16 rounded-full bg-[#1A1F2C]/80 flex items-center justify-center mb-4 border border-[#33C3F0]/10">
+              <span className="text-3xl opacity-20">{isAssetType ? '+' : '−'}</span>
+            </div>
+            <p className="text-lg mb-1">No {isAssetType ? 'assets' : 'liabilities'} added yet.</p>
+            <p className="text-sm mb-4">Add {isAssetType ? 'assets' : 'liabilities'} to track your net worth.</p>
+            <Button variant="outline" className="border-[#33C3F0]/20 hover:bg-[#33C3F0]/10 text-[#33C3F0]">
+              Add {isAssetType ? 'Asset' : 'Liability'}
+            </Button>
           </div>
         )}
       </div>
       
       {/* Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-[#131620] border border-[#33C3F0]/20">
           <DialogHeader>
             <DialogTitle>Edit {editType === "asset" ? "Asset" : "Liability"}</DialogTitle>
             <DialogDescription>
               Make changes to your {editType}. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
+          
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
@@ -194,53 +266,53 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Account name"
+                className="bg-[#1A1F2C] border-[#33C3F0]/20"
               />
             </div>
+            
             <div className="space-y-2">
               <Label htmlFor="balance">Balance</Label>
               <Input
                 id="balance"
-                type="number"
+                type="text"
                 value={balance}
                 onChange={(e) => setBalance(e.target.value)}
-                placeholder="0"
+                className="bg-[#1A1F2C] border-[#33C3F0]/20"
               />
             </div>
+            
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-[#1A1F2C] border-[#33C3F0]/20">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent>
-                  {editType === "asset" ? (
-                    Object.entries(assetCategoryLabels).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    Object.entries(liabilityCategoryLabels).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))
-                  )}
+                <SelectContent className="bg-[#1A1F2C] border-[#33C3F0]/20">
+                  {Object.entries(
+                    editType === "asset" ? assetCategoryLabels : liabilityCategoryLabels
+                  ).map(([value, label]) => (
+                    <SelectItem key={value} value={value} className="focus:bg-[#33C3F0]/20">
+                      {label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
+          
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave}>Save Changes</Button>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="border-[#33C3F0]/20 hover:bg-[#1A1F2C]">
+              Cancel
+            </Button>
+            <Button onClick={handleSave} className="bg-[#33C3F0] hover:bg-[#33C3F0]/90 text-black">
+              Save changes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
       
-      {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-[#131620] border border-[#33C3F0]/20">
           <DialogHeader>
             <DialogTitle>Delete {editType === "asset" ? "Asset" : "Liability"}</DialogTitle>
             <DialogDescription>
@@ -248,8 +320,12 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDeleteConfirm}>Delete</Button>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} className="border-[#33C3F0]/20 hover:bg-[#1A1F2C]">
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteConfirm}>
+              Delete
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

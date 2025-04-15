@@ -1,43 +1,49 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background circle with subtle gradient -->
-  <circle cx="256" cy="256" r="240" fill="url(#bg-gradient)" />
+  <!-- Sleek background with subtle blur effect -->
+  <rect width="512" height="512" rx="256" fill="#0F1119" />
   
-  <!-- The "E" letter stylized as a financial bar chart/growth -->
-  <path d="M140 160H300" stroke="url(#line-gradient)" stroke-width="32" stroke-linecap="round" />
-  <path d="M140 256H260" stroke="url(#line-gradient)" stroke-width="32" stroke-linecap="round" />
-  <path d="M140 352H320" stroke="url(#line-gradient)" stroke-width="32" stroke-linecap="round" />
+  <!-- Subtle inner glow -->
+  <rect x="8" y="8" width="496" height="496" rx="248" fill="url(#subtle_glow)" opacity="0.6" />
   
-  <!-- Upward trending line representing financial growth -->
-  <path d="M180 340L230 280L290 240L350 170" stroke="white" stroke-width="16" stroke-linecap="round" />
+  <!-- Border element inspired by Sign In button -->
+  <rect x="4" y="4" width="504" height="504" rx="252" stroke="url(#border_gradient)" stroke-width="2" stroke-opacity="0.6" />
   
-  <!-- Dollar sign to clearly indicate financial context -->
-  <path d="M350 220C350 198.909 332.091 182 310 182H290C267.909 182 250 198.909 250 220C250 241.091 267.909 258 290 258H320C342.091 258 360 274.909 360 296C360 317.091 342.091 334 320 334H290C267.909 334 250 317.091 250 296" 
-        stroke="url(#dollar-gradient)" stroke-width="18" stroke-linecap="round" />
-  <line x1="320" y1="150" x2="320" y2="360" stroke="url(#dollar-gradient)" stroke-width="18" stroke-linecap="round" />
+  <!-- Minimalist graph line (arrow pointing up) -->
+  <path d="M166 346 L256 166 L346 346" 
+        stroke="url(#line_gradient)" 
+        stroke-width="10" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
   
-  <!-- Coin/circle to emphasize wealth/value -->
-  <circle cx="180" cy="256" r="45" stroke="url(#coin-gradient)" stroke-width="16" fill="#0F1119" fill-opacity="0.3" />
+  <!-- Horizontal line representing baseline -->
+  <path d="M166 346 L346 346" 
+        stroke="url(#line_gradient)" 
+        stroke-width="10" 
+        stroke-linecap="round" />
   
-  <!-- Definitions for gradients -->
+  <!-- Subtle blur overlay effect (like Sign In button hover) -->
+  <circle cx="256" cy="256" r="120" fill="url(#blur_overlay)" opacity="0.07" filter="blur(40px)" />
+  
+  <!-- Gradient definitions -->
   <defs>
-    <linearGradient id="bg-gradient" x1="100" y1="100" x2="400" y2="400" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#131620" />
-      <stop offset="1" stop-color="#0A0C14" />
+    <linearGradient id="border_gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#33C3F0" stop-opacity="0.6" />
+      <stop offset="1" stop-color="#66EACE" stop-opacity="0.6" />
     </linearGradient>
     
-    <linearGradient id="line-gradient" x1="140" y1="256" x2="320" y2="256" gradientUnits="userSpaceOnUse">
+    <linearGradient id="line_gradient" x1="166" y1="256" x2="346" y2="256" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#33C3F0" />
       <stop offset="1" stop-color="#66EACE" />
     </linearGradient>
     
-    <linearGradient id="dollar-gradient" x1="250" y1="150" x2="360" y2="360" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#66EACE" />
-      <stop offset="1" stop-color="#33C3F0" />
+    <linearGradient id="blur_overlay" x1="136" y1="136" x2="376" y2="376" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#33C3F0" />
+      <stop offset="1" stop-color="#66EACE" />
     </linearGradient>
     
-    <linearGradient id="coin-gradient" x1="135" y1="211" x2="225" y2="301" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#66EACE" />
-      <stop offset="1" stop-color="#33C3F0" />
-    </linearGradient>
+    <radialGradient id="subtle_glow" cx="256" cy="256" r="248" gradientUnits="userSpaceOnUse">
+      <stop offset="0.7" stop-color="#0F1119" stop-opacity="0" />
+      <stop offset="1" stop-color="#33C3F0" stop-opacity="0.08" />
+    </radialGradient>
   </defs>
 </svg>

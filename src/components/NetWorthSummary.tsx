@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFinancial } from "@/context/FinancialContext";
 import { useCurrency } from "@/context/CurrencyContext";
@@ -26,77 +26,46 @@ export const NetWorthSummary = () => {
   }
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
       {/* Assets Card */}
-      <Card className="bg-[#1A1F2C]/90 shadow-lg border-[#33C3F0]/10 overflow-hidden">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-md font-medium text-[#A0AEC0] flex items-center">
-            <div className="mr-2 h-8 w-8 rounded-full bg-[#33C3F0]/10 flex items-center justify-center">
-              <span className="h-4 w-4 text-[#33C3F0] font-bold">{currency.symbol}</span>
-            </div>
-            Total Assets
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-2xl sm:text-3xl font-bold text-green-400">{formatAmount(totalAssets)}</div>
-            <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
-              <ArrowUp className="h-5 w-5 text-green-500" />
-            </div>
+      <div className="bg-[#1A1F2C]/80 rounded-lg p-4 border border-[#33C3F0]/10 shadow-lg">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-[#7A7F92]">Assets</h3>
+        </div>
+        <div className="text-2xl font-bold text-green-400">{formatAmount(totalAssets)}</div>
+        <div className="h-1 w-full bg-[#272D3D] rounded-full mt-2">
+          <div className="h-1 bg-gradient-to-r from-green-400 to-green-600 rounded-full" 
+            style={{ width: totalAssets > 0 ? `${Math.min(100, (totalAssets / (totalAssets + totalLiabilities)) * 100)}%` : "0%" }}>
           </div>
-        </CardContent>
-      </Card>
-      
-      {/* Net Worth Change Card */}
-      <Card className="bg-[#1A1F2C]/90 shadow-lg border-[#33C3F0]/10 overflow-hidden">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-md font-medium text-[#A0AEC0] flex items-center">
-            <div className="mr-2 h-8 w-8 rounded-full bg-[#9b87f5]/10 flex items-center justify-center">
-              <span className="h-4 w-4 text-[#9b87f5] font-bold">{currency.symbol}</span>
-            </div>
-            Change
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="flex items-baseline">
-              <span className="text-2xl sm:text-3xl font-bold">{percentChange !== 0 ? `${percentChange >= 0 ? '+' : ''}${percentChange.toFixed(1)}%` : '—'}</span>
-            </div>
-            {percentChange !== 0 && (
-              <div className={cn(
-                "h-10 w-10 rounded-full flex items-center justify-center",
-                percentChange >= 0 ? "bg-green-500/10" : "bg-red-500/10" 
-              )}>
-                {percentChange >= 0 ? (
-                  <ArrowUp className="h-5 w-5 text-green-500" />
-                ) : (
-                  <ArrowDown className="h-5 w-5 text-red-500" />
-                )}
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
       
       {/* Liabilities Card */}
-      <Card className="bg-[#1A1F2C]/90 shadow-lg border-[#33C3F0]/10 overflow-hidden">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-md font-medium text-[#A0AEC0] flex items-center">
-            <div className="mr-2 h-8 w-8 rounded-full bg-[#F97316]/10 flex items-center justify-center">
-              <span className="h-4 w-4 text-[#F97316] font-bold">{currency.symbol}</span>
-            </div>
-            Total Liabilities
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-2xl sm:text-3xl font-bold text-red-400">{formatAmount(totalLiabilities)}</div>
-            <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center">
-              <ArrowDown className="h-5 w-5 text-red-500" />
-            </div>
+      <div className="bg-[#1A1F2C]/80 rounded-lg p-4 border border-[#33C3F0]/10 shadow-lg">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-[#7A7F92]">Liabilities</h3>
+        </div>
+        <div className="text-2xl font-bold text-red-400">{formatAmount(totalLiabilities)}</div>
+        <div className="h-1 w-full bg-[#272D3D] rounded-full mt-2">
+          <div className="h-1 bg-gradient-to-r from-red-400 to-red-600 rounded-full" 
+            style={{ width: totalLiabilities > 0 ? `${Math.min(100, (totalLiabilities / (totalAssets + totalLiabilities)) * 100)}%` : "0%" }}>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+      
+      {/* Growth Rate Card */}
+      <div className="col-span-2 md:col-span-1 bg-[#1A1F2C]/80 rounded-lg p-4 border border-[#33C3F0]/10 shadow-lg">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-[#7A7F92]">Growth Rate</h3>
+        </div>
+        <div className="text-2xl font-bold text-[#66EACE]">
+          {percentChange !== 0 ? `${percentChange >= 0 ? '+' : ''}${percentChange.toFixed(1)}%` : 'N/A'}
+        </div>
+        <div className="flex items-center mt-1 text-xs text-[#7A7F92]">
+          <TrendingUp className="h-3 w-3 mr-1 text-[#66EACE]" />
+          <span>Since last update</span>
+        </div>
+      </div>
     </div>
   );
 };

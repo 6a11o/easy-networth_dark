@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -147,12 +146,12 @@ const SettingsPage = () => {
                 <div className="flex justify-between items-center">
                   <div>
                     <h3 className="font-medium">
-                      {isPremium ? "Premium Plan" : "Free Plan"}
+                      {isPremium ? "Pro Plan" : "Free Trial"}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {isPremium
-                        ? "Unlimited historical data tracking"
-                        : "Limited to 3 historical data points"}
+                        ? "Unlimited accounts and historical data tracking"
+                        : "Limited to 3 asset accounts, 2 liability accounts, and 3 historical data points"}
                     </p>
                   </div>
                   <div>
@@ -165,11 +164,11 @@ const SettingsPage = () => {
               
               {isPremium ? (
                 <Button variant="outline" onClick={handleCancelPremium} className="w-full">
-                  Cancel Premium
+                  Cancel Pro Subscription
                 </Button>
               ) : (
                 <Button onClick={handleUpgradeToPremium} className="w-full">
-                  Upgrade to Premium - $19.99
+                  Upgrade to Pro - $19.99
                 </Button>
               )}
             </div>

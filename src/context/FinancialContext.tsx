@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Asset, Liability, AssetCategory, LiabilityCategory, BalanceHistory } from '../types';
@@ -167,6 +166,11 @@ export const FinancialProvider = ({ children }: { children: ReactNode }) => {
   
   // Asset management functions
   const addAsset = (name: string, balance: number, category: AssetCategory) => {
+    // Check for free plan limitations
+    if (!isPremium && assets.length >= 3) {
+      throw new Error('Upgrade to premium to add more than 3 asset accounts.');
+    }
+
     const newAsset: Asset = {
       id: uuidv4(),
       name,
@@ -233,6 +237,11 @@ export const FinancialProvider = ({ children }: { children: ReactNode }) => {
   
   // Liability management functions
   const addLiability = (name: string, balance: number, category: LiabilityCategory) => {
+    // Check for free plan limitations
+    if (!isPremium && liabilities.length >= 2) {
+      throw new Error('Upgrade to premium to add more than 2 liability accounts.');
+    }
+
     const newLiability: Liability = {
       id: uuidv4(),
       name,

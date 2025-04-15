@@ -108,14 +108,14 @@ const NetWorthPage = () => {
           <CardContent className="py-6">
             <div className="text-center">
               <h3 className="font-medium text-lg mb-2">
-                Premium Feature Locked
+                Pro Feature Locked
               </h3>
               <p className="text-muted-foreground mb-4">
-                You've reached the limit of 3 historical data points in the free version. 
-                Upgrade to premium for unlimited historical data tracking.
+                You've reached the limit of 3 historical data points in the free trial. 
+                Upgrade to Pro for unlimited historical data tracking.
               </p>
               <Button onClick={handleUpgradeToPremium} className="bg-primary hover:bg-primary/90 text-[#081924] font-semibold">
-                Upgrade to Premium - $19.99
+                Upgrade to Pro - $19.99
               </Button>
             </div>
           </CardContent>

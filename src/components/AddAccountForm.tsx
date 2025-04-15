@@ -60,7 +60,7 @@ type LiabilityFormData = z.infer<typeof liabilitySchema>;
 
 export const AddAccountForm = () => {
   const [activeTab, setActiveTab] = useState("asset");
-  const { addAsset, addLiability } = useFinancial();
+  const { addAsset, addLiability, isPremium, setIsPremium } = useFinancial();
 
   // React Hook Form setup for Assets
   const {
@@ -103,8 +103,18 @@ export const AddAccountForm = () => {
       resetAssetForm();
       toast.success(`Asset "${data.name}" added successfully`);
     } catch (error) {
-      toast.error("Failed to add asset. Please try again.");
-      console.error("Asset submission error:", error);
+      if (error instanceof Error && error.message.includes('Upgrade to premium')) {
+        toast.error(error.message, {
+          description: 'Upgrade to Pro to add unlimited asset accounts',
+          action: {
+            label: 'Upgrade',
+            onClick: () => setIsPremium(true)
+          }
+        });
+      } else {
+        toast.error("Failed to add asset. Please try again.");
+        console.error("Asset submission error:", error);
+      }
     }
   };
 
@@ -115,8 +125,18 @@ export const AddAccountForm = () => {
       resetLiabilityForm();
       toast.success(`Liability "${data.name}" added successfully`);
     } catch (error) {
-      toast.error("Failed to add liability. Please try again.");
-      console.error("Liability submission error:", error);
+      if (error instanceof Error && error.message.includes('Upgrade to premium')) {
+        toast.error(error.message, {
+          description: 'Upgrade to Pro to add unlimited liability accounts',
+          action: {
+            label: 'Upgrade',
+            onClick: () => setIsPremium(true)
+          }
+        });
+      } else {
+        toast.error("Failed to add liability. Please try again.");
+        console.error("Liability submission error:", error);
+      }
     }
   };
 
