@@ -7,6 +7,17 @@ import { useFinancial } from "@/context/FinancialContext";
 import { useState } from "react";
 import { toast } from "sonner";
 
+// Get API base URL based on environment
+const getApiBaseUrl = () => {
+  const env = process.env.NODE_ENV;
+  if (env === 'production') {
+    return 'https://api.easynetworth.com';
+  } else if (env === 'test') {
+    return 'https://test-api.easynetworth.com';
+  }
+  return 'https://dev-api.easynetworth.com';
+};
+
 const SettingsPage = () => {
   const { user } = useAuth();
   const { isPremium, setIsPremium } = useFinancial();
@@ -15,16 +26,48 @@ const SettingsPage = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   
-  const handleUpdateProfile = (e: React.FormEvent) => {
+  const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Mock update - in a real app, this would call an API
-    toast.success("Profile updated successfully");
+    if (!user?.token) {
+      toast.error("You must be logged in");
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch(`${getApiBaseUrl()}/user/profile`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update profile');
+      }
+      
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
   };
   
-  const handleChangePassword = (e: React.FormEvent) => {
+  const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user?.token) {
+      toast.error("You must be logged in");
+      return;
+    }
     
     if (newPassword !== confirmPassword) {
       toast.error("New passwords don't match");
@@ -36,23 +79,97 @@ const SettingsPage = () => {
       return;
     }
     
-    // Mock update - in a real app, this would call an API
-    toast.success("Password changed successfully");
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch(`${getApiBaseUrl()}/user/password`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to change password');
+      }
+      
+      toast.success("Password changed successfully");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
   };
   
-  const handleUpgradeToPremium = () => {
-    // This would typically integrate with a payment processor
-    // For this demo, we'll just toggle the premium status
-    setIsPremium(true);
-    toast.success("Upgraded to premium successfully");
+  const handleUpgradeToPremium = async () => {
+    if (!user?.token) {
+      toast.error("You must be logged in");
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      // This would typically redirect to a payment processor
+      // For now, let's simulate an API call
+      const response = await fetch(`${getApiBaseUrl()}/user/subscription/upgrade`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${user.token}`,
+        },
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to upgrade subscription');
+      }
+      
+      setIsPremium(true);
+      toast.success("Upgraded to premium successfully");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
   };
   
-  const handleCancelPremium = () => {
-    setIsPremium(false);
-    toast.success("Premium subscription cancelled");
+  const handleCancelPremium = async () => {
+    if (!user?.token) {
+      toast.error("You must be logged in");
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch(`${getApiBaseUrl()}/user/subscription/cancel`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${user.token}`,
+        },
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to cancel subscription');
+      }
+      
+      setIsPremium(false);
+      toast.success("Premium subscription cancelled");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
@@ -82,7 +199,9 @@ const SettingsPage = () => {
                 />
               </div>
               
-              <Button type="submit">Save Changes</Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "Saving..." : "Save Changes"}
+              </Button>
             </form>
           </CardContent>
         </Card>
@@ -127,7 +246,9 @@ const SettingsPage = () => {
                 />
               </div>
               
-              <Button type="submit">Change Password</Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "Changing..." : "Change Password"}
+              </Button>
             </form>
           </CardContent>
         </Card>
@@ -163,12 +284,21 @@ const SettingsPage = () => {
               </div>
               
               {isPremium ? (
-                <Button variant="outline" onClick={handleCancelPremium} className="w-full">
-                  Cancel Pro Subscription
+                <Button 
+                  variant="outline" 
+                  onClick={handleCancelPremium} 
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Processing..." : "Cancel Pro Subscription"}
                 </Button>
               ) : (
-                <Button onClick={handleUpgradeToPremium} className="w-full">
-                  Upgrade to Pro - $19.99
+                <Button 
+                  onClick={handleUpgradeToPremium} 
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Processing..." : "Upgrade to Pro - $19.99"}
                 </Button>
               )}
             </div>

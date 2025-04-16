@@ -1,6 +1,18 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Asset, Liability, AssetCategory, LiabilityCategory, BalanceHistory } from '../types';
+import { useAuth } from './AuthContext';
+
+// Get API base URL based on environment
+const getApiBaseUrl = () => {
+  const env = process.env.NODE_ENV;
+  if (env === 'production') {
+    return 'https://api.easynetworth.com';
+  } else if (env === 'test') {
+    return 'https://test-api.easynetworth.com';
+  }
+  return 'https://dev-api.easynetworth.com';
+};
 
 // Context type definitions
 type FinancialContextType = {
@@ -32,129 +44,107 @@ type FinancialContextType = {
   // Premium status
   isPremium: boolean;
   setIsPremium: (status: boolean) => void;
+  
+  // Loading state
+  isLoading: boolean;
 };
 
 // Create context with default values
 const FinancialContext = createContext<FinancialContextType | undefined>(undefined);
 
-// Sample data for demonstration
-const sampleAssets: Asset[] = [
-  {
-    id: '1',
-    name: 'Checking Account',
-    balance: 5000,
-    category: 'bank',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: '2',
-    name: 'Stock Portfolio',
-    balance: 15000,
-    category: 'stocks',
-    createdAt: new Date().toISOString()
-  }
-];
-
-const sampleLiabilities: Liability[] = [
-  {
-    id: '1',
-    name: 'Credit Card',
-    balance: 2000,
-    category: 'creditcard',
-    createdAt: new Date().toISOString()
-  }
-];
-
-// Sample balance history
-const today = new Date();
-const oneMonthAgo = new Date();
-oneMonthAgo.setMonth(today.getMonth() - 1);
-
-const twoMonthsAgo = new Date();
-twoMonthsAgo.setMonth(today.getMonth() - 2);
-
-const sampleBalanceHistory: BalanceHistory[] = [
-  // Asset 1 history
-  {
-    id: uuidv4(),
-    accountId: '1',
-    date: twoMonthsAgo.toISOString().split('T')[0],
-    balance: 4000
-  },
-  {
-    id: uuidv4(),
-    accountId: '1',
-    date: oneMonthAgo.toISOString().split('T')[0],
-    balance: 4500
-  },
-  {
-    id: uuidv4(),
-    accountId: '1',
-    date: today.toISOString().split('T')[0],
-    balance: 5000
-  },
-  
-  // Asset 2 history
-  {
-    id: uuidv4(),
-    accountId: '2',
-    date: twoMonthsAgo.toISOString().split('T')[0],
-    balance: 12000
-  },
-  {
-    id: uuidv4(),
-    accountId: '2',
-    date: oneMonthAgo.toISOString().split('T')[0],
-    balance: 13500
-  },
-  {
-    id: uuidv4(),
-    accountId: '2',
-    date: today.toISOString().split('T')[0],
-    balance: 15000
-  },
-  
-  // Liability 1 history
-  {
-    id: uuidv4(),
-    accountId: '1', // Same ID as asset, but we know it's a liability from context
-    date: twoMonthsAgo.toISOString().split('T')[0],
-    balance: 3000
-  },
-  {
-    id: uuidv4(),
-    accountId: '1',
-    date: oneMonthAgo.toISOString().split('T')[0],
-    balance: 2500
-  },
-  {
-    id: uuidv4(),
-    accountId: '1',
-    date: today.toISOString().split('T')[0],
-    balance: 2000
-  }
-];
-
 // Provider component
 export const FinancialProvider = ({ children }: { children: ReactNode }) => {
   // State management
-  const [assets, setAssets] = useState<Asset[]>(sampleAssets);
-  const [liabilities, setLiabilities] = useState<Liability[]>(sampleLiabilities);
-  const [balanceHistory, setBalanceHistory] = useState<BalanceHistory[]>(sampleBalanceHistory);
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [liabilities, setLiabilities] = useState<Liability[]>([]);
+  const [balanceHistory, setBalanceHistory] = useState<BalanceHistory[]>([]);
   const [isPremium, setIsPremium] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   
-  // Load data from localStorage on mount
+  const { user, isAuthenticated } = useAuth();
+  
+  // Fetch user financial data when authenticated
   useEffect(() => {
-    const storedAssets = localStorage.getItem('assets');
-    const storedLiabilities = localStorage.getItem('liabilities');
-    const storedBalanceHistory = localStorage.getItem('balanceHistory');
-    const storedPremium = localStorage.getItem('isPremium');
+    const fetchUserData = async () => {
+      if (!isAuthenticated || !user) {
+        setIsLoading(false);
+        return;
+      }
+      
+      setIsLoading(true);
+      
+      try {
+        // Fetch assets
+        const assetsResponse = await fetch(`${getApiBaseUrl()}/assets`, {
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+          },
+        });
+        
+        if (assetsResponse.ok) {
+          const assetsData = await assetsResponse.json();
+          setAssets(assetsData);
+        }
+        
+        // Fetch liabilities
+        const liabilitiesResponse = await fetch(`${getApiBaseUrl()}/liabilities`, {
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+          },
+        });
+        
+        if (liabilitiesResponse.ok) {
+          const liabilitiesData = await liabilitiesResponse.json();
+          setLiabilities(liabilitiesData);
+        }
+        
+        // Fetch balance history
+        const historyResponse = await fetch(`${getApiBaseUrl()}/balance-history`, {
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+          },
+        });
+        
+        if (historyResponse.ok) {
+          const historyData = await historyResponse.json();
+          setBalanceHistory(historyData);
+        }
+        
+        // Fetch premium status
+        const premiumResponse = await fetch(`${getApiBaseUrl()}/user/premium-status`, {
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+          },
+        });
+        
+        if (premiumResponse.ok) {
+          const premiumData = await premiumResponse.json();
+          setIsPremium(premiumData.isPremium);
+        }
+      } catch (error) {
+        console.error('Error fetching financial data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    if (storedAssets) setAssets(JSON.parse(storedAssets));
-    if (storedLiabilities) setLiabilities(JSON.parse(storedLiabilities));
-    if (storedBalanceHistory) setBalanceHistory(JSON.parse(storedBalanceHistory));
-    if (storedPremium) setIsPremium(JSON.parse(storedPremium));
-  }, []);
+    fetchUserData();
+  }, [isAuthenticated, user]);
+  
+  // Fallback to localStorage for offline/development scenarios
+  useEffect(() => {
+    if (!isAuthenticated && !isLoading) {
+      const storedAssets = localStorage.getItem('assets');
+      const storedLiabilities = localStorage.getItem('liabilities');
+      const storedBalanceHistory = localStorage.getItem('balanceHistory');
+      const storedPremium = localStorage.getItem('isPremium');
+      
+      if (storedAssets) setAssets(JSON.parse(storedAssets));
+      if (storedLiabilities) setLiabilities(JSON.parse(storedLiabilities));
+      if (storedBalanceHistory) setBalanceHistory(JSON.parse(storedBalanceHistory));
+      if (storedPremium) setIsPremium(JSON.parse(storedPremium));
+    }
+  }, [isAuthenticated, isLoading]);
   
   // Save data to localStorage whenever it changes
   useEffect(() => {
@@ -179,6 +169,19 @@ export const FinancialProvider = ({ children }: { children: ReactNode }) => {
       createdAt: new Date().toISOString()
     };
     
+    // API call to add asset
+    if (isAuthenticated && user) {
+      fetch(`${getApiBaseUrl()}/assets`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(newAsset),
+      })
+      .catch(error => console.error('Error adding asset:', error));
+    }
+    
     setAssets([...assets, newAsset]);
     
     // Add to balance history
@@ -194,9 +197,23 @@ export const FinancialProvider = ({ children }: { children: ReactNode }) => {
   };
   
   const updateAsset = (id: string, data: Partial<Asset>) => {
+    // Update local state
     setAssets(assets.map(asset => 
       asset.id === id ? { ...asset, ...data } : asset
     ));
+    
+    // API call to update asset
+    if (isAuthenticated && user) {
+      fetch(`${getApiBaseUrl()}/assets/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(data),
+      })
+      .catch(error => console.error('Error updating asset:', error));
+    }
     
     // Update the latest balance in history if balance was changed
     if (data.balance !== undefined) {
@@ -229,6 +246,18 @@ export const FinancialProvider = ({ children }: { children: ReactNode }) => {
   };
   
   const deleteAsset = (id: string) => {
+    // API call to delete asset
+    if (isAuthenticated && user) {
+      fetch(`${getApiBaseUrl()}/assets/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${user.token}`,
+        },
+      })
+      .catch(error => console.error('Error deleting asset:', error));
+    }
+    
+    // Update local state
     setAssets(assets.filter(asset => asset.id !== id));
     
     // Remove from balance history
@@ -401,33 +430,30 @@ export const FinancialProvider = ({ children }: { children: ReactNode }) => {
     });
   };
   
-  const value = {
+  // Provide the context value
+  const contextValue: FinancialContextType = {
     assets,
     addAsset,
     updateAsset,
     deleteAsset,
-    
     liabilities,
     addLiability,
     updateLiability,
     deleteLiability,
-    
     balanceHistory,
     updateBalances,
-    
     getTotalAssets,
     getTotalLiabilities,
     getNetWorth,
-    
     getHistoricalDates,
     getHistoricalNetWorth,
-    
     isPremium,
-    setIsPremium
+    setIsPremium,
+    isLoading
   };
   
   return (
-    <FinancialContext.Provider value={value}>
+    <FinancialContext.Provider value={contextValue}>
       {children}
     </FinancialContext.Provider>
   );

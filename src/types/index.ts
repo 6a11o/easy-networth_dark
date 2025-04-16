@@ -1,8 +1,8 @@
-
 // User related types
 export type User = {
   id: string;
   email: string;
+  token?: string; // Authentication token
 };
 
 // Category types
