@@ -183,7 +183,7 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
                   }
                 </p>
                 <Button onClick={handleUpgradeToPremium} className="bg-[#33C3F0] hover:bg-[#33C3F0]/90 text-[#081924] font-semibold">
-                  Upgrade to Pro - $19.99
+                  Upgrade to Pro
                 </Button>
               </div>
             </CardContent>

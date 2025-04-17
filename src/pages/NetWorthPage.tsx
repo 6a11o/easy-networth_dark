@@ -115,7 +115,7 @@ const NetWorthPage = () => {
                 Upgrade to Pro for unlimited historical data tracking.
               </p>
               <Button onClick={handleUpgradeToPremium} className="bg-primary hover:bg-primary/90 text-[#081924] font-semibold">
-                Upgrade to Pro - $19.99
+                Upgrade to Pro
               </Button>
             </div>
           </CardContent>

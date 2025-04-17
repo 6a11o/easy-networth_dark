@@ -11,41 +11,12 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Environment-aware API endpoint
-const getApiBaseUrl = () => {
-  const env = process.env.NODE_ENV;
-  if (env === 'production') {
-    return 'https://api.easynetworth.com';
-  } else if (env === 'test') {
-    return 'https://test-api.easynetworth.com';
-  }
-  return 'https://dev-api.easynetworth.com';
-};
-
-// Dev mode configuration - set to false when testing actual auth flows
-const DEV_AUTH_BYPASS = process.env.NODE_ENV === 'development';
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   
   // Check for existing user session on mount
   useEffect(() => {
-    // Development mode auto-login bypass
-    if (DEV_AUTH_BYPASS) {
-      console.info('🔑 Development mode: Auto-login enabled');
-      const devUser = {
-        id: 'dev-user-id',
-        email: 'dev@easynetworth.com',
-        token: 'dev-mode-token'
-      };
-      setUser(devUser);
-      setIsAuthenticated(true);
-      localStorage.setItem('user', JSON.stringify(devUser));
-      return;
-    }
-    
-    // Normal authentication logic for production
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
@@ -59,100 +30,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
   
+  // Mock login functionality
   const login = async (email: string, password: string) => {
+    // For demo purposes, any non-empty email/password combination is accepted
     if (!email || !password) {
       throw new Error('Email and password are required');
     }
     
-    // Development mode auto-login bypass
-    if (DEV_AUTH_BYPASS) {
-      console.info('🔑 Development mode: Login bypassed');
-      const devUser = {
-        id: 'dev-user-id',
-        email: email || 'dev@easynetworth.com',
-        token: 'dev-mode-token'
-      };
-      localStorage.setItem('user', JSON.stringify(devUser));
-      setUser(devUser);
-      setIsAuthenticated(true);
-      return;
-    }
+    // Simulate network request
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
-    try {
-      const response = await fetch(`${getApiBaseUrl()}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
-      }
-      
-      const userData = await response.json();
-      
-      // Store user in localStorage
-      localStorage.setItem('user', JSON.stringify(userData.user));
-      
-      // Update state
-      setUser(userData.user);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
-    }
+    // Create mock user
+    const mockUser: User = {
+      id: 'user-' + Math.random().toString(36).substring(2, 9),
+      email
+    };
+    
+    // Store user in localStorage
+    localStorage.setItem('user', JSON.stringify(mockUser));
+    
+    // Update state
+    setUser(mockUser);
+    setIsAuthenticated(true);
   };
   
+  // Mock signup functionality
   const signup = async (email: string, password: string) => {
-    if (!email || !password) {
-      throw new Error('Email and password are required');
-    }
-    
-    // Development mode auto-signup bypass
-    if (DEV_AUTH_BYPASS) {
-      console.info('🔑 Development mode: Signup bypassed');
-      const devUser = {
-        id: 'dev-user-id',
-        email: email || 'dev@easynetworth.com',
-        token: 'dev-mode-token'
-      };
-      localStorage.setItem('user', JSON.stringify(devUser));
-      setUser(devUser);
-      setIsAuthenticated(true);
-      return;
-    }
-    
-    try {
-      const response = await fetch(`${getApiBaseUrl()}/auth/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Signup failed');
-      }
-      
-      const userData = await response.json();
-      
-      // Store user in localStorage
-      localStorage.setItem('user', JSON.stringify(userData.user));
-      
-      // Update state
-      setUser(userData.user);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Signup error:', error);
-      throw error;
-    }
+    // For demo purposes, just use the same login flow
+    await login(email, password);
   };
   
+  // Logout functionality
   const logout = () => {
     localStorage.removeItem('user');
     setUser(null);

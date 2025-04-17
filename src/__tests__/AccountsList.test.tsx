@@ -147,7 +147,7 @@ describe('AccountsList Component', () => {
     render(<AccountsList type="assets" />);
     
     // Check for upgrade button and click it
-    const upgradeButton = screen.getByText('Upgrade to Pro - $19.99');
+    const upgradeButton = screen.getByText('Upgrade to Pro');
     fireEvent.click(upgradeButton);
     
     // Verify setIsPremium was called

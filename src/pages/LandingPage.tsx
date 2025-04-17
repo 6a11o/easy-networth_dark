@@ -401,14 +401,47 @@ const LandingPage = () => {
               Best Value
             </div>
             
-            <div className="grid md:grid-cols-2 gap-12">
-              <div>
+            <div className="grid md:grid-cols-2 gap-12 items-stretch">
+              <div className="flex flex-col">
+                <h3 className="text-3xl font-bold mb-4 text-white">Free Trial</h3>
+                <p className="text-lg text-[#7A7F92] mb-6">Basic features to get started</p>
+                <ul className="space-y-3 mb-8 flex-grow">
+                  <li className="flex items-center text-gray-300">
+                    <div className="h-5 w-5 mr-3 text-[#7A7F92] rounded-full bg-[#7A7F92]/20 flex items-center justify-center">✓</div>
+                    Up to 3 assets
+                  </li>
+                  <li className="flex items-center text-gray-300">
+                    <div className="h-5 w-5 mr-3 text-[#7A7F92] rounded-full bg-[#7A7F92]/20 flex items-center justify-center">✓</div>
+                    Up to 2 liabilities
+                  </li>
+                  <li className="flex items-center text-gray-300">
+                    <div className="h-5 w-5 mr-3 text-[#7A7F92] rounded-full bg-[#7A7F92]/20 flex items-center justify-center">✓</div>
+                    Basic charts
+                  </li>
+                  <li className="flex items-center text-gray-300">
+                    <div className="h-5 w-5 mr-3 text-[#7A7F92] rounded-full bg-[#7A7F92]/20 flex items-center justify-center">✓</div>
+                    Manual data entry
+                  </li>
+                  <li className="flex items-center text-gray-300">
+                    <div className="h-5 w-5 mr-3 text-[#7A7F92]/20 rounded-full bg-[#7A7F92]/10 flex items-center justify-center">✕</div>
+                    <span className="line-through">Advanced features</span>
+                  </li>
+                </ul>
+                
+                <Link to="/signup">
+                  <Button variant="outline" className="w-full border-[#7A7F92] hover:bg-[#7A7F92]/10 text-white py-6 rounded-lg">
+                    Start Free
+                  </Button>
+                </Link>
+              </div>
+
+              <div className="flex flex-col">
                 <h3 className="text-3xl font-bold mb-4 text-white">Pro Plan</h3>
-                <div className="flex items-baseline mb-6">
+                <div className="flex items-baseline mb-1">
                   <span className="text-5xl font-bold text-[#33C3F0]">$19.99</span>
-                  <span className="text-xl text-[#7A7F92] ml-2">/month</span>
                 </div>
-                <ul className="space-y-3 mb-8">
+                <p className="text-sm text-[#7A7F92] mb-6">One-time access fee for full capability</p>
+                <ul className="space-y-3 mb-8 flex-grow">
                   <li className="flex items-center text-gray-300">
                     <div className="h-5 w-5 mr-3 text-[#33C3F0] rounded-full bg-[#33C3F0]/20 flex items-center justify-center">✓</div>
                     Unlimited assets and liabilities
@@ -435,42 +468,6 @@ const LandingPage = () => {
                   <Button className="w-full bg-gradient-to-r from-[#33C3F0] to-[#66EACE] text-black font-medium py-6 rounded-lg shadow-lg transition-all">
                     Get Started
                     <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </div>
-              
-              <div>
-                <h3 className="text-3xl font-bold mb-4 text-white">Free Trial</h3>
-                <div className="flex items-baseline mb-6">
-                  <span className="text-5xl font-bold text-[#7A7F92]">$0</span>
-                  <span className="text-xl text-[#7A7F92] ml-2">/forever</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center text-gray-300">
-                    <div className="h-5 w-5 mr-3 text-[#7A7F92] rounded-full bg-[#7A7F92]/20 flex items-center justify-center">✓</div>
-                    Up to 3 assets
-                  </li>
-                  <li className="flex items-center text-gray-300">
-                    <div className="h-5 w-5 mr-3 text-[#7A7F92] rounded-full bg-[#7A7F92]/20 flex items-center justify-center">✓</div>
-                    Up to 2 liabilities
-                  </li>
-                  <li className="flex items-center text-gray-300">
-                    <div className="h-5 w-5 mr-3 text-[#7A7F92] rounded-full bg-[#7A7F92]/20 flex items-center justify-center">✓</div>
-                    Basic charts
-                  </li>
-                  <li className="flex items-center text-gray-300">
-                    <div className="h-5 w-5 mr-3 text-[#7A7F92] rounded-full bg-[#7A7F92]/20 flex items-center justify-center">✓</div>
-                    Manual data entry
-                  </li>
-                  <li className="flex items-center text-gray-300">
-                    <div className="h-5 w-5 mr-3 text-[#7A7F92]/20 rounded-full bg-[#7A7F92]/10 flex items-center justify-center">✕</div>
-                    <span className="line-through">Advanced features</span>
-                  </li>
-                </ul>
-                
-                <Link to="/signup">
-                  <Button variant="outline" className="w-full border-[#7A7F92] hover:bg-[#7A7F92]/10 text-white py-6 rounded-lg">
-                    Start Free
                   </Button>
                 </Link>
               </div>

@@ -189,16 +189,12 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* 2. Portfolio Allocation - Side by side donuts */}
+      {/* 2. Portfolio Allocation - Single unified box */}
       <div className="mb-8">
         <h3 className="text-xl font-medium mb-4 text-[#E2E8F0]">Portfolio Allocation</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[#131620]/90 border border-[#33C3F0]/20 rounded-xl p-6 shadow-2xl hover:shadow-xl transition-all backdrop-blur-xl transform hover:scale-[1.005] duration-500">
-            <AllocationCharts displayType="assets" />
-          </div>
-          <div className="bg-[#131620]/90 border border-[#33C3F0]/20 rounded-xl p-6 shadow-2xl hover:shadow-xl transition-all backdrop-blur-xl transform hover:scale-[1.005] duration-500">
-            <AllocationCharts displayType="liabilities" />
-          </div>
+        {/* Render AllocationCharts once, applying container styles here */}
+        <div className="bg-[#131620]/90 border border-[#33C3F0]/20 rounded-xl p-6 shadow-2xl hover:shadow-xl transition-all backdrop-blur-xl transform hover:scale-[1.005] duration-500">
+          <AllocationCharts displayType="both" />
         </div>
       </div>
       

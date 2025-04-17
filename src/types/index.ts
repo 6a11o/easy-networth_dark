@@ -2,7 +2,6 @@
 export type User = {
   id: string;
   email: string;
-  token?: string; // Authentication token
 };
 
 // Category types
@@ -35,19 +34,19 @@ export type BalanceHistory = {
 
 // Category color mapping
 export const assetCategoryColors: Record<AssetCategory, string> = {
-  bank: 'rgb(180, 240, 240)',
-  stocks: 'rgb(180, 240, 200)',
-  crypto: 'rgb(220, 200, 240)',
-  investment: 'rgb(240, 220, 180)',
-  realestate: 'rgb(240, 200, 180)',
-  other: 'rgb(220, 220, 220)'
+  bank: '#3498db', // Blue
+  stocks: '#2ecc71', // Green
+  crypto: '#f1c40f', // Yellow
+  investment: '#e67e22', // Orange
+  realestate: '#9b59b6', // Purple
+  other: '#95a5a6' // Gray
 };
 
 export const liabilityCategoryColors: Record<LiabilityCategory, string> = {
-  mortgage: 'rgb(240, 180, 180)',
-  creditcard: 'rgb(240, 180, 220)',
-  loan: 'rgb(220, 180, 240)',
-  other: 'rgb(180, 220, 240)'
+  mortgage: '#e74c3c', // Red
+  creditcard: '#c0392b', // Darker Red
+  loan: '#d35400', // Pumpkin
+  other: '#7f8c8d' // Darker Gray
 };
 
 // Category labels for display
