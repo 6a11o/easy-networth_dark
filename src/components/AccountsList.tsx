@@ -22,7 +22,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Asset, Liability, assetCategoryLabels, liabilityCategoryLabels } from "@/types";
+import { Asset, Liability, assetCategoryLabels, liabilityCategoryLabels, assetCategoryColors, liabilityCategoryColors } from "@/types";
 import { toast } from "sonner";
 
 interface AccountsListProps {
@@ -139,29 +139,6 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
     ? !isPremium && assets.length >= 3
     : !isPremium && liabilities.length >= 2;
 
-  // Get the color for each account category
-  const getCategoryColor = (category: string): string => {
-    if (isAssetType) {
-      switch(category) {
-        case 'bank': return '#33C3F0';
-        case 'stocks': return '#66EACE';
-        case 'crypto': return '#8b5cf6';
-        case 'realEstate': return '#4ade80';
-        case 'retirement': return '#f59e0b';
-        case 'other': return '#94a3b8';
-        default: return '#33C3F0';
-      }
-    } else {
-      switch(category) {
-        case 'creditcard': return '#f87171';
-        case 'loan': return '#ef4444';
-        case 'mortgage': return '#dc2626';
-        case 'other': return '#94a3b8';
-        default: return '#f87171';
-      }
-    }
-  };
-  
   return (
     <>
       <div className="space-y-4">
@@ -178,8 +155,8 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
                 </h3>
                 <p className="text-muted-foreground mb-4">
                   {isAssetType
-                    ? `Free trial is limited to 3 asset accounts. ${isAtLimit ? "You've reached this limit." : "You're approaching this limit."}`
-                    : `Free trial is limited to 2 liability accounts. ${isAtLimit ? "You've reached this limit." : "You're approaching this limit."}`
+                    ? `Free trial is limited to 3 asset accounts. ${isAtLimit ? "You\'ve reached this limit." : "You\'re approaching this limit."}`
+                    : `Free trial is limited to 2 liability accounts. ${isAtLimit ? "You\'ve reached this limit." : "You\'re approaching this limit."}`
                   }
                 </p>
                 <Button onClick={handleUpgradeToPremium} className="bg-[#33C3F0] hover:bg-[#33C3F0]/90 text-[#081924] font-semibold">
@@ -192,48 +169,55 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
 
         {accountsToDisplay.length > 0 ? (
           <div className="space-y-3">
-            {accountsToDisplay.map((item) => (
-              <div 
-                key={item.id}
-                className="flex justify-between items-center p-3 bg-[#1A1F2C]/60 rounded border border-[#1A1F2C]/90 shadow-md hover:shadow-lg transition-all hover:bg-[#1A1F2C]/80"
-              >
-                <div className="flex items-center">
-                  <div className="w-2 h-8 rounded-sm mr-3" style={{ backgroundColor: getCategoryColor(item.category) }}></div>
-                  <div>
-                    <h4 className="font-medium">{item.name}</h4>
-                    <p className="text-xs text-[#7A7F92]">
-                      {isAssetType 
-                        ? assetCategoryLabels[item.category as keyof typeof assetCategoryLabels]
-                        : liabilityCategoryLabels[item.category as keyof typeof liabilityCategoryLabels]
-                      }
-                    </p>
+            {accountsToDisplay.map((item) => {
+              // Determine the correct color map and category type
+              const categoryColors = isAssetType ? assetCategoryColors : liabilityCategoryColors;
+              const categoryKey = item.category as keyof typeof categoryColors;
+              const color = categoryColors[categoryKey] || (isAssetType ? "#33C3F0" : "#f87171"); // Default color
+              
+              return (
+                <div 
+                  key={item.id}
+                  className="flex justify-between items-center p-3 bg-[#1A1F2C]/60 rounded border border-[#1A1F2C]/90 shadow-md hover:shadow-lg transition-all hover:bg-[#1A1F2C]/80"
+                >
+                  <div className="flex items-center">
+                    <div className="w-2 h-8 rounded-sm mr-3" style={{ backgroundColor: color }}></div>
+                    <div>
+                      <h4 className="font-medium">{item.name}</h4>
+                      <p className="text-xs text-[#7A7F92]">
+                        {isAssetType 
+                          ? assetCategoryLabels[item.category as keyof typeof assetCategoryLabels]
+                          : liabilityCategoryLabels[item.category as keyof typeof liabilityCategoryLabels]
+                        }
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`font-medium ${isAssetType ? 'text-green-400' : 'text-red-400'}`}>
+                      {formatAmount(item.balance)}
+                    </span>
+                    <div className="flex space-x-1">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => handleEdit(item, isAssetType ? "asset" : "liability")}
+                        className="h-8 w-8 rounded-full hover:bg-[#33C3F0]/10"
+                      >
+                        <Edit className="h-4 w-4 text-[#33C3F0]" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => handleDeleteClick(item, isAssetType ? "asset" : "liability")}
+                        className="h-8 w-8 rounded-full hover:bg-red-400/10"
+                      >
+                        <Trash className="h-4 w-4 text-red-400" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`font-medium ${isAssetType ? 'text-green-400' : 'text-red-400'}`}>
-                    {formatAmount(item.balance)}
-                  </span>
-                  <div className="flex space-x-1">
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={() => handleEdit(item, isAssetType ? "asset" : "liability")}
-                      className="h-8 w-8 rounded-full hover:bg-[#33C3F0]/10"
-                    >
-                      <Edit className="h-4 w-4 text-[#33C3F0]" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={() => handleDeleteClick(item, isAssetType ? "asset" : "liability")}
-                      className="h-8 w-8 rounded-full hover:bg-red-400/10"
-                    >
-                      <Trash className="h-4 w-4 text-red-400" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-[#7A7F92] bg-[#1A1F2C]/40 rounded-lg border border-[#1A1F2C]/90 shadow-inner">

@@ -120,14 +120,14 @@ const Dashboard = () => {
           ))}
         </div>
         
-        {/* SECTION 1: What I Have */}
-        <div id="what-i-have" className="mb-10 scroll-mt-20">
+        {/* SECTION 1: CURRENT WEALTH */}
+        <div id="current-wealth" className="mb-10 pt-16 -mt-16">
           <div className="flex flex-col items-center mb-6">
             <div className="bg-[#1A1F2C]/80 p-2 rounded-lg mb-2 shadow-md">
               <Wallet className="h-6 w-6 text-[#66EACE]" />
             </div>
             <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE]">
-              My Money Today
+              Current Wealth
             </h2>
           </div>
           
@@ -139,7 +139,7 @@ const Dashboard = () => {
             <div className="absolute -bottom-20 -left-20 w-40 h-40 rounded-full bg-gradient-to-br from-[#33C3F0]/5 to-[#66EACE]/10 blur-3xl animate-[pulse_4s_ease-in-out_infinite_1s]"></div>
             
             <div className="relative flex flex-col items-center text-center mb-4">
-              <h2 className="text-lg font-medium text-[#7A7F92]">What I Have</h2>
+              <h2 className="text-lg font-medium text-[#7A7F92]">Your Net Worth</h2>
               <div className="mt-2 text-5xl sm:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE]">
                 {formatAmount(netWorth)}
               </div>
@@ -158,6 +158,7 @@ const Dashboard = () => {
                   )}
                 </div>
               )}
+              <p className="mt-2 text-[#7A7F92]">Track, analyze, and grow your wealth</p>
               <Button
                 onClick={() => setIsUpdateModalOpen(true)}
                 className="mt-4 bg-[#1A1F2C]/80 hover:bg-[#272D3D] text-white border border-[#33C3F0]/20 backdrop-blur-sm shadow-md"
@@ -217,28 +218,28 @@ const Dashboard = () => {
           </div>
         </div>
         
-        {/* SECTION 2: Financial Info (Contains Money Over Time & Where I Have It) */}
-        <div id="financial-info-wrapper" className="mb-10 scroll-mt-20">
+        {/* SECTION 2: FINANCIAL DETAILS */}
+        <div id="financial-details" className="mb-10 pt-16 -mt-16">
           <div className="flex flex-col items-center mb-6">
             <div className="bg-[#1A1F2C]/80 p-2 rounded-lg mb-2 shadow-md">
               <BarChart3 className="h-6 w-6 text-[#66EACE]" />
             </div>
             <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE]">
-              My Money Info
+              Financial Details
             </h2>
           </div>
           
-          {/* My Money over Time */}
-          <div id="money-over-time" className="bg-[#131620]/90 border border-[#33C3F0]/20 rounded-xl p-6 shadow-2xl backdrop-blur-xl hover:shadow-xl transition-all mb-8 transform hover:scale-[1.005] duration-500 scroll-mt-20">
-            <h3 className="text-xl font-semibold text-[#CBD5E1] mb-4">My Money over Time</h3>
+          {/* Net Worth Trend */}
+          <div className="bg-[#131620]/90 border border-[#33C3F0]/20 rounded-xl p-6 shadow-2xl backdrop-blur-xl hover:shadow-xl transition-all mb-8 transform hover:scale-[1.005] duration-500">
+            <h3 className="text-xl font-semibold text-[#CBD5E1] mb-4">Net Worth Trend</h3>
             <div className="relative">
               <NetWorthChart />
             </div>
           </div>
           
-          {/* Where I Have it */}
-          <div id="where-i-have-it" className="bg-[#131620]/90 border border-[#33C3F0]/20 rounded-xl p-6 shadow-2xl backdrop-blur-xl hover:shadow-xl transition-all mb-8 transform hover:scale-[1.005] duration-500 scroll-mt-20">
-            <h3 className="text-xl font-semibold text-[#CBD5E1] mb-4">Where I Have it</h3>
+          {/* Portfolio Allocation - Combined View */}
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold text-[#CBD5E1] mb-4">Portfolio Allocation</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Combined Assets Box */}
               <div className="bg-[#131620]/90 border border-[#33C3F0]/20 rounded-xl p-6 shadow-2xl hover:shadow-xl transition-all backdrop-blur-xl transform hover:scale-[1.005] duration-500 space-y-6">
@@ -257,18 +258,17 @@ const Dashboard = () => {
           </div>
         </div>
         
-        {/* SECTION 3: Portfolio Recap */}
-        <div id="portfolio-recap-wrapper" className="mb-10 scroll-mt-20">
+        {/* SECTION 3: PORTFOLIO RECAP */}
+        <div id="portfolio-recap" className="pt-16 -mt-16">
           <div className="flex flex-col items-center mb-6">
             <div className="bg-[#1A1F2C]/80 p-2 rounded-lg mb-2 shadow-md">
               <Clock className="h-6 w-6 text-[#66EACE]" />
             </div>
             <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE]">
-              My Money History
+              Historical Recap
             </h2>
           </div>
           
-          {/* Render EnhancedRecapSection directly. IDs are now inside this component. */}
           <EnhancedRecapSection />
         </div>
         

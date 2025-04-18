@@ -208,12 +208,12 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
     );
   };
 
-  // Render function for Assets Chart - Removed Card wrapper
+  // Render function for Assets Chart - Removed Card wrapper and Header
   const renderAssetsChartContent = () => (
     <>
-      <CardHeader className="pt-4 pb-2 px-0"> {/* Removed padding, title only */}
+      {/* <CardHeader className="pt-4 pb-2 px-0"> REMOVED THIS HEADER
         <CardTitle className="text-lg font-medium">Asset Allocation</CardTitle>
-      </CardHeader>
+      </CardHeader> */}
       {/* Use items-start for top alignment */}
       <CardContent className="p-0 pt-2 flex flex-col sm:flex-row items-start"> 
          {/* Container for chart and labels */}
@@ -225,12 +225,12 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
     </>
   );
 
-  // Render function for Liabilities Card - Removed Card wrapper
+  // Render function for Liabilities Card - Removed Card wrapper and Header
   const renderLiabilitiesChartContent = () => (
     <>
-      <CardHeader className="pt-4 pb-2 px-0"> {/* Removed padding, title only */}
+      {/* <CardHeader className="pt-4 pb-2 px-0"> REMOVED THIS HEADER
         <CardTitle className="text-lg font-medium">Liability Allocation</CardTitle>
-      </CardHeader>
+      </CardHeader> */}
       {/* Use items-start for top alignment */}
        <CardContent className="p-0 pt-2 flex flex-col sm:flex-row items-start"> 
          {/* Container for chart and labels */}
