@@ -198,7 +198,7 @@ export const OnboardingFlow = () => {
   
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md md:max-w-3xl lg:max-w-4xl">
         {renderStepContent()}
       </DialogContent>
     </Dialog>

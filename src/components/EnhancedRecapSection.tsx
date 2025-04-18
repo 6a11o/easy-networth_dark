@@ -296,9 +296,9 @@ export const EnhancedRecapSection = () => {
   return (
     <Tabs defaultValue="historical" className="w-full space-y-6">
       <TabsList className="grid w-full grid-cols-3 bg-[#1A1F2C]/60">
-        <TabsTrigger value="historical">Historical Analysis</TabsTrigger>
-        <TabsTrigger value="trends">Financial Trends</TabsTrigger>
-        <TabsTrigger value="log">Transaction Log</TabsTrigger>
+        <TabsTrigger value="historical">History</TabsTrigger>
+        <TabsTrigger value="trends">Trends</TabsTrigger>
+        <TabsTrigger value="log">Activity</TabsTrigger>
       </TabsList>
       
       {/* Historical Analysis Tab */}
@@ -463,7 +463,7 @@ export const EnhancedRecapSection = () => {
       <TabsContent value="trends" className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div>
-            <label className="block text-sm font-medium mb-2">Metrics to Display</label>
+            <label className="block text-sm font-medium mb-2">Metrics</label>
             <Select 
               value={selectedMetrics.join(',')}
               onValueChange={(value) => setSelectedMetrics(value ? value.split(',') : ["netWorth"])}
@@ -476,99 +476,199 @@ export const EnhancedRecapSection = () => {
                 <SelectItem value="netWorth,assets,liabilities">All Totals</SelectItem>
                 <SelectItem value="assets">Total Assets</SelectItem>
                 <SelectItem value="liabilities">Total Liabilities</SelectItem>
-                {/* Could add individual accounts here if needed */}
               </SelectContent>
             </Select>
           </div>
           
           <div>
             <label className="block text-sm font-medium mb-2">Time Range</label>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button 
                 onClick={() => setTimeRange("1m")}
                 className={cn(
-                  "px-2 py-1 text-xs rounded-md",
-                  timeRange === "1m" ? "bg-[#9b87f5] text-white" : "bg-[#1A1F2C] hover:bg-[#1A1F2C]/80"
+                  "px-3 py-1.5 text-xs rounded-md transition-all duration-300",
+                  timeRange === "1m" 
+                    ? "bg-gradient-to-r from-[#9b87f5] to-[#8878e9] text-white shadow-md" 
+                    : "bg-[#1A1F2C] hover:bg-[#252B3B] border border-[#252B3B]/60"
                 )}
               >
-                1 Month
+                1M
               </button>
               <button 
                 onClick={() => setTimeRange("3m")}
                 className={cn(
-                  "px-2 py-1 text-xs rounded-md",
-                  timeRange === "3m" ? "bg-[#9b87f5] text-white" : "bg-[#1A1F2C] hover:bg-[#1A1F2C]/80"
+                  "px-3 py-1.5 text-xs rounded-md transition-all duration-300",
+                  timeRange === "3m" 
+                    ? "bg-gradient-to-r from-[#9b87f5] to-[#8878e9] text-white shadow-md" 
+                    : "bg-[#1A1F2C] hover:bg-[#252B3B] border border-[#252B3B]/60"
                 )}
               >
-                3 Months
+                3M
               </button>
               <button 
                 onClick={() => setTimeRange("6m")}
                 className={cn(
-                  "px-2 py-1 text-xs rounded-md",
-                  timeRange === "6m" ? "bg-[#9b87f5] text-white" : "bg-[#1A1F2C] hover:bg-[#1A1F2C]/80"
+                  "px-3 py-1.5 text-xs rounded-md transition-all duration-300",
+                  timeRange === "6m" 
+                    ? "bg-gradient-to-r from-[#9b87f5] to-[#8878e9] text-white shadow-md" 
+                    : "bg-[#1A1F2C] hover:bg-[#252B3B] border border-[#252B3B]/60"
                 )}
               >
-                6 Months
+                6M
               </button>
               <button 
                 onClick={() => setTimeRange("1y")}
                 className={cn(
-                  "px-2 py-1 text-xs rounded-md",
-                  timeRange === "1y" ? "bg-[#9b87f5] text-white" : "bg-[#1A1F2C] hover:bg-[#1A1F2C]/80"
+                  "px-3 py-1.5 text-xs rounded-md transition-all duration-300",
+                  timeRange === "1y" 
+                    ? "bg-gradient-to-r from-[#9b87f5] to-[#8878e9] text-white shadow-md" 
+                    : "bg-[#1A1F2C] hover:bg-[#252B3B] border border-[#252B3B]/60"
                 )}
               >
-                1 Year
+                1Y
               </button>
               <button 
                 onClick={() => setTimeRange("all")}
                 className={cn(
-                  "px-2 py-1 text-xs rounded-md",
-                  timeRange === "all" ? "bg-[#9b87f5] text-white" : "bg-[#1A1F2C] hover:bg-[#1A1F2C]/80"
+                  "px-3 py-1.5 text-xs rounded-md transition-all duration-300",
+                  timeRange === "all" 
+                    ? "bg-gradient-to-r from-[#9b87f5] to-[#8878e9] text-white shadow-md" 
+                    : "bg-[#1A1F2C] hover:bg-[#252B3B] border border-[#252B3B]/60"
                 )}
               >
-                All Time
+                All
               </button>
             </div>
           </div>
         </div>
         
-        <Card className="bg-[#1A1F2C]/60 border-[#1A1F2C]/80">
-          <CardHeader>
-            <CardTitle>Financial Trends</CardTitle>
+        <Card className="bg-gradient-to-b from-[#13172090] to-[#0D0F1790] border-[#1A1F2C]/50 backdrop-blur-sm shadow-xl">
+          <CardHeader className="border-b border-[#252B3B]/40 pb-4">
+            <CardTitle className="text-[#E2E8F0] flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-[#9b87f5]" /> 
+              Financial Trends
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-[300px] w-full">
+          <CardContent className="pt-6">
+            <div className="h-[350px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={trendData}
                   margin={{
-                    top: 5,
+                    top: 20,
                     right: 30,
                     left: 20,
-                    bottom: 5,
+                    bottom: 10,
                   }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1A1F2C" />
-                  <XAxis dataKey="date" stroke="#9b87f5" />
-                  <YAxis stroke="#9b87f5" />
+                  <defs>
+                    {/* Gradient for Net Worth */}
+                    <linearGradient id="netWorthGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#9b87f5" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#9b87f5" stopOpacity={0.1} />
+                    </linearGradient>
+                    
+                    {/* Gradient for Assets */}
+                    <linearGradient id="assetsGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#33C3F0" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#33C3F0" stopOpacity={0.1} />
+                    </linearGradient>
+                    
+                    {/* Gradient for Liabilities */}
+                    <linearGradient id="liabilitiesGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#FF6B6B" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#FF6B6B" stopOpacity={0.1} />
+                    </linearGradient>
+                  </defs>
+                  
+                  <CartesianGrid 
+                    strokeDasharray="3 3" 
+                    stroke="rgba(255,255,255,0.05)" 
+                    vertical={false} 
+                  />
+                  
+                  <XAxis 
+                    dataKey="date" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
+                    dy={10}
+                  />
+                  
+                  <YAxis 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
+                    dx={-10}
+                    tickFormatter={(value) => formatAmount(value).replace(/[^\d.-]/g, '')}
+                  />
+                  
                   <Tooltip 
                     contentStyle={{
-                      backgroundColor: '#1A1F2C',
-                      border: '1px solid #2A2F42',
-                      borderRadius: '8px'
+                      backgroundColor: 'rgba(19, 22, 32, 0.95)',
+                      backdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(155, 135, 245, 0.2)',
+                      borderRadius: '8px',
+                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
+                      padding: '12px'
                     }} 
-                    formatter={(value: number) => [formatAmount(value)]}
+                    formatter={(value: number) => [formatAmount(value), ""]}
+                    labelStyle={{ color: 'rgba(255,255,255,0.7)', marginBottom: '8px', fontWeight: 500 }}
+                    itemStyle={{ color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}
+                    cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }}
                   />
-                  <Legend />
+                  
+                  <Legend 
+                    wrapperStyle={{ paddingTop: '15px' }}
+                    formatter={(value) => <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>{value}</span>}
+                  />
+                  
                   {selectedMetrics.includes('netWorth') && (
-                    <Line type="monotone" dataKey="netWorth" name="Net Worth" stroke="#9b87f5" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 6 }} />
+                    <Line 
+                      type="monotone" 
+                      dataKey="netWorth" 
+                      name="Net Worth" 
+                      stroke="#9b87f5" 
+                      strokeWidth={3}
+                      activeDot={{ r: 8, strokeWidth: 1, stroke: '#ffffff' }} 
+                      dot={{ r: 0 }}
+                      connectNulls={true}
+                      animationDuration={1500}
+                      animationEasing="ease-in-out"
+                      fill="url(#netWorthGradient)"
+                    />
                   )}
+                  
                   {selectedMetrics.includes('assets') && (
-                    <Line type="monotone" dataKey="assets" name="Total Assets" stroke="#33C3F0" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 6 }} />
+                    <Line 
+                      type="monotone" 
+                      dataKey="assets" 
+                      name="Assets" 
+                      stroke="#33C3F0" 
+                      strokeWidth={3}
+                      activeDot={{ r: 8, strokeWidth: 1, stroke: '#ffffff' }} 
+                      dot={{ r: 0 }}
+                      connectNulls={true}
+                      animationDuration={1500}
+                      animationEasing="ease-in-out"
+                      fill="url(#assetsGradient)"
+                    />
                   )}
+                  
                   {selectedMetrics.includes('liabilities') && (
-                    <Line type="monotone" dataKey="liabilities" name="Total Liabilities" stroke="#FF6B6B" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 6 }} />
+                    <Line 
+                      type="monotone" 
+                      dataKey="liabilities" 
+                      name="Liabilities" 
+                      stroke="#FF6B6B" 
+                      strokeWidth={3}
+                      activeDot={{ r: 8, strokeWidth: 1, stroke: '#ffffff' }} 
+                      dot={{ r: 0 }}
+                      connectNulls={true}
+                      animationDuration={1500}
+                      animationEasing="ease-in-out"
+                      fill="url(#liabilitiesGradient)"
+                    />
                   )}
                 </LineChart>
               </ResponsiveContainer>

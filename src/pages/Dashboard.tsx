@@ -6,7 +6,7 @@ import { AllocationCharts } from "@/components/AllocationCharts";
 import { AccountsList } from "@/components/AccountsList";
 import { UpdateBalancesModal } from "@/components/UpdateBalancesModal";
 import { EnhancedRecapSection } from "@/components/EnhancedRecapSection";
-import { RefreshCw, ChevronDown, ChevronUp, TrendingUp, ArrowUp } from "lucide-react";
+import { RefreshCw, ChevronDown, ChevronUp, TrendingUp, ArrowUp, PlusCircle, Rewind } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useFinancial } from "@/context/FinancialContext";
 import { useCurrency } from "@/context/CurrencyContext";
@@ -227,7 +227,10 @@ const Dashboard = () => {
           className="w-full space-y-2"
         >
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-medium text-[#E2E8F0]">Financial Insights</h3>
+            <div className="flex items-center gap-2">
+              <Rewind className="h-5 w-5 text-[#9b87f5]" />
+              <h3 className="text-xl font-medium text-[#E2E8F0]">Recap</h3>
+            </div>
             <CollapsibleTrigger asChild>
               <Button variant="ghost" size="sm" className="w-9 p-0 hover:bg-[#131620]/40">
                 {isRecapOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
