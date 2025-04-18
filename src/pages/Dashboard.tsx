@@ -16,7 +16,8 @@ import {
   Rewind,
   Wallet,
   BarChart3,
-  Clock
+  Clock,
+  Download
 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useFinancial } from "@/context/FinancialContext";
@@ -101,6 +102,42 @@ const Dashboard = () => {
     }
   }, []);
   
+  // --- START: CSV Export Logic (Corrected) ---
+  const exportToCsv = () => {
+    const history = getHistoricalNetWorth();
+    if (!history || history.length === 0) {
+      alert("No historical data to export.");
+      return;
+    }
+
+    // Define CSV Headers (Corrected - only Date and Net Worth)
+    const headers = ["Date", "Net Worth"];
+    
+    // Prepare CSV Rows (Corrected)
+    const rows = history.map(entry => {
+      const date = new Date(entry.date).toLocaleDateString(); // Format date nicely
+      const netWorthValue = entry.netWorth;
+      // Assets and Liabilities not available in history object, so removed
+      return [date, netWorthValue].join(","); 
+    });
+
+    // Combine headers and rows
+    const csvContent = [headers.join(","), ...rows].join("\n");
+
+    // Create blob and trigger download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    const timestamp = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    link.setAttribute("download", `easy-net-worth-history-${timestamp}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  // --- END: CSV Export Logic (Corrected) ---
+  
   return (
     <div className="flex">
       <Sidebar />
@@ -158,13 +195,24 @@ const Dashboard = () => {
                   )}
                 </div>
               )}
-              <Button
-                onClick={() => setIsUpdateModalOpen(true)}
-                className="mt-4 bg-[#1A1F2C]/80 hover:bg-[#272D3D] text-white border border-[#33C3F0]/20 backdrop-blur-sm shadow-md"
-              >
-                <RefreshCw className="mr-2 h-4 w-4 text-[#33C3F0]" />
-                Update Balances
-              </Button>
+              <div className="flex gap-2 mt-4">
+                <Button
+                  onClick={() => setIsUpdateModalOpen(true)}
+                  className="bg-[#1A1F2C]/80 hover:bg-[#272D3D] text-white border border-[#33C3F0]/20 backdrop-blur-sm shadow-md"
+                >
+                  <RefreshCw className="mr-2 h-4 w-4 text-[#33C3F0]" />
+                  Update Balances
+                </Button>
+                <Button
+                  onClick={exportToCsv}
+                  variant="outline"
+                  className="bg-transparent hover:bg-[#272D3D]/50 text-white border border-[#33C3F0]/20 backdrop-blur-sm shadow-md"
+                  disabled={!getHistoricalNetWorth() || getHistoricalNetWorth().length === 0}
+                >
+                  <Download className="mr-2 h-4 w-4 text-[#66EACE]" />
+                  Export History (CSV)
+                </Button>
+              </div>
             </div>
 
             {/* Summary Cards */}
