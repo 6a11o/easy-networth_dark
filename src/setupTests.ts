@@ -1,21 +1,36 @@
 import '@testing-library/jest-dom'
 import * as matchers from '@testing-library/jest-dom/matchers'
-import { expect, vi } from 'vitest'
+import { expect, vi, beforeEach } from 'vitest'
 
 // Extend Vitest's expect with jest-dom matchers
 expect.extend(matchers)
 
+// Mock ResizeObserver
+class ResizeObserverMock {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+global.ResizeObserver = ResizeObserverMock;
+
 // Mock localStorage
 const localStorageMock = {
-  getItem: vi.fn(() => null),
+  getItem: vi.fn(),
   setItem: vi.fn(),
-  removeItem: vi.fn(),
   clear: vi.fn(),
+  removeItem: vi.fn(),
+  length: 0,
+  key: vi.fn(),
 }
 
 // Set up global localStorage mock
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-})
+global.localStorage = localStorageMock;
+
+// Reset all mocks before each test
+beforeEach(() => {
+  vi.clearAllMocks();
+  localStorage.clear();
+});
 
 // Add any other global test setup here 

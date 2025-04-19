@@ -4,22 +4,22 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { TimePeriod } from "@/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronsUpDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { useCurrency } from "@/context/CurrencyContext";
 
 export const NetWorthChart = () => {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("ALL");
-  const { getHistoricalNetWorth } = useFinancial();
+  const { getHistoricalNetWorth, getHistoricalDates } = useFinancial();
   const { currency, formatAmount } = useCurrency();
   
   // Get net worth history
+  const dates = getHistoricalDates();
   const netWorthHistory = getHistoricalNetWorth();
   
   // Filter data based on selected time period
@@ -65,11 +65,9 @@ export const NetWorthChart = () => {
   // Time period options
   const periods: TimePeriod[] = ["1M", "3M", "6M", "1Y", "ALL"];
   
-  // Format axis value WITHOUT currency symbol
+  // Format axis value
   const formatValue = (value: number) => {
-    return `${currency.symbol}${new Intl.NumberFormat(undefined, {
-      maximumFractionDigits: 0
-    }).format(value)}`;
+    return formatAmount(value);
   };
   
   const getTimeRangeLabel = (period: TimePeriod) => {
@@ -99,67 +97,65 @@ export const NetWorthChart = () => {
   
   // Determine trend color and gradient
   const trendColor = netWorthChange.value >= 0 ? '#4ade80' : '#f87171'; // green-400 or red-400
-  const gradientId = netWorthChange.value >= 0 ? 'url(#positiveGradient)' : 'url(#negativeGradient)';
+  const gradientId = netWorthChange.value >= 0 ? 'positiveGradient' : 'negativeGradient';
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="bg-[#1A1F2C] border-[#33C3F0]/20 text-white hover:bg-[#272D3D]">
-                {getTimeRangeLabel(timePeriod)}
-                <ChevronDown className="ml-2 h-4 w-4 text-[#33C3F0]" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-[#1A1F2C] border-[#33C3F0]/20">
-              {periods.map((period) => (
-                <DropdownMenuItem 
-                  key={period}
-                  onClick={() => setTimePeriod(period)}
-                  className={cn(
-                    "cursor-pointer hover:bg-[#272D3D] focus:bg-[#272D3D]",
-                    timePeriod === period && "bg-[#33C3F0]/20 text-[#33C3F0]"
-                  )}
-                >
-                  {getTimeRangeLabel(period)}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+    <div className="space-y-3 sm:space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3 sm:gap-4">
+          {chartData.length >= 2 && (
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="text-xs sm:text-sm text-muted-foreground">Change:</div>
+              <div className={cn(
+                "flex items-center gap-1 text-xs sm:text-sm font-medium",
+                netWorthChange.value >= 0 ? "text-green-400" : "text-red-400"
+              )}>
+                {formatAmount(netWorthChange.value)}
+                <span className="text-[10px] sm:text-xs">
+                  ({netWorthChange.value >= 0 ? "+" : ""}{netWorthChange.percentage.toFixed(1)}%)
+                </span>
+              </div>
+            </div>
+          )}
         </div>
         
-        {chartData.length >= 2 && (
-          <div className="flex items-center gap-2">
-            <div className="text-sm text-muted-foreground">Change:</div>
-            <div className={cn(
-              "flex items-center gap-1 text-sm font-medium",
-              netWorthChange.value >= 0 ? "text-green-400" : "text-red-400"
-            )}>
-              {formatAmount(netWorthChange.value)}
-              <span className="text-xs">
-                ({netWorthChange.value >= 0 ? "+" : ""}{netWorthChange.percentage.toFixed(1)}%)
-              </span>
-            </div>
-          </div>
-        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="bg-[#1A1F2C] border-[#33C3F0]/20 text-white hover:bg-[#272D3D] h-8 sm:h-9 text-xs sm:text-sm"
+            >
+              {getTimeRangeLabel(timePeriod)}
+              <ChevronDown className="ml-1.5 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#33C3F0]" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-48 sm:w-56 bg-[#1A1F2C] border-[#33C3F0]/20">
+            {periods.map((period) => (
+              <DropdownMenuItem 
+                key={period}
+                onClick={() => setTimePeriod(period)}
+                className={cn(
+                  "cursor-pointer hover:bg-[#272D3D] focus:bg-[#272D3D] text-xs sm:text-sm py-1.5 sm:py-2",
+                  timePeriod === period && "bg-[#33C3F0]/20 text-[#33C3F0]"
+                )}
+              >
+                {getTimeRangeLabel(period)}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       
       {chartData.length >= 2 ? (
-        <div className="mt-6 luxury-shadow rounded-lg overflow-hidden" style={{ height: '400px' }}>
-          <div className="w-full h-full bg-gradient-to-b from-[#121825]/80 to-[#0A0C14]/95 border border-[#1A1F2C]/50 rounded-lg p-4">
+        <div className="h-[300px] sm:h-[400px] mt-4 sm:mt-6 luxury-shadow rounded-lg overflow-hidden">
+          <div className="w-full h-full bg-gradient-to-b from-[#121825]/80 to-[#0A0C14]/95 border border-[#1A1F2C]/50 rounded-lg p-2 sm:p-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 10, bottom: 20 }}>
                 <defs>
-                  {/* Green gradient for positive trend */}
-                  <linearGradient id="positiveGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4ade80" stopOpacity={0.5} />
-                    <stop offset="95%" stopColor="#4ade80" stopOpacity={0.05} />
-                  </linearGradient>
-                  {/* Red gradient for negative trend */}
-                  <linearGradient id="negativeGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#f87171" stopOpacity={0.5} />
-                    <stop offset="95%" stopColor="#f87171" stopOpacity={0.05} />
+                  <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={trendColor} stopOpacity={0.5} />
+                    <stop offset="95%" stopColor={trendColor} stopOpacity={0.05} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" vertical={false} />
@@ -168,28 +164,29 @@ export const NetWorthChart = () => {
                   stroke="rgba(255, 255, 255, 0.4)"
                   axisLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
                   tickLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
-                  tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 11 }}
+                  tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}
                   dy={10}
-                  minTickGap={50}
+                  minTickGap={30}
+                  interval="preserveStartEnd"
                 />
                 <YAxis
                   stroke="rgba(255, 255, 255, 0.4)"
                   axisLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
                   tickLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
-                  tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 11 }}
+                  tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}
                   tickFormatter={formatValue}
                   domain={['auto', 'auto']}
-                  width={60}
+                  width={80}
                 />
                 <Tooltip
                   cursor={{ stroke: trendColor, strokeWidth: 1.5, strokeDasharray: '4 4' }}
                   content={({ active, payload, label }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-gray-950/90 backdrop-blur-lg border border-[#33C3F0]/20 text-gray-100 shadow-xl rounded-lg p-3">
-                          <p className="text-sm text-gray-300 mb-1">Date: {label}</p>
-                          <p className="text-base font-medium">
-                            {currency.name}: {formatAmount(payload[0].value as number)}
+                        <div className="bg-gray-950/90 backdrop-blur-lg border border-[#33C3F0]/20 text-gray-100 shadow-xl rounded-lg p-2 sm:p-3">
+                          <p className="text-xs sm:text-sm text-gray-300 mb-0.5 sm:mb-1">Date: {label}</p>
+                          <p className="text-sm sm:text-base font-medium">
+                            {formatAmount(payload[0].value as number)}
                           </p>
                         </div>
                       );
@@ -200,30 +197,23 @@ export const NetWorthChart = () => {
                 <Area
                   type="monotone"
                   dataKey="netWorth"
-                  name="Net Worth"
                   stroke={trendColor}
-                  strokeWidth={2.5}
-                  fillOpacity={0.6}
-                  fill={gradientId}
-                  activeDot={{ r: 6, strokeWidth: 1.5, fill: trendColor, stroke: '#fff' }}
-                  dot={false}
+                  strokeWidth={2}
+                  fill={`url(#${gradientId})`}
+                  animationDuration={1000}
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
       ) : (
-        <div className="flex h-[350px] items-center justify-center text-muted-foreground bg-[#1A1F2C]/30 rounded-lg border border-[#1A1F2C]/50 luxury-shadow">
-          <div className="text-center space-y-2">
-            <p>Add at least two balance updates to see your net worth trend.</p>
-            <Button 
-              onClick={() => window.location.href="/accounts"} 
-              variant="outline" 
-              size="sm" 
-              className="border-[#33C3F0]/20 hover:bg-[#33C3F0]/10"
-            >
-              Add Accounts
-            </Button>
+        <div className="h-[300px] sm:h-[400px] mt-4 sm:mt-6 luxury-shadow rounded-lg overflow-hidden">
+          <div className="w-full h-full bg-gradient-to-b from-[#121825]/80 to-[#0A0C14]/95 border border-[#1A1F2C]/50 rounded-lg flex items-center justify-center">
+            <p className="text-sm sm:text-base text-muted-foreground">
+              {dates.length === 0
+                ? "No data available yet. Add assets or liabilities to see your net worth history."
+                : "Add more data points to see historical trends."}
+            </p>
           </div>
         </div>
       )}

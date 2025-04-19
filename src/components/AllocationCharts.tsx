@@ -147,9 +147,9 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
       );
     });
 
-    // Increased size and removed mx-auto for flex control
+    // Improved size for better scaling on desktop
     return (
-      <div className="relative w-48 h-48 sm:w-52 sm:h-52 flex-shrink-0"> 
+      <div className="relative w-44 h-44 sm:w-48 sm:h-48 lg:w-56 lg:h-56 flex-shrink-0"> 
         <svg viewBox="0 0 100 100" className="w-full h-full">
           {backgroundCircle} 
           {segments}
@@ -158,24 +158,24 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
     );
   };
 
-  // Render asset labels list - adjusted layout and removed truncation
+  // Render asset labels list - adjusted layout for better scaling
   const renderAssetLabels = () => {
     if (assetChartData.length === 0 || (assetChartData.length === 1 && assetChartData[0].name === "No Data")) {
       return <p className="text-center text-sm text-muted-foreground mt-4 sm:mt-0 sm:ml-4 flex-1">No asset data available.</p>;
     }
     
-    // Use flex column for labels
+    // Use flex column for labels with appropriate padding on larger screens
     return (
-      <div className="mt-4 sm:mt-0 sm:ml-8 flex-1 space-y-2 self-start pt-1"> 
+      <div className="mt-4 sm:mt-0 sm:ml-6 lg:ml-8 flex-1 space-y-2 self-start pt-1 max-w-full sm:max-w-[60%] lg:max-w-[70%]"> 
         {assetChartData.map((entry, index) => (
           entry.name !== "No Data" && (
             <div key={index} className="flex items-center justify-between"> 
-              <div className="flex items-center mr-2">
+              <div className="flex items-center mr-2 flex-1 min-w-0">
                 <div className="w-3 h-3 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: entry.color }}></div>
-                <span className="text-sm mr-1">{entry.name}</span> 
-                <span className="text-xs text-muted-foreground">({entry.percent.toFixed(0)}%)</span>
+                <span className="text-sm mr-1 truncate">{entry.name}</span> 
+                <span className="text-xs text-muted-foreground whitespace-nowrap">({entry.percent.toFixed(0)}%)</span>
               </div>
-              <span className="text-sm font-medium text-right">{formatAmount(entry.value)}</span>
+              <span className="text-sm font-medium text-right ml-2 whitespace-nowrap">{formatAmount(entry.value)}</span>
             </div>
           )
         ))}
@@ -183,24 +183,24 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
     );
   };
 
-  // Render liability labels list - adjusted layout and removed truncation
+  // Render liability labels list - adjusted layout for better scaling
   const renderLiabilityLabels = () => {
      if (liabilityChartData.length === 0 || (liabilityChartData.length === 1 && liabilityChartData[0].name === "No Data")) {
        return <p className="text-center text-sm text-muted-foreground mt-4 sm:mt-0 sm:ml-4 flex-1">No liability data available.</p>;
      }
     
-    // Use flex column for labels
+    // Use flex column for labels with appropriate padding on larger screens
     return (
-      <div className="mt-4 sm:mt-0 sm:ml-8 flex-1 space-y-2 self-start pt-1"> 
+      <div className="mt-4 sm:mt-0 sm:ml-6 lg:ml-8 flex-1 space-y-2 self-start pt-1 max-w-full sm:max-w-[60%] lg:max-w-[70%]"> 
         {liabilityChartData.map((entry, index) => (
           entry.name !== "No Data" && (
             <div key={index} className="flex items-center justify-between"> 
-              <div className="flex items-center mr-2">
+              <div className="flex items-center mr-2 flex-1 min-w-0">
                 <div className="w-3 h-3 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: entry.color }}></div>
-                <span className="text-sm mr-1">{entry.name}</span> 
-                <span className="text-xs text-muted-foreground">({entry.percent.toFixed(0)}%)</span>
+                <span className="text-sm mr-1 truncate">{entry.name}</span> 
+                <span className="text-xs text-muted-foreground whitespace-nowrap">({entry.percent.toFixed(0)}%)</span>
               </div>
-              <span className="text-sm font-medium text-right">{formatAmount(entry.value)}</span>
+              <span className="text-sm font-medium text-right ml-2 whitespace-nowrap">{formatAmount(entry.value)}</span>
             </div>
           )
         ))}
@@ -214,11 +214,13 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
       {/* <CardHeader className="pt-4 pb-2 px-0"> REMOVED THIS HEADER
         <CardTitle className="text-lg font-medium">Asset Allocation</CardTitle>
       </CardHeader> */}
-      {/* Use items-start for top alignment */}
-      <CardContent className="p-0 pt-2 flex flex-col sm:flex-row items-start"> 
+      {/* Use items-start for top alignment and justify-center for horizontal centering */}
+      <CardContent className="p-0 pt-2 flex flex-col sm:flex-row items-start justify-center"> 
          {/* Container for chart and labels */}
-        <div className="flex flex-col sm:flex-row items-start w-full"> 
-           {renderDonutSVG(assetChartData)}
+        <div className="flex flex-col sm:flex-row items-start w-full justify-center sm:justify-between lg:justify-start"> 
+           <div className="flex justify-center sm:justify-start w-full sm:w-auto">
+             {renderDonutSVG(assetChartData)}
+           </div>
            {renderAssetLabels()}
         </div>
       </CardContent>
@@ -231,11 +233,13 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
       {/* <CardHeader className="pt-4 pb-2 px-0"> REMOVED THIS HEADER
         <CardTitle className="text-lg font-medium">Liability Allocation</CardTitle>
       </CardHeader> */}
-      {/* Use items-start for top alignment */}
-       <CardContent className="p-0 pt-2 flex flex-col sm:flex-row items-start"> 
+      {/* Use items-start for top alignment and justify-center for horizontal centering */}
+       <CardContent className="p-0 pt-2 flex flex-col sm:flex-row items-start justify-center"> 
          {/* Container for chart and labels */}
-         <div className="flex flex-col sm:flex-row items-start w-full"> 
-           {renderDonutSVG(liabilityChartData)}
+         <div className="flex flex-col sm:flex-row items-start w-full justify-center sm:justify-between lg:justify-start"> 
+           <div className="flex justify-center sm:justify-start w-full sm:w-auto">
+             {renderDonutSVG(liabilityChartData)}
+           </div>
            {renderLiabilityLabels()}
          </div>
       </CardContent>

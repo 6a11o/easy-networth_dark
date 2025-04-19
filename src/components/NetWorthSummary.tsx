@@ -26,14 +26,14 @@ export const NetWorthSummary = () => {
   }
   
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
       {/* Assets Card */}
-      <div className="bg-[#1A1F2C]/80 rounded-lg p-4 border border-[#33C3F0]/10 shadow-lg">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="text-[#7A7F92]">Assets</h3>
+      <div className="bg-[#1A1F2C]/80 rounded-lg p-3 sm:p-4 border border-[#33C3F0]/10 shadow-lg">
+        <div className="flex justify-between items-center mb-1.5 sm:mb-2">
+          <h3 className="text-[#7A7F92] text-sm sm:text-base">Assets</h3>
         </div>
-        <div className="text-2xl font-bold text-green-400">{formatAmount(totalAssets)}</div>
-        <div className="h-1 w-full bg-[#272D3D] rounded-full mt-2">
+        <div className="text-xl sm:text-2xl font-bold text-green-400">{formatAmount(totalAssets)}</div>
+        <div className="h-1 w-full bg-[#272D3D] rounded-full mt-1.5 sm:mt-2">
           <div className="h-1 bg-gradient-to-r from-green-400 to-green-600 rounded-full" 
             style={{ width: totalAssets > 0 ? `${Math.min(100, (totalAssets / (totalAssets + totalLiabilities)) * 100)}%` : "0%" }}>
           </div>
@@ -41,12 +41,12 @@ export const NetWorthSummary = () => {
       </div>
       
       {/* Liabilities Card */}
-      <div className="bg-[#1A1F2C]/80 rounded-lg p-4 border border-[#33C3F0]/10 shadow-lg">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="text-[#7A7F92]">Liabilities</h3>
+      <div className="bg-[#1A1F2C]/80 rounded-lg p-3 sm:p-4 border border-[#33C3F0]/10 shadow-lg">
+        <div className="flex justify-between items-center mb-1.5 sm:mb-2">
+          <h3 className="text-[#7A7F92] text-sm sm:text-base">Liabilities</h3>
         </div>
-        <div className="text-2xl font-bold text-red-400">{formatAmount(totalLiabilities)}</div>
-        <div className="h-1 w-full bg-[#272D3D] rounded-full mt-2">
+        <div className="text-xl sm:text-2xl font-bold text-red-400">{formatAmount(totalLiabilities)}</div>
+        <div className="h-1 w-full bg-[#272D3D] rounded-full mt-1.5 sm:mt-2">
           <div className="h-1 bg-gradient-to-r from-red-400 to-red-600 rounded-full" 
             style={{ width: totalLiabilities > 0 ? `${Math.min(100, (totalLiabilities / (totalAssets + totalLiabilities)) * 100)}%` : "0%" }}>
           </div>
@@ -54,14 +54,14 @@ export const NetWorthSummary = () => {
       </div>
       
       {/* Growth Rate Card */}
-      <div className="col-span-2 md:col-span-1 bg-[#1A1F2C]/80 rounded-lg p-4 border border-[#33C3F0]/10 shadow-lg">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="text-[#7A7F92]">Growth Rate</h3>
+      <div className="col-span-1 xs:col-span-2 md:col-span-1 bg-[#1A1F2C]/80 rounded-lg p-3 sm:p-4 border border-[#33C3F0]/10 shadow-lg">
+        <div className="flex justify-between items-center mb-1.5 sm:mb-2">
+          <h3 className="text-[#7A7F92] text-sm sm:text-base">Growth Rate</h3>
         </div>
-        <div className="text-2xl font-bold text-[#66EACE]">
+        <div className="text-xl sm:text-2xl font-bold text-[#66EACE]">
           {percentChange !== 0 ? `${percentChange >= 0 ? '+' : ''}${percentChange.toFixed(1)}%` : 'N/A'}
         </div>
-        <div className="flex items-center mt-1 text-xs text-[#7A7F92]">
+        <div className="flex items-center mt-1 text-xs sm:text-sm text-[#7A7F92]">
           <TrendingUp className="h-3 w-3 mr-1 text-[#66EACE]" />
           <span>Since last update</span>
         </div>

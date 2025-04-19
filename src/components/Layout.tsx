@@ -118,17 +118,17 @@ export const Layout = ({ children, requireAuth = true }: LayoutProps) => {
         // Dashboard layout
         <div className="flex min-h-screen w-full flex-col overflow-x-hidden relative">
           {/* Enhanced colored light blobs for depth */}
-          <div className="absolute top-0 right-0 w-1/3 h-1/2 bg-[#33C3F0]/8 blur-[180px] rounded-full z-0"></div>
-          <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-[#9b87f5]/8 blur-[180px] rounded-full z-0"></div>
-          <div className="absolute top-1/3 left-1/4 w-1/4 h-1/3 bg-[#66EACE]/8 blur-[150px] rounded-full z-0"></div>
+          <div className="absolute top-0 right-0 w-1/3 h-1/2 bg-[#33C3F0]/8 blur-[180px] rounded-full z-0 opacity-75 md:opacity-100"></div>
+          <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-[#9b87f5]/8 blur-[180px] rounded-full z-0 opacity-75 md:opacity-100"></div>
+          <div className="absolute top-1/3 left-1/4 w-1/4 h-1/3 bg-[#66EACE]/8 blur-[150px] rounded-full z-0 opacity-75 md:opacity-100"></div>
           
           {/* Animated light elements */}
-          <div className="absolute top-1/4 right-1/3 w-64 h-64 bg-[#33C3F0]/5 rounded-full blur-[100px] animate-pulse z-0"></div>
-          <div className="absolute bottom-1/3 left-1/4 w-72 h-72 bg-[#9b87f5]/5 rounded-full blur-[120px] animate-pulse z-0" style={{animationDuration: '8s'}}></div>
+          <div className="absolute top-1/4 right-1/3 w-64 h-64 bg-[#33C3F0]/5 rounded-full blur-[100px] animate-pulse z-0 hidden sm:block"></div>
+          <div className="absolute bottom-1/3 left-1/4 w-72 h-72 bg-[#9b87f5]/5 rounded-full blur-[120px] animate-pulse z-0 hidden sm:block" style={{animationDuration: '8s'}}></div>
           
           <TopBar />
-          <div className="flex-1 overflow-auto pt-20 px-3 sm:px-5 md:px-6 lg:px-8 pb-6 sm:pb-8 relative z-10">
-            <div className="max-w-screen-2xl mx-auto w-full">
+          <div className="flex-1 overflow-auto pt-16 sm:pt-20 px-2 sm:px-4 md:px-6 lg:px-8 pb-4 sm:pb-6 md:pb-8 relative z-10">
+            <div className="max-w-screen-2xl mx-auto w-full space-y-4 sm:space-y-6">
               {children}
             </div>
           </div>

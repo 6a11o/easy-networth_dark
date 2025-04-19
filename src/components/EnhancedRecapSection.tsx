@@ -275,381 +275,394 @@ export const EnhancedRecapSection = () => {
     <div className="w-full space-y-10">
       
       {/* SECTION 1: Historical Analysis */}
-      <div id="historical-data" className="bg-[#131620]/90 border border-[#33C3F0]/20 rounded-xl p-6 shadow-2xl backdrop-blur-xl space-y-6 scroll-mt-20">
-        <h3 className="text-xl font-semibold text-[#CBD5E1] mb-4">Historical Data</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium mb-2">Start Date</label>
-            <Select value={startDate} onValueChange={setStartDate}>
-              <SelectTrigger className="bg-[#1A1F2C]/60 border-[#1A1F2C]">
-                <SelectValue placeholder="Select start date" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableDates.map((date) => (
-                  <SelectItem key={`start-${date}`} value={date}>
-                    {format(new Date(date), 'MMM dd, yyyy')}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+      <div id="historical-data" className="bg-[#131620]/90 border border-[#33C3F0]/20 rounded-xl p-4 sm:p-6 shadow-2xl backdrop-blur-xl hover:shadow-xl transition-all scroll-mt-20">
+        <Tabs defaultValue="trends" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-6 bg-[#1A1F2C] border border-[#33C3F0]/10 p-1">
+            <TabsTrigger value="trends" className="text-xs sm:text-sm">Money Habits</TabsTrigger>
+            <TabsTrigger value="comparison" className="text-xs sm:text-sm">Historical Data</TabsTrigger>
+          </TabsList>
           
-          <div>
-            <label className="block text-sm font-medium mb-2">End Date</label>
-            <Select value={endDate} onValueChange={setEndDate}>
-              <SelectTrigger className="bg-[#1A1F2C]/60 border-[#1A1F2C]">
-                <SelectValue placeholder="Select end date" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableDates.map((date) => (
-                  <SelectItem key={`end-${date}`} value={date}>
-                    {format(new Date(date), 'MMM dd, yyyy')}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {/* Net Worth Comparison */}
-          <Card className="bg-[#1A1F2C]/60 border-[#1A1F2C]/80">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
-                <span className="mr-2">Net Worth Change</span>
-                {comparison.netWorthChange >= 0 ? 
-                  <TrendingUp className="h-4 w-4 text-green-500" /> : 
-                  <TrendingDown className="h-4 w-4 text-red-500" />
-                }
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xl font-bold mb-1">
-                {formatAmount(comparison.netWorthChange)}
-              </div>
-              <div className={cn(
-                "text-sm flex items-center",
-                comparison.netWorthChangePercent >= 0 ? "text-green-500" : "text-red-500"
-              )}>
-                {comparison.netWorthChangePercent >= 0 ? 
-                  <ArrowUpRight className="h-4 w-4 mr-1" /> : 
-                  <ArrowDownRight className="h-4 w-4 mr-1" />
-                }
-                {Math.abs(comparison.netWorthChangePercent).toFixed(1)}%
-              </div>
-            </CardContent>
-          </Card>
-          
-          {/* Assets Comparison */}
-          <Card className="bg-[#1A1F2C]/60 border-[#1A1F2C]/80">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
-                <span className="mr-2">Assets Change</span>
-                {comparison.assetsChange >= 0 ? 
-                  <TrendingUp className="h-4 w-4 text-green-500" /> : 
-                  <TrendingDown className="h-4 w-4 text-red-500" />
-                }
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xl font-bold mb-1 text-green-500">
-                {formatAmount(comparison.assetsChange)}
-              </div>
-              <div className={cn(
-                "text-sm flex items-center",
-                comparison.assetsChange >= 0 ? "text-green-500" : "text-red-500"
-              )}>
-                {comparison.assetsChange >= 0 ? 
-                  <ArrowUpRight className="h-4 w-4 mr-1" /> : 
-                  <ArrowDownRight className="h-4 w-4 mr-1" />
-                }
-                {Math.abs(comparison.assetsChangePercent).toFixed(1)}%
-              </div>
-            </CardContent>
-          </Card>
-          
-          {/* Liabilities Comparison */}
-          <Card className="bg-[#1A1F2C]/60 border-[#1A1F2C]/80">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
-                <span className="mr-2">Liabilities Change</span>
-                {comparison.liabilitiesChange <= 0 ? 
-                  <TrendingUp className="h-4 w-4 text-green-500" /> : 
-                  <TrendingDown className="h-4 w-4 text-red-500" />
-                }
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xl font-bold mb-1 text-red-500">
-                {formatAmount(comparison.liabilitiesChange)}
-              </div>
-              <div className={cn(
-                "text-sm flex items-center",
-                comparison.liabilitiesChange <= 0 ? "text-green-500" : "text-red-500"
-              )}>
-                {comparison.liabilitiesChange <= 0 ? 
-                  <ArrowUpRight className="h-4 w-4 mr-1" /> : 
-                  <ArrowDownRight className="h-4 w-4 mr-1" />
-                }
-                {Math.abs(comparison.liabilitiesChangePercent).toFixed(1)}%
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Individual account changes */}
-        <h3 className="text-xl font-semibold text-[#CBD5E1] mb-4">Individual Account Changes</h3>
-        <div className="space-y-3">
-          {comparison.accountChanges.map((account) => (
-            <div 
-              key={account.id}
-              className="p-3 bg-[#1A1F2C]/40 rounded-lg border border-[#1A1F2C]/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
-            >
-              <div className="flex items-center">
-                <Badge variant={account.type === 'asset' ? 'outline' : 'destructive'} className="mr-2">
-                  {account.type === 'asset' ? 'Asset' : 'Liability'}
-                </Badge>
-                <span className="font-medium">{account.name}</span>
+          {/* FINANCIAL TRENDS TAB */}
+          <TabsContent value="trends" className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div className="flex flex-col xs:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                <Select value={timeRange} onValueChange={setTimeRange}>
+                  <SelectTrigger className="w-full sm:w-36 text-xs sm:text-sm h-8 sm:h-9 bg-[#1A1F2C] border-[#33C3F0]/20">
+                    <SelectValue placeholder="Select time range" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#131620] border-[#33C3F0]/20">
+                    <SelectItem value="all" className="text-xs sm:text-sm">All time</SelectItem>
+                    <SelectItem value="1m" className="text-xs sm:text-sm">Last month</SelectItem>
+                    <SelectItem value="3m" className="text-xs sm:text-sm">Last 3 months</SelectItem>
+                    <SelectItem value="6m" className="text-xs sm:text-sm">Last 6 months</SelectItem>
+                    <SelectItem value="1y" className="text-xs sm:text-sm">Last year</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Select 
+                  value={selectedMetrics.join(',')} 
+                  onValueChange={(value) => setSelectedMetrics(value.split(','))}
+                >
+                  <SelectTrigger className="w-full sm:w-44 text-xs sm:text-sm h-8 sm:h-9 bg-[#1A1F2C] border-[#33C3F0]/20">
+                    <SelectValue placeholder="Select metrics" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#131620] border-[#33C3F0]/20">
+                    <SelectItem value="netWorth" className="text-xs sm:text-sm">Net Worth</SelectItem>
+                    <SelectItem value="netWorth,assets,liabilities" className="text-xs sm:text-sm">All financials</SelectItem>
+                    <SelectItem value="assets" className="text-xs sm:text-sm">Assets only</SelectItem>
+                    <SelectItem value="liabilities" className="text-xs sm:text-sm">Liabilities only</SelectItem>
+                    {/* Individual accounts could be added here */}
+                  </SelectContent>
+                </Select>
               </div>
               
-              <div className="flex items-center gap-4">
-                <div className="text-sm text-muted-foreground">
-                  From: {formatAmount(account.startBalance)}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  To: {formatAmount(account.endBalance)}
-                </div>
-                <div className={cn(
-                  "flex items-center",
-                  (account.type === 'asset' && account.change >= 0) || (account.type === 'liability' && account.change <= 0) 
-                    ? "text-green-500" 
-                    : "text-red-500"
-                )}>
-                  {account.change >= 0 ? "+" : ""}{formatAmount(account.change)} ({Math.abs(account.changePercent).toFixed(1)}%)
-                </div>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                {selectedMetrics.includes('netWorth') && (
+                  <Badge variant="outline" className="bg-[#33C3F0]/10 border-[#33C3F0]/30 text-[#33C3F0] text-[10px] sm:text-xs">
+                    Net Worth
+                  </Badge>
+                )}
+                {selectedMetrics.includes('assets') && (
+                  <Badge variant="outline" className="bg-green-400/10 border-green-400/30 text-green-400 text-[10px] sm:text-xs">
+                    Assets
+                  </Badge>
+                )}
+                {selectedMetrics.includes('liabilities') && (
+                  <Badge variant="outline" className="bg-red-400/10 border-red-400/30 text-red-400 text-[10px] sm:text-xs">
+                    Liabilities
+                  </Badge>
+                )}
               </div>
             </div>
-          ))}
-        </div>
-      </div>
-      
-      {/* SECTION 2: Financial Trends (Money Habits) */}
-      <div id="money-habits" className="bg-[#131620]/90 border border-[#33C3F0]/20 rounded-xl p-6 shadow-2xl backdrop-blur-xl space-y-6 scroll-mt-20">
-        <h3 className="text-xl font-semibold text-[#CBD5E1] mb-4">Money Habits</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium mb-2">Metrics</label>
-            <Select 
-              value={selectedMetrics.join(',')}
-              onValueChange={(value) => setSelectedMetrics(value ? value.split(',') : ["netWorth"])}
-            >
-              <SelectTrigger className="bg-[#1A1F2C]/60 border-[#1A1F2C]">
-                <SelectValue placeholder="Select metrics" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="netWorth">Net Worth</SelectItem>
-                <SelectItem value="netWorth,assets,liabilities">All Totals</SelectItem>
-                <SelectItem value="assets">Total Assets</SelectItem>
-                <SelectItem value="liabilities">Total Liabilities</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium mb-2">Time Range</label>
-            <div className="flex flex-wrap gap-2">
-              <button 
-                onClick={() => setTimeRange("1m")}
-                className={cn(
-                  "px-3 py-1.5 text-xs rounded-md transition-all duration-300",
-                  timeRange === "1m" 
-                    ? "bg-gradient-to-r from-[#9b87f5] to-[#8878e9] text-white shadow-md" 
-                    : "bg-[#1A1F2C] hover:bg-[#252B3B] border border-[#252B3B]/60"
-                )}
-              >
-                1M
-              </button>
-              <button 
-                onClick={() => setTimeRange("3m")}
-                className={cn(
-                  "px-3 py-1.5 text-xs rounded-md transition-all duration-300",
-                  timeRange === "3m" 
-                    ? "bg-gradient-to-r from-[#9b87f5] to-[#8878e9] text-white shadow-md" 
-                    : "bg-[#1A1F2C] hover:bg-[#252B3B] border border-[#252B3B]/60"
-                )}
-              >
-                3M
-              </button>
-              <button 
-                onClick={() => setTimeRange("6m")}
-                className={cn(
-                  "px-3 py-1.5 text-xs rounded-md transition-all duration-300",
-                  timeRange === "6m" 
-                    ? "bg-gradient-to-r from-[#9b87f5] to-[#8878e9] text-white shadow-md" 
-                    : "bg-[#1A1F2C] hover:bg-[#252B3B] border border-[#252B3B]/60"
-                )}
-              >
-                6M
-              </button>
-              <button 
-                onClick={() => setTimeRange("1y")}
-                className={cn(
-                  "px-3 py-1.5 text-xs rounded-md transition-all duration-300",
-                  timeRange === "1y" 
-                    ? "bg-gradient-to-r from-[#9b87f5] to-[#8878e9] text-white shadow-md" 
-                    : "bg-[#1A1F2C] hover:bg-[#252B3B] border border-[#252B3B]/60"
-                )}
-              >
-                1Y
-              </button>
-              <button 
-                onClick={() => setTimeRange("all")}
-                className={cn(
-                  "px-3 py-1.5 text-xs rounded-md transition-all duration-300",
-                  timeRange === "all" 
-                    ? "bg-gradient-to-r from-[#9b87f5] to-[#8878e9] text-white shadow-md" 
-                    : "bg-[#1A1F2C] hover:bg-[#252B3B] border border-[#252B3B]/60"
-                )}
-              >
-                All
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <Card className="bg-gradient-to-b from-[#13172090] to-[#0D0F1790] border-[#1A1F2C]/50 backdrop-blur-sm shadow-xl">
-          <CardHeader className="border-b border-[#252B3B]/40 pb-4">
-            <CardTitle className="text-[#E2E8F0] flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-[#9b87f5]" /> 
-              Financial Trends Chart
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="h-[350px] w-full">
+            
+            <div className="w-full h-[250px] sm:h-[350px] mb-4 sm:mb-6 bg-[#0F1119]/70 rounded-lg border border-[#33C3F0]/10 p-2 sm:p-4 overflow-hidden">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={trendData}
-                  margin={{
-                    top: 20,
-                    right: 30,
-                    left: 20,
-                    bottom: 10,
-                  }}
-                >
-                  <defs>
-                    {/* Gradient for Net Worth */}
-                    <linearGradient id="netWorthGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#9b87f5" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#9b87f5" stopOpacity={0.1} />
-                    </linearGradient>
-                    
-                    {/* Gradient for Assets */}
-                    <linearGradient id="assetsGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#33C3F0" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#33C3F0" stopOpacity={0.1} />
-                    </linearGradient>
-                    
-                    {/* Gradient for Liabilities */}
-                    <linearGradient id="liabilitiesGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#FF6B6B" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#FF6B6B" stopOpacity={0.1} />
-                    </linearGradient>
-                  </defs>
-                  
-                  <CartesianGrid 
-                    strokeDasharray="3 3" 
-                    stroke="rgba(255,255,255,0.05)" 
-                    vertical={false} 
-                  />
-                  
+                <LineChart data={trendData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" vertical={false} />
                   <XAxis 
                     dataKey="date" 
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
+                    axisLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }} 
+                    tickLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
+                    tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 10 }}
                     dy={10}
+                    minTickGap={30}
+                    height={40}
                   />
-                  
                   <YAxis 
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
-                    dx={-10}
-                    tickFormatter={(value) => formatAmount(value).replace(/[^\d.-]/g, '')}
+                    axisLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }} 
+                    tickLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
+                    tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 10 }}
+                    width={50}
+                    tickFormatter={(value) => `${value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value}`}
                   />
-                  
                   <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'rgba(19, 22, 32, 0.95)',
-                      backdropFilter: 'blur(8px)',
-                      border: '1px solid rgba(155, 135, 245, 0.2)',
-                      borderRadius: '8px',
-                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
-                      padding: '12px'
-                    }} 
-                    formatter={(value: number) => [formatAmount(value), ""]}
-                    labelStyle={{ color: 'rgba(255,255,255,0.7)', marginBottom: '8px', fontWeight: 500 }}
-                    itemStyle={{ color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}
-                    cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }}
+                    contentStyle={{ backgroundColor: '#131620', borderColor: 'rgba(51, 195, 240, 0.3)', color: '#fff', fontSize: '12px', borderRadius: '4px' }}
+                    labelStyle={{ fontWeight: 'bold', marginBottom: '4px' }}
                   />
-                  
-                  <Legend 
-                    wrapperStyle={{ paddingTop: '15px' }}
-                    formatter={(value) => <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>{value}</span>}
+                  <Legend
+                    verticalAlign="top"
+                    height={30}
+                    iconSize={12}
+                    iconType="circle"
+                    fontSize={11}
                   />
-                  
                   {selectedMetrics.includes('netWorth') && (
                     <Line 
                       type="monotone" 
                       dataKey="netWorth" 
                       name="Net Worth" 
-                      stroke="#9b87f5" 
-                      strokeWidth={3}
-                      activeDot={{ r: 8, strokeWidth: 1, stroke: '#ffffff' }} 
-                      dot={{ r: 0 }}
-                      connectNulls={true}
-                      animationDuration={1500}
-                      animationEasing="ease-in-out"
-                      fill="url(#netWorthGradient)"
+                      stroke="#33C3F0" 
+                      strokeWidth={2} 
+                      dot={false}
+                      activeDot={{ r: 6 }}
                     />
                   )}
-                  
                   {selectedMetrics.includes('assets') && (
                     <Line 
                       type="monotone" 
                       dataKey="assets" 
                       name="Assets" 
-                      stroke="#33C3F0" 
-                      strokeWidth={3}
-                      activeDot={{ r: 8, strokeWidth: 1, stroke: '#ffffff' }} 
-                      dot={{ r: 0 }}
-                      connectNulls={true}
-                      animationDuration={1500}
-                      animationEasing="ease-in-out"
-                      fill="url(#assetsGradient)"
+                      stroke="#4ade80" 
+                      strokeWidth={2} 
+                      dot={false}
+                      activeDot={{ r: 6 }}
                     />
                   )}
-                  
                   {selectedMetrics.includes('liabilities') && (
                     <Line 
                       type="monotone" 
                       dataKey="liabilities" 
                       name="Liabilities" 
-                      stroke="#FF6B6B" 
-                      strokeWidth={3}
-                      activeDot={{ r: 8, strokeWidth: 1, stroke: '#ffffff' }} 
-                      dot={{ r: 0 }}
-                      connectNulls={true}
-                      animationDuration={1500}
-                      animationEasing="ease-in-out"
-                      fill="url(#liabilitiesGradient)"
+                      stroke="#f87171" 
+                      strokeWidth={2} 
+                      dot={false}
+                      activeDot={{ r: 6 }}
                     />
                   )}
+                  {/* Add lines for individual accounts if selected */}
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          </CardContent>
-        </Card>
+            
+            <div id="what-i-did" className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              <Card className="bg-[#1A1F2C]/50 border-[#33C3F0]/20 shadow-lg">
+                <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-3">
+                  <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-[#33C3F0]" />
+                    <span>Net Worth Growth</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+                  {trendData.length >= 2 ? (
+                    <>
+                      <div className="flex items-baseline gap-1 mb-1">
+                        <span className="text-xl sm:text-2xl font-bold">
+                          {formatAmount(trendData[trendData.length - 1].netWorth - trendData[0].netWorth)}
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        {trendData[trendData.length - 1].netWorth - trendData[0].netWorth > 0 ? (
+                          <>
+                            <ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-400 mr-1" />
+                            <span className="text-green-400 text-xs sm:text-sm">
+                              {((trendData[trendData.length - 1].netWorth - trendData[0].netWorth) / 
+                                Math.abs(trendData[0].netWorth) * 100).toFixed(1)}% increase
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <ArrowDownRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-400 mr-1" />
+                            <span className="text-red-400 text-xs sm:text-sm">
+                              {((trendData[trendData.length - 1].netWorth - trendData[0].netWorth) / 
+                                Math.abs(trendData[0].netWorth) * 100).toFixed(1)}% decrease
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-[#7A7F92] text-xs sm:text-sm">Need at least two data points</p>
+                  )}
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-[#1A1F2C]/50 border-[#33C3F0]/20 shadow-lg">
+                <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-3">
+                  <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-[#33C3F0]" />
+                    <span>Time Period</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+                  {trendData.length >= 2 ? (
+                    <>
+                      <div className="text-base sm:text-lg font-medium">
+                        {trendData[0].date} - {trendData[trendData.length - 1].date}
+                      </div>
+                      <div className="text-[#7A7F92] text-xs sm:text-sm mt-1">
+                        {trendData.length} data points
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-[#7A7F92] text-xs sm:text-sm">No data available</p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          {/* TIME COMPARISON TAB */}
+          <TabsContent value="comparison" className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col xs:flex-row gap-3 mb-4">
+              <Select value={startDate} onValueChange={setStartDate}>
+                <SelectTrigger className="w-full text-xs sm:text-sm h-8 sm:h-9 bg-[#1A1F2C] border-[#33C3F0]/20">
+                  <SelectValue placeholder="Start date" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#131620] border-[#33C3F0]/20 max-h-[200px]">
+                  {availableDates.map(date => (
+                    <SelectItem key={`start-${date}`} value={date} className="text-xs sm:text-sm">
+                      {format(new Date(date), 'MMM dd, yyyy')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={endDate} onValueChange={setEndDate}>
+                <SelectTrigger className="w-full text-xs sm:text-sm h-8 sm:h-9 bg-[#1A1F2C] border-[#33C3F0]/20">
+                  <SelectValue placeholder="End date" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#131620] border-[#33C3F0]/20 max-h-[200px]">
+                  {availableDates.map(date => (
+                    <SelectItem key={`end-${date}`} value={date} className="text-xs sm:text-sm">
+                      {format(new Date(date), 'MMM dd, yyyy')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-4">
+              <Card className="bg-[#1A1F2C]/50 border-[#33C3F0]/20 shadow-lg overflow-hidden">
+                <CardHeader className="p-4 pb-2">
+                  <CardTitle className="text-sm sm:text-base flex items-center gap-2">
+                    <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#33C3F0]" />
+                    <span>Net Worth</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 pt-0">
+                  <div className="flex flex-col">
+                    <div className={cn(
+                      "text-lg sm:text-xl font-semibold",
+                      comparison.netWorthChange > 0 ? "text-green-400" : 
+                      comparison.netWorthChange < 0 ? "text-red-400" : ""
+                    )}>
+                      {formatAmount(comparison.netWorthChange)}
+                    </div>
+                    <div className="flex items-center">
+                      {comparison.netWorthChange > 0 ? (
+                        <ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-400 mr-1" />
+                      ) : comparison.netWorthChange < 0 ? (
+                        <ArrowDownRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-400 mr-1" />
+                      ) : null}
+                      <span className={cn(
+                        "text-xs sm:text-sm",
+                        comparison.netWorthChange > 0 ? "text-green-400" : 
+                        comparison.netWorthChange < 0 ? "text-red-400" : "text-[#7A7F92]"
+                      )}>
+                        {comparison.netWorthChange !== 0 
+                          ? `${comparison.netWorthChangePercent > 0 ? "+" : ""}${comparison.netWorthChangePercent.toFixed(1)}%` 
+                          : "No change"}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-[#1A1F2C]/50 border-[#33C3F0]/20 shadow-lg overflow-hidden">
+                <CardHeader className="p-4 pb-2">
+                  <CardTitle className="text-sm sm:text-base flex items-center gap-2">
+                    <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-400" />
+                    <span>Assets</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 pt-0">
+                  <div className="flex flex-col">
+                    <div className={cn(
+                      "text-lg sm:text-xl font-semibold",
+                      comparison.assetsChange > 0 ? "text-green-400" : 
+                      comparison.assetsChange < 0 ? "text-red-400" : ""
+                    )}>
+                      {formatAmount(comparison.assetsChange)}
+                    </div>
+                    <div className="flex items-center">
+                      {comparison.assetsChange > 0 ? (
+                        <ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-400 mr-1" />
+                      ) : comparison.assetsChange < 0 ? (
+                        <ArrowDownRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-400 mr-1" />
+                      ) : null}
+                      <span className={cn(
+                        "text-xs sm:text-sm",
+                        comparison.assetsChange > 0 ? "text-green-400" : 
+                        comparison.assetsChange < 0 ? "text-red-400" : "text-[#7A7F92]"
+                      )}>
+                        {comparison.assetsChange !== 0 
+                          ? `${comparison.assetsChangePercent > 0 ? "+" : ""}${comparison.assetsChangePercent.toFixed(1)}%` 
+                          : "No change"}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-[#1A1F2C]/50 border-[#33C3F0]/20 shadow-lg overflow-hidden">
+                <CardHeader className="p-4 pb-2">
+                  <CardTitle className="text-sm sm:text-base flex items-center gap-2">
+                    <TrendingDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-400" />
+                    <span>Liabilities</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 pt-0">
+                  <div className="flex flex-col">
+                    <div className={cn(
+                      "text-lg sm:text-xl font-semibold",
+                      comparison.liabilitiesChange < 0 ? "text-green-400" : 
+                      comparison.liabilitiesChange > 0 ? "text-red-400" : ""
+                    )}>
+                      {formatAmount(comparison.liabilitiesChange)}
+                    </div>
+                    <div className="flex items-center">
+                      {comparison.liabilitiesChange < 0 ? (
+                        <ArrowDownRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-400 mr-1" />
+                      ) : comparison.liabilitiesChange > 0 ? (
+                        <ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-400 mr-1" />
+                      ) : null}
+                      <span className={cn(
+                        "text-xs sm:text-sm",
+                        comparison.liabilitiesChange < 0 ? "text-green-400" : 
+                        comparison.liabilitiesChange > 0 ? "text-red-400" : "text-[#7A7F92]"
+                      )}>
+                        {comparison.liabilitiesChange !== 0 
+                          ? `${comparison.liabilitiesChange < 0 ? "-" : "+"}${Math.abs(comparison.liabilitiesChangePercent).toFixed(1)}%` 
+                          : "No change"}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Account Changes Section for smaller screens */}
+            <div className="mt-4 overflow-auto">
+              <h3 className="text-sm sm:text-base font-medium mb-2 sm:mb-3">Account Changes</h3>
+              <div className="min-w-full">
+                <div className="bg-[#1A1F2C]/50 rounded-lg border border-[#33C3F0]/20">
+                  <div className="grid grid-cols-4 gap-2 p-3 text-xs font-medium text-[#7A7F92]">
+                    <div>Account</div>
+                    <div className="text-right">Start</div>
+                    <div className="text-right">End</div>
+                    <div className="text-right">Change</div>
+                  </div>
+                  <div className="divide-y divide-[#33C3F0]/10">
+                    {comparison.accountChanges.length > 0 ? (
+                      comparison.accountChanges.map(account => (
+                        <div 
+                          key={account.id}
+                          className="grid grid-cols-4 gap-2 p-3 text-xs hover:bg-[#1A1F2C]/70"
+                        >
+                          <div className="font-medium truncate" title={account.name}>
+                            <span className={account.type === 'asset' ? 'text-green-400' : 'text-red-400'}>
+                              {account.type === 'asset' ? '+ ' : '− '}
+                            </span>
+                            {account.name}
+                          </div>
+                          <div className="text-right font-mono">{formatAmount(account.startBalance)}</div>
+                          <div className="text-right font-mono">{formatAmount(account.endBalance)}</div>
+                          <div className="text-right">
+                            <span className={cn(
+                              "font-medium",
+                              account.type === 'asset' ? 
+                                (account.change > 0 ? 'text-green-400' : account.change < 0 ? 'text-red-400' : '') :
+                                (account.change < 0 ? 'text-green-400' : account.change > 0 ? 'text-red-400' : '')
+                            )}>
+                              {account.change !== 0 ? 
+                                `${account.change > 0 ? '+' : ''}${account.changePercent.toFixed(1)}%` : 
+                                '-'
+                              }
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-3 text-center text-xs text-[#7A7F92]">
+                        No account data available for comparison
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
       
       {/* SECTION 3: Activity Log (What I Did) */}

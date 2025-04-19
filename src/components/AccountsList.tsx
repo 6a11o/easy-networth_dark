@@ -168,7 +168,7 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
         )}
 
         {accountsToDisplay.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {accountsToDisplay.map((item) => {
               // Determine the correct color map and category type
               const categoryColors = isAssetType ? assetCategoryColors : liabilityCategoryColors;
@@ -178,13 +178,13 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
               return (
                 <div 
                   key={item.id}
-                  className="flex justify-between items-center p-3 bg-[#1A1F2C]/60 rounded border border-[#1A1F2C]/90 shadow-md hover:shadow-lg transition-all hover:bg-[#1A1F2C]/80"
+                  className="flex flex-col xs:flex-row justify-between items-start xs:items-center p-2.5 sm:p-3 bg-[#1A1F2C]/60 rounded border border-[#1A1F2C]/90 shadow-md hover:shadow-lg transition-all hover:bg-[#1A1F2C]/80 gap-2 xs:gap-0"
                 >
-                  <div className="flex items-center">
-                    <div className="w-2 h-8 rounded-sm mr-3" style={{ backgroundColor: color }}></div>
+                  <div className="flex items-center w-full xs:w-auto">
+                    <div className="w-1.5 sm:w-2 h-8 rounded-sm mr-2 sm:mr-3" style={{ backgroundColor: color }}></div>
                     <div>
-                      <h4 className="font-medium">{item.name}</h4>
-                      <p className="text-xs text-[#7A7F92]">
+                      <h4 className="font-medium text-sm sm:text-base">{item.name}</h4>
+                      <p className="text-[10px] sm:text-xs text-[#7A7F92]">
                         {isAssetType 
                           ? assetCategoryLabels[item.category as keyof typeof assetCategoryLabels]
                           : liabilityCategoryLabels[item.category as keyof typeof liabilityCategoryLabels]
@@ -192,8 +192,8 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`font-medium ${isAssetType ? 'text-green-400' : 'text-red-400'}`}>
+                  <div className="flex items-center gap-2 w-full xs:w-auto justify-between xs:justify-end pl-3.5 xs:pl-0">
+                    <span className={`font-medium text-sm sm:text-base ${isAssetType ? 'text-green-400' : 'text-red-400'}`}>
                       {formatAmount(item.balance)}
                     </span>
                     <div className="flex space-x-1">
@@ -201,17 +201,17 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
                         variant="ghost" 
                         size="icon"
                         onClick={() => handleEdit(item, isAssetType ? "asset" : "liability")}
-                        className="h-8 w-8 rounded-full hover:bg-[#33C3F0]/10"
+                        className="h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-[#33C3F0]/10"
                       >
-                        <Edit className="h-4 w-4 text-[#33C3F0]" />
+                        <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#33C3F0]" />
                       </Button>
                       <Button 
                         variant="ghost" 
                         size="icon"
                         onClick={() => handleDeleteClick(item, isAssetType ? "asset" : "liability")}
-                        className="h-8 w-8 rounded-full hover:bg-red-400/10"
+                        className="h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-red-400/10"
                       >
-                        <Trash className="h-4 w-4 text-red-400" />
+                        <Trash className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-400" />
                       </Button>
                     </div>
                   </div>
@@ -220,13 +220,13 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
             })}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-[#7A7F92] bg-[#1A1F2C]/40 rounded-lg border border-[#1A1F2C]/90 shadow-inner">
-            <div className="h-16 w-16 rounded-full bg-[#1A1F2C]/80 flex items-center justify-center mb-4 border border-[#33C3F0]/10">
-              <span className="text-3xl opacity-20">{isAssetType ? '+' : '−'}</span>
+          <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-[#7A7F92] bg-[#1A1F2C]/40 rounded-lg border border-[#1A1F2C]/90 shadow-inner px-4 text-center">
+            <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-[#1A1F2C]/80 flex items-center justify-center mb-3 sm:mb-4 border border-[#33C3F0]/10">
+              <span className="text-2xl sm:text-3xl opacity-20">{isAssetType ? '+' : '−'}</span>
             </div>
-            <p className="text-lg mb-1">No {isAssetType ? 'assets' : 'liabilities'} added yet.</p>
-            <p className="text-sm mb-4">Add {isAssetType ? 'assets' : 'liabilities'} to track your net worth.</p>
-            <Button variant="outline" className="border-[#33C3F0]/20 hover:bg-[#33C3F0]/10 text-[#33C3F0]">
+            <p className="text-base sm:text-lg mb-0.5 sm:mb-1">No {isAssetType ? 'assets' : 'liabilities'} added yet.</p>
+            <p className="text-xs sm:text-sm mb-3 sm:mb-4">Add {isAssetType ? 'assets' : 'liabilities'} to track your net worth.</p>
+            <Button variant="outline" size="sm" className="border-[#33C3F0]/20 hover:bg-[#33C3F0]/10 text-[#33C3F0] text-sm">
               Add {isAssetType ? 'Asset' : 'Liability'}
             </Button>
           </div>
@@ -235,15 +235,15 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
       
       {/* Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-[#131620] border border-[#33C3F0]/20">
+        <DialogContent className="bg-[#131620] border border-[#33C3F0]/20 w-[90vw] max-w-[425px] p-4 sm:p-6">
           <DialogHeader>
-            <DialogTitle>Edit {editType === "asset" ? "Asset" : "Liability"}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg sm:text-xl">Edit {editType === "asset" ? "Asset" : "Liability"}</DialogTitle>
+            <DialogDescription className="text-sm">
               Make changes to your {editType}. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
+          <div className="space-y-3 sm:space-y-4 py-3 sm:py-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
               <Input

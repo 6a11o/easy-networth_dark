@@ -1,4 +1,3 @@
-
 import {
   LayoutDashboard,
   Wallet,
@@ -50,12 +49,12 @@ export const TopBar = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#1A1F2C]/40 bg-[#0F1119]/90 backdrop-blur-md shadow-md">
-      <div className="flex h-16 items-center justify-between px-4 md:px-8 max-w-7xl mx-auto">
-        {/* Logo - updated to navigate to landing page */}
+      <div className="flex h-14 sm:h-16 items-center justify-between px-2 sm:px-4 md:px-8 max-w-7xl mx-auto">
+        {/* Logo - updated with better styling */}
         <div className="flex items-center">
-          <Link to="/landing" className="flex items-center">
-            <img src="/logo.svg" alt="EASY NET WORTH" className="h-8 w-8" />
-            <h1 className="ml-3 hidden text-lg font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE] sm:block">
+          <Link to="/dashboard" className="flex items-center group">
+            <img src="/logo.svg" alt="Logo" className="h-5 w-5 sm:h-6 sm:w-6" />
+            <h1 className="ml-2 sm:ml-3 text-sm sm:text-base font-semibold text-white">
               EASY NET WORTH
             </h1>
           </Link>
@@ -69,14 +68,14 @@ export const TopBar = () => {
               variant={location.pathname === item.path ? "secondary" : "ghost"}
               size="sm"
               className={cn(
-                "flex h-9 items-center gap-2 px-4 rounded-md transition-all",
+                "flex h-8 sm:h-9 items-center gap-1.5 sm:gap-2 px-3 sm:px-4 rounded-md transition-all text-sm",
                 location.pathname === item.path
                   ? "bg-[#1A1F2C] text-[#33C3F0] shadow-inner border border-[#33C3F0]/20"
                   : "text-gray-300 hover:bg-[#1A1F2C]/30 hover:text-white"
               )}
               onClick={() => navigate(item.path)}
             >
-              <item.icon className="h-4 w-4" />
+              <item.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               <span className="hidden lg:inline">{item.label}</span>
             </Button>
           ))}
@@ -89,28 +88,28 @@ export const TopBar = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="rounded-full h-9 w-9 border border-[#1A1F2C] bg-[#0F1119] hover:bg-[#1A1F2C]/50 hover:border-[#33C3F0]/20"
+                className="rounded-full h-8 w-8 sm:h-9 sm:w-9 border border-[#1A1F2C] bg-[#0F1119] hover:bg-[#1A1F2C]/50 hover:border-[#33C3F0]/20"
               >
                 <span className="sr-only">User menu</span>
-                <div className="size-7 rounded-full bg-gradient-to-br from-[#33C3F0] to-[#66EACE] flex items-center justify-center text-white font-medium">
+                <div className="size-6 sm:size-7 rounded-full bg-gradient-to-br from-[#33C3F0] to-[#66EACE] flex items-center justify-center text-white text-sm sm:text-base font-medium">
                   U
                 </div>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 bg-[#0F1119]/95 backdrop-blur-md border border-[#1A1F2C]">
               <DropdownMenuItem
-                className="cursor-pointer hover:bg-[#1A1F2C]"
+                className="cursor-pointer hover:bg-[#1A1F2C] text-sm"
                 onClick={() => navigate("/settings")}
               >
-                <Settings className="mr-2 h-4 w-4 text-[#33C3F0]" />
+                <Settings className="mr-2 h-3.5 w-3.5 text-[#33C3F0]" />
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-[#1A1F2C]/50" />
               <DropdownMenuItem
-                className="cursor-pointer text-red-400 hover:bg-[#1A1F2C] hover:text-red-400"
+                className="cursor-pointer text-red-400 hover:bg-[#1A1F2C] hover:text-red-400 text-sm"
                 onClick={() => logout()}
               >
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className="mr-2 h-3.5 w-3.5" />
                 <span>Log Out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -120,12 +119,16 @@ export const TopBar = () => {
         {/* Mobile Menu Trigger */}
         <Sheet>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon" className="hover:bg-[#1A1F2C]/30">
-              <Menu className="h-5 w-5" />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 sm:h-9 sm:w-9 hover:bg-[#1A1F2C]/30"
+            >
+              <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
               <span className="sr-only">Toggle menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[240px] bg-[#0F1119]/95 backdrop-blur-md border-l border-[#1A1F2C]">
+          <SheetContent side="right" className="w-[240px] sm:w-[280px] bg-[#0F1119]/95 backdrop-blur-md border-l border-[#1A1F2C] p-4">
             <div className="flex flex-col h-full">
               <div className="flex-1 space-y-1 py-4">
                 {navItems.map((item) => (
@@ -133,7 +136,7 @@ export const TopBar = () => {
                     key={item.path}
                     variant="ghost"
                     className={cn(
-                      "w-full justify-start",
+                      "w-full justify-start text-sm",
                       location.pathname === item.path
                         ? "bg-[#1A1F2C]/70 text-[#33C3F0] border-l-2 border-[#33C3F0]"
                         : "text-gray-300 hover:bg-[#1A1F2C]/30 hover:text-white"
@@ -147,7 +150,7 @@ export const TopBar = () => {
               </div>
               <Button
                 variant="ghost"
-                className="mt-auto justify-start text-red-400 hover:bg-[#1A1F2C] hover:text-red-400"
+                className="mt-auto justify-start text-red-400 hover:bg-[#1A1F2C] hover:text-red-400 text-sm"
                 onClick={() => logout()}
               >
                 <LogOut className="mr-2 h-4 w-4" />
