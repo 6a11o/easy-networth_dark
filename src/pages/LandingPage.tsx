@@ -220,31 +220,350 @@ const LandingPage = () => {
     <Layout requireAuth={false}>
       <div className="w-full">
         {/* Hero Section */}
-        <section className="w-full py-24 lg:py-32">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-8 flex items-center">
-                <img src="/logo.svg" alt="EASY NET WORTH Logo" className="h-20 w-20 mr-4" />
-                <h1 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE]">
-                  EASY NET WORTH
-                </h1>
+        <section className="w-full min-h-screen py-24 lg:py-32 relative overflow-hidden flex items-center">
+          {/* Abstract Minimalist Background */}
+          <div className="absolute inset-0 bg-[#0a0d14]">
+            {/* Grid Lines */}
+            <div className="absolute inset-0 grid grid-cols-6 opacity-10">
+              {[...Array(7)].map((_, i) => (
+                <div key={`grid-v-${i}`} className="border-r border-[#33C3F0]/20 h-full"></div>
+              ))}
+            </div>
+            <div className="absolute inset-0 grid grid-rows-6 opacity-10">
+              {[...Array(7)].map((_, i) => (
+                <div key={`grid-h-${i}`} className="border-b border-[#33C3F0]/20 w-full"></div>
+              ))}
+            </div>
+            
+            {/* Abstract Visual Elements */}
+            <div className="absolute right-0 top-1/4 h-96 w-96 rounded-full bg-gradient-to-bl from-[#33C3F0]/30 to-transparent blur-3xl"></div>
+            <div className="absolute -left-20 bottom-1/3 h-64 w-64 rounded-full bg-gradient-to-tr from-[#66EACE]/20 to-transparent blur-3xl"></div>
+            
+            {/* Animated Plus Symbols (Representing Assets) */}
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={`plus-${i}`}
+                className="absolute text-[#33C3F0]/10 text-7xl font-thin"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  transform: `rotate(${Math.random() * 45}deg)`,
+                  animationDelay: `${Math.random() * 8}s`,
+                  animation: `float ${10 + Math.random() * 20}s ease-in-out infinite`
+                }}
+              >
+                +
               </div>
-              <p className="text-xl md:text-2xl mb-10 max-w-4xl text-gray-300 leading-relaxed">
-                Finally! Track your net worth easily, without linking bank accounts.
-              </p>
+            ))}
+            
+            {/* Animated Minus Symbols (Representing Liabilities) */}
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={`minus-${i}`}
+                className="absolute text-red-400/10 text-7xl font-thin"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 5}s`,
+                  animation: `float ${10 + Math.random() * 15}s ease-in-out infinite`
+                }}
+              >
+                −
+              </div>
+            ))}
+          </div>
+
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              {/* Left Column: Text Content */}
+              <div className="flex flex-col text-left space-y-8">
+                {/* Clean Logo and Brand Name */}
+                <div className="mb-8 flex items-center">
+                  <div className="relative mr-4">
+                    <img src="/logo.svg" alt="EASY NET WORTH Logo" className="h-12 w-12 drop-shadow-[0_0_3px_rgba(51,195,240,0.3)]" />
+                    <div className="absolute -inset-0.5 bg-gradient-to-br from-[#33C3F0]/10 to-transparent rounded-full blur-sm -z-10"></div>
+                  </div>
+                  
+                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+                    <span className="text-white">EASY</span>
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE] ml-2">NET WORTH</span>
+                  </h1>
+                </div>
+                
+                <h2 className="text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight">
+                  <span className="block">See what</span>
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE]">
+                    you're worth.
+                  </span>
+                </h2>
+                
+                <p className="text-xl text-gray-300 leading-relaxed max-w-lg">
+                  One clear view of what you own, what you owe, and how it's changing. No fluff. No need to link your bank accounts. Just the number that matters.
+                </p>
+                
+                <div className="flex flex-wrap gap-4 pt-4">
+                  <Link to="/signup">
+                    <Button className="bg-gradient-to-r from-[#33C3F0] to-[#66EACE] hover:from-[#33C3F0]/90 hover:to-[#66EACE]/90 text-black font-semibold text-lg px-8 py-5 rounded-lg shadow-lg shadow-[#33C3F0]/20 transition-all transform hover:translate-y-[-2px]">
+                      Try it now
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </Link>
+                  <Link to="/login">
+                    <Button variant="outline" className="border-[#33C3F0]/40 hover:bg-[#33C3F0]/10 text-white font-medium text-lg px-8 py-5 rounded-lg transition-all">
+                      Sign In
+                    </Button>
+                  </Link>
+                </div>
+              </div>
               
-              <div className="flex flex-wrap justify-center gap-4 mb-8">
-                <Link to="/signup">
-                  <Button className="bg-gradient-to-r from-[#33C3F0] to-[#66EACE] hover:from-[#33C3F0]/90 hover:to-[#66EACE]/90 text-black font-medium text-lg px-8 py-6 rounded-lg shadow-lg shadow-[#33C3F0]/20 transition-all">
-                    Start Tracking (Free)
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link to="/login">
-                  <Button variant="outline" className="border-[#33C3F0]/30 hover:bg-[#33C3F0]/10 text-white font-medium text-lg px-8 py-6 rounded-lg">
-                    Sign In
-                  </Button>
-                </Link>
+              {/* Right Column: Conceptual Visualization */}
+              <div className="relative w-full mt-8 lg:mt-0">
+                <div className="md:hidden flex flex-col items-center mb-8">
+                  {/* Mobile Simplified Visualization */}
+                  <div className="relative w-full max-w-[340px] bg-[#0d1117] border border-[#33C3F0]/20 rounded-xl p-5 shadow-lg">
+                    <div className="absolute -inset-1 bg-gradient-to-br from-[#33C3F0]/5 to-[#66EACE]/5 rounded-xl blur-md opacity-50"></div>
+                    {/* Adding decorative elements for mobile */}
+                    <div className="absolute top-3 left-3 text-[10px] text-[#33C3F0]/30 font-mono">01</div>
+                    <div className="absolute bottom-3 right-3 text-[10px] text-[#33C3F0]/30 font-mono">02</div>
+                    {/* Tech Decoration for mobile */}
+                    <div className="absolute top-1/2 right-2 h-16 flex flex-col items-end justify-center opacity-30 space-y-1">
+                      <div className="h-0.5 w-2 bg-[#33C3F0]"></div>
+                      <div className="h-0.5 w-3 bg-[#33C3F0]"></div>
+                      <div className="h-0.5 w-2 bg-[#33C3F0]"></div>
+                    </div>
+                    <div className="relative">
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="text-sm font-medium uppercase tracking-wider text-[#7A7F92]">Net Worth</div>
+                        <div className="flex items-center text-xs text-green-400 bg-green-400/10 rounded-full px-2 py-0.5">
+                          <ArrowUp className="h-3 w-3 mr-1" />
+                          <span>5.2%</span>
+                        </div>
+                      </div>
+                      <div className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#33C3F0] to-[#66EACE] mb-4">€93,000</div>
+                      
+                      <div className="grid grid-cols-2 gap-4 mt-4">
+                        <div className="border border-[#33C3F0]/10 rounded-lg p-3">
+                          <div className="text-xs text-[#7A7F92] uppercase tracking-wider mb-1">Assets</div>
+                          <div className="text-xl font-semibold text-green-400">€115,000</div>
+                        </div>
+                        <div className="border border-[#33C3F0]/10 rounded-lg p-3">
+                          <div className="text-xs text-[#7A7F92] uppercase tracking-wider mb-1">Liabilities</div>
+                          <div className="text-xl font-semibold text-red-400">€22,000</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="hidden md:flex items-center justify-center">
+                  {/* ULTRA EXPLOSIVE Futuristic Balance Visualization */}
+                  <div className="relative w-full max-w-3xl p-8 space-y-10 transform transition-all duration-500 group" style={{ perspective: '1000px' }}>
+                    {/* Floating Particles Layer */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      {[...Array(15)].map((_, i) => (
+                        <div 
+                          key={`particle-${i}`} 
+                          className="absolute w-1.5 h-1.5 rounded-full bg-[#33C3F0]/60 blur-[1px]" 
+                          style={{
+                            top: `${Math.random() * 100}%`,
+                            left: `${Math.random() * 100}%`,
+                            animationDuration: `${8 + Math.random() * 15}s`,
+                            animationDelay: `${Math.random() * 5}s`
+                          }}
+                        />
+                      ))}
+                      {[...Array(10)].map((_, i) => (
+                        <div 
+                          key={`particle-sm-${i}`} 
+                          className="absolute w-0.5 h-0.5 rounded-full bg-[#66EACE]/70" 
+                          style={{
+                            top: `${Math.random() * 100}%`,
+                            left: `${Math.random() * 100}%`,
+                            animationDuration: `${5 + Math.random() * 10}s`,
+                            animationDelay: `${Math.random() * 5}s`
+                          }}
+                        />
+                      ))}
+                    </div>
+                    
+                    {/* Circuit Pattern Layer */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      <div className="absolute bottom-[15%] right-[10%] w-[120px] h-[80px]">
+                        <svg viewBox="0 0 120 80" className="w-full h-full opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+                          <path d="M0,40 L30,40 L40,30 L80,30 L90,20 L120,20" 
+                                fill="none" 
+                                stroke="#33C3F0" 
+                                strokeWidth="0.5" 
+                                className="animate-draw-line" />
+                          <path d="M0,60 L20,60 L30,50 L60,50 L70,60 L120,60" 
+                                fill="none" 
+                                stroke="#33C3F0" 
+                                strokeWidth="0.5" 
+                                className="animate-draw-line animation-delay-150" />
+                          <circle cx="40" cy="30" r="2" fill="#33C3F0" className="animate-pulse-slow" />
+                          <circle cx="90" cy="20" r="2" fill="#33C3F0" className="animate-pulse-slow animation-delay-300" />
+                          <circle cx="30" cy="50" r="2" fill="#33C3F0" className="animate-pulse-slow animation-delay-150" />
+                          <circle cx="70" cy="60" r="2" fill="#33C3F0" className="animate-pulse-slow animation-delay-450" />
+                        </svg>
+                      </div>
+                      <div className="absolute top-[15%] left-[10%] w-[120px] h-[80px]">
+                        <svg viewBox="0 0 120 80" className="w-full h-full opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+                          <path d="M120,40 L90,40 L80,30 L40,30 L30,20 L0,20" 
+                                fill="none" 
+                                stroke="#33C3F0" 
+                                strokeWidth="0.5" 
+                                className="animate-draw-line animation-delay-300" />
+                          <path d="M120,60 L100,60 L90,50 L60,50 L50,60 L0,60" 
+                                fill="none" 
+                                stroke="#33C3F0" 
+                                strokeWidth="0.5" 
+                                className="animate-draw-line animation-delay-450" />
+                          <circle cx="80" cy="30" r="2" fill="#33C3F0" className="animate-pulse-slow animation-delay-450" />
+                          <circle cx="30" cy="20" r="2" fill="#33C3F0" className="animate-pulse-slow animation-delay-600" />
+                          <circle cx="90" cy="50" r="2" fill="#33C3F0" className="animate-pulse-slow animation-delay-300" />
+                          <circle cx="50" cy="60" r="2" fill="#33C3F0" className="animate-pulse-slow animation-delay-150" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Holographic Overlay Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#33C3F0]/5 via-transparent to-[#66EACE]/5 opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-xl pointer-events-none holographic-noise"></div>
+                    
+                    {/* Corner Brackets (Enhanced Animation) */}
+                    <div className="absolute -top-2 -left-2 w-8 h-8 border-l-2 border-t-2 border-[#33C3F0]/40 rounded-tl-lg transition-all duration-300 group-hover:border-[#33C3F0]/80 group-hover:scale-110 animate-corner-pulse"></div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 border-r-2 border-t-2 border-[#33C3F0]/40 rounded-tr-lg transition-all duration-300 group-hover:border-[#33C3F0]/80 group-hover:scale-110 animate-corner-pulse animation-delay-200"></div>
+                    <div className="absolute -bottom-2 -left-2 w-8 h-8 border-l-2 border-b-2 border-[#33C3F0]/40 rounded-bl-lg transition-all duration-300 group-hover:border-[#33C3F0]/80 group-hover:scale-110 animate-corner-pulse animation-delay-400"></div>
+                    <div className="absolute -bottom-2 -right-2 w-8 h-8 border-r-2 border-b-2 border-[#33C3F0]/40 rounded-br-lg transition-all duration-300 group-hover:border-[#33C3F0]/80 group-hover:scale-110 animate-corner-pulse animation-delay-600"></div>
+                    
+                    {/* Tech Grid Background (Interactive) */}
+                    <div className="absolute inset-0 overflow-hidden rounded-xl z-0">
+                      <div className="absolute inset-0 grid grid-cols-32 grid-rows-32 opacity-5 group-hover:opacity-10 transition-opacity duration-300">
+                        {[...Array(33)].map((_, i) => ( <div key={`tech-grid-v-${i}`} className="border-r border-[#33C3F0]/15 border-dashed h-full"></div> ))}
+                        {[...Array(33)].map((_, i) => ( <div key={`tech-grid-h-${i}`} className="border-b border-[#33C3F0]/15 border-dashed w-full"></div> ))}
+                      </div>
+                      {/* Ambient Glow (Animated) */}
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-radial from-[#33C3F0]/15 via-transparent to-transparent blur-3xl opacity-40 group-hover:opacity-60 transition-opacity duration-500 animate-pulse-slow"></div>
+                    </div>
+
+                    {/* Data Stream Animation */}
+                    <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden z-30">
+                      <div className="absolute h-full w-0.5 bg-gradient-to-b from-transparent via-[#33C3F0]/30 to-transparent left-[30%] animate-data-stream"></div>
+                      <div className="absolute h-full w-0.5 bg-gradient-to-b from-transparent via-[#33C3F0]/30 to-transparent left-[70%] animate-data-stream animation-delay-450"></div>
+                      <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-[#33C3F0]/30 to-transparent top-[25%] animate-data-stream-horizontal animation-delay-300"></div>
+                      <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-[#33C3F0]/30 to-transparent top-[75%] animate-data-stream-horizontal animation-delay-600"></div>
+                    </div>
+
+                    {/* Main Display Elements */}
+                    <div className="relative z-10 flex flex-col items-center space-y-6 transition-transform duration-500 group-hover:[transform:rotateX(5deg)]" 
+                         style={{ transformStyle: 'preserve-3d' }}>
+                      {/* Top Section: Net Worth Result (Interactive Tilt & Scan Line) */}
+                      <div className="relative w-[320px] transition-transform duration-300 group-hover:-translate-y-1">
+                        <div className="absolute -inset-3 bg-gradient-to-br from-[#33C3F0]/20 to-[#66EACE]/15 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 group-hover:blur-2xl transition-all duration-500 animate-pulse-slow"></div>
+                        <div className="relative bg-[#0A0D14]/80 border border-[#33C3F0]/40 rounded-xl p-6 shadow-xl backdrop-blur-lg transition-all duration-300 group-hover:border-[#33C3F0]/60 group-hover:shadow-cyan-glow overflow-hidden hover:scale-105 card-hologram">
+                          {/* Scanning Line */}
+                          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                             <div className="absolute top-0 left-0 w-0.5 h-full bg-[#66EACE] shadow-[0_0_15px_rgba(102,234,206,0.7)] animate-scan-line"></div>
+                          </div>
+
+                          {/* Reactive Pulse Elements */}
+                          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                            <div className="absolute top-0 left-0 w-full h-full bg-[#33C3F0]/1 opacity-0 hover:opacity-100 transition-opacity duration-200 reactive-pulse"></div>
+                          </div>
+
+                          <div className="relative z-10"> {/* Content above scan line */}
+                            <div className="flex justify-between items-center mb-2">
+                              <div className="text-xs font-semibold uppercase tracking-widest text-[#7A7F92] group-hover:text-[#33C3F0]/80 transition-colors duration-300">Net Worth</div>
+                              <div className="flex items-center text-[11px] text-green-400 bg-green-400/10 rounded-full px-1.5 py-0.5 hover:bg-green-400/20 transition-colors duration-300">
+                                <ArrowUp className="h-2.5 w-2.5 mr-0.5" />
+                                <span>5.2%</span>
+                              </div>
+                            </div>
+                            <div className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#66EACE] to-[#33C3F0] mb-2 animate-text-shine relative">
+                              €93,000
+                              <span className="absolute -bottom-px left-0 w-full h-px bg-gradient-to-r from-[#66EACE]/30 to-[#33C3F0]/30"></span>
+                            </div>
+                            {/* Data Visualization Line (with Pulsing Endpoints) */}
+                            <div className="h-1 w-full bg-[#1A1F2C]/70 rounded-full mt-3 relative flex items-center overflow-hidden">
+                              <div className="h-full bg-gradient-to-r from-green-500 to-green-400 w-[84%] rounded-l-full relative">
+                                {/* Pulsing dot for Assets end */} 
+                                <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-2 h-2 rounded-full bg-green-300 shadow-[0_0_8px_rgba(74,222,128,0.8)] animate-ping-slow"></div>
+                              </div>
+                              <div className="h-full bg-gradient-to-r from-red-400 to-red-500 w-[16%] rounded-r-full relative">
+                                {/* Pulsing dot for Liabilities start */}
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-red-300 shadow-[0_0_8px_rgba(248,113,113,0.8)] animate-ping-slow animation-delay-300"></div>
+                              </div>
+                              {/* Shimmer Effect */}
+                              <div className="absolute top-0 left-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer rounded-full"></div>
+                            </div>
+                            <div className="flex justify-between mt-1.5 text-[10px] text-[#7A7F92]">
+                              <span>Assets 84%</span>
+                              <span>Liabilities 16%</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Connecting Graphic Elements */}
+                      <div className="h-10 flex flex-col items-center justify-center space-y-1 opacity-50 group-hover:opacity-80 transition-opacity duration-300">
+                         <div className="w-px h-4 bg-gradient-to-b from-[#33C3F0]/0 via-[#33C3F0]/50 to-[#33C3F0]/0 animate-drip-pulse"></div>
+                         <div className="w-1 h-1 rounded-full bg-[#33C3F0]/70 animate-ping-slow animation-delay-150"></div>
+                         <div className="w-px h-4 bg-gradient-to-b from-[#33C3F0]/0 via-[#33C3F0]/50 to-[#33C3F0]/0 animate-drip-pulse animation-delay-300"></div>
+                      </div>
+
+                      {/* Bottom Section: Assets & Liabilities (Interactive Tilt) */}
+                      <div className="w-full flex justify-between items-start space-x-6">
+                        {/* Assets Display */}
+                        <div className="w-1/2 relative transition-transform duration-500 group-hover:translate-x-1 group-hover:[transform:rotateY(-5deg)]" 
+                             style={{ transformStyle: 'preserve-3d' }}>
+                          <div className="absolute -inset-2 rounded-xl bg-gradient-to-br from-green-400/20 to-transparent blur-lg opacity-60 group-hover:opacity-90 group-hover:blur-xl transition-all duration-500"></div>
+                          <div className="relative bg-[#0A0D14]/70 border border-[#33C3F0]/20 rounded-xl p-5 transition-all duration-300 group-hover:border-green-400/50 group-hover:shadow-green-glow card-hologram" style={{ transformStyle: 'preserve-3d' }}>
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="text-[11px] text-[#7A7F92] uppercase tracking-wider font-medium group-hover:text-green-400/80 transition-colors duration-300">Assets</div>
+                              <div className="w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.7)]"></div>
+                            </div>
+                            <div className="text-2xl font-semibold text-green-400 mb-1.5 relative">
+                              €115,000
+                              <div className="absolute -bottom-0.5 left-0 w-full h-px bg-gradient-to-r from-green-400/40 to-transparent"></div>
+                            </div>
+                            <div className="w-full h-0.5 bg-gradient-to-r from-green-400/50 to-green-400/20 rounded-full overflow-hidden">
+                              <div className="w-1/3 h-full bg-green-300/30 animate-shimmer"></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Liabilities Display */}
+                        <div className="w-1/2 relative transition-transform duration-500 group-hover:-translate-x-1 group-hover:[transform:rotateY(5deg)]" 
+                             style={{ transformStyle: 'preserve-3d' }}>
+                          <div className="absolute -inset-2 rounded-xl bg-gradient-to-bl from-red-400/20 to-transparent blur-lg opacity-60 group-hover:opacity-90 group-hover:blur-xl transition-all duration-500"></div>
+                          <div className="relative bg-[#0A0D14]/70 border border-[#33C3F0]/20 rounded-xl p-5 transition-all duration-300 group-hover:border-red-400/50 group-hover:shadow-red-glow card-hologram" style={{ transformStyle: 'preserve-3d' }}>
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="text-[11px] text-[#7A7F92] uppercase tracking-wider font-medium group-hover:text-red-400/80 transition-colors duration-300">Liabilities</div>
+                              <div className="w-1.5 h-1.5 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.7)]"></div>
+                            </div>
+                            <div className="text-2xl font-semibold text-red-400 mb-1.5 relative">
+                              €22,000
+                              <div className="absolute -bottom-0.5 left-0 w-full h-px bg-gradient-to-r from-red-400/40 to-transparent"></div>
+                            </div>
+                            <div className="w-full h-0.5 bg-gradient-to-r from-red-400/50 to-red-400/20 rounded-full overflow-hidden">
+                              <div className="w-1/3 h-full bg-red-300/30 animate-shimmer animation-delay-300"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Data Flow Particles - Small Bits Moving Between Elements */}
+                    <div className="absolute inset-0 pointer-events-none">
+                      <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#33C3F0] animate-data-bit"></div>
+                      <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#66EACE] animate-data-bit animation-delay-300"></div>
+                      <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-green-400 animate-data-bit animation-delay-600"></div>
+                      <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-red-400 animate-data-bit animation-delay-900"></div>
+                    </div>
+
+                    {/* Tech Decoration Elements (Even Subtler) */}
+                    <div className="absolute top-4 left-4 text-[9px] text-[#33C3F0]/15 font-mono z-0">01</div>
+                    <div className="absolute bottom-4 right-4 text-[9px] text-[#33C3F0]/15 font-mono z-0">02</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

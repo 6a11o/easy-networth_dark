@@ -123,6 +123,10 @@ export default {
         "pulse": {
           "0%, 100%": { opacity: "0.1" },
           "50%": { opacity: "0.3" }
+        },
+        "pulse-slow": {
+          "0%, 100%": { opacity: "0.6" },
+          "50%": { opacity: "1" }
         }
       },
       animation: {
@@ -135,7 +139,8 @@ export default {
         "shimmer": "shimmer 2s infinite linear",
         "float": "float 15s ease-in-out infinite",
         "sweep": "sweep 8s ease-in-out infinite",
-        "pulse": "pulse 4s ease-in-out infinite"
+        "pulse": "pulse 4s ease-in-out infinite",
+        "pulse-slow": "pulse-slow 3s ease-in-out infinite"
       },
     },
   },
