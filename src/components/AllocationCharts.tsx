@@ -4,6 +4,7 @@ import { useFinancial } from "@/context/FinancialContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import { assetCategoryColors, liabilityCategoryColors, assetCategoryLabels, liabilityCategoryLabels } from "@/types";
 import { useState } from "react";
+import { convertCurrency } from '@/utils/currencyUtils';
 
 interface AllocationChartsProps {
   displayType?: 'assets' | 'liabilities' | 'both';
@@ -13,27 +14,31 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
   const { assets, liabilities } = useFinancial();
   const { formatAmount, currency } = useCurrency();
   
-  // Group assets by category
+  // Group assets by category with currency conversion
   const assetsByCategory = assets.reduce((acc, asset) => {
     const category = asset.category;
     if (!acc[category]) {
       acc[category] = 0;
     }
-    acc[category] += asset.balance;
+    // Convert to main currency before adding
+    const convertedBalance = convertCurrency(asset.balance, asset.currency, currency.code);
+    acc[category] += convertedBalance;
     return acc;
   }, {} as Record<string, number>);
   
-  // Group liabilities by category
+  // Group liabilities by category with currency conversion
   const liabilitiesByCategory = liabilities.reduce((acc, liability) => {
     const category = liability.category;
     if (!acc[category]) {
       acc[category] = 0;
     }
-    acc[category] += liability.balance;
+    // Convert to main currency before adding
+    const convertedBalance = convertCurrency(liability.balance, liability.currency, currency.code);
+    acc[category] += convertedBalance;
     return acc;
   }, {} as Record<string, number>);
   
-  // Get total values
+  // Get total values (already in main currency)
   const totalAssets = Object.values(assetsByCategory).reduce((sum, value) => sum + value, 0);
   const totalLiabilities = Object.values(liabilitiesByCategory).reduce((sum, value) => sum + value, 0);
   

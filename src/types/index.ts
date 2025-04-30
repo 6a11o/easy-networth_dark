@@ -13,6 +13,7 @@ export type FinancialAccount = {
   id: string;
   name: string;
   balance: number;
+  currency: string; // Currency code (e.g., 'USD', 'EUR')
   createdAt: string;
 };
 

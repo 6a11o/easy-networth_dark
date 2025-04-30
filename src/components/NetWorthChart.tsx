@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useFinancial } from "@/context/FinancialContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
 import { TimePeriod } from "@/types";
@@ -18,12 +18,12 @@ export const NetWorthChart = () => {
   const { getHistoricalNetWorth, getHistoricalDates } = useFinancial();
   const { currency, formatAmount } = useCurrency();
   
-  // Get net worth history
-  const dates = getHistoricalDates();
-  const netWorthHistory = getHistoricalNetWorth();
+  // Memoize the historical data
+  const netWorthHistory = useMemo(() => getHistoricalNetWorth(), [getHistoricalNetWorth]);
+  const dates = useMemo(() => getHistoricalDates(), [getHistoricalDates]);
   
-  // Filter data based on selected time period
-  const filteredData = () => {
+  // Memoize filtered data based on time period
+  const filteredData = useMemo(() => {
     if (timePeriod === "ALL" || netWorthHistory.length <= 1) {
       return netWorthHistory;
     }
@@ -50,39 +50,21 @@ export const NetWorthChart = () => {
     
     const cutoffDate = startDate.toISOString().split('T')[0];
     return netWorthHistory.filter(item => item.date >= cutoffDate);
-  };
+  }, [timePeriod, netWorthHistory]);
   
-  // Format chart data
-  const chartData = filteredData().map(item => ({
+  // Memoize chart data formatting
+  const chartData = useMemo(() => filteredData.map(item => ({
     date: new Date(item.date).toLocaleDateString(undefined, {
       month: 'short', 
       day: 'numeric',
       year: timePeriod === '1Y' || timePeriod === 'ALL' ? 'numeric' : undefined
     }),
-    netWorth: item.netWorth
-  }));
+    netWorth: item.netWorth,
+    rawDate: item.date // Keep original date for tooltip
+  })), [filteredData, timePeriod]);
   
-  // Time period options
-  const periods: TimePeriod[] = ["1M", "3M", "6M", "1Y", "ALL"];
-  
-  // Format axis value
-  const formatValue = (value: number) => {
-    return formatAmount(value);
-  };
-  
-  const getTimeRangeLabel = (period: TimePeriod) => {
-    switch(period) {
-      case "1M": return "Last Month";
-      case "3M": return "Last 3 Months";
-      case "6M": return "Last 6 Months";
-      case "1Y": return "Last Year";
-      case "ALL": return "All Time";
-      default: return "Select Period";
-    }
-  };
-  
-  // Get the net worth change percentage
-  const getNetWorthChange = () => {
+  // Memoize net worth change calculation
+  const netWorthChange = useMemo(() => {
     if (chartData.length < 2) return { value: 0, percentage: 0 };
     
     const firstValue = chartData[0].netWorth;
@@ -91,13 +73,52 @@ export const NetWorthChart = () => {
     const percentage = firstValue !== 0 ? (change / Math.abs(firstValue)) * 100 : 0;
     
     return { value: change, percentage };
-  };
+  }, [chartData]);
   
-  const netWorthChange = getNetWorthChange();
+  // Memoize time period label
+  const getTimeRangeLabel = useCallback((period: TimePeriod) => {
+    switch(period) {
+      case "1M": return "Last Month";
+      case "3M": return "Last 3 Months";
+      case "6M": return "Last 6 Months";
+      case "1Y": return "Last Year";
+      case "ALL": return "All Time";
+      default: return "Select Period";
+    }
+  }, []);
   
   // Determine trend color and gradient
-  const trendColor = netWorthChange.value >= 0 ? '#4ade80' : '#f87171'; // green-400 or red-400
+  const trendColor = netWorthChange.value >= 0 ? '#4ade80' : '#f87171';
   const gradientId = netWorthChange.value >= 0 ? 'positiveGradient' : 'negativeGradient';
+
+  // Custom tooltip component
+  const CustomTooltip = useCallback(({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      const date = new Date(data.rawDate);
+      const formattedDate = date.toLocaleDateString(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      return (
+        <div className="bg-gray-950/90 backdrop-blur-lg border border-[#33C3F0]/20 text-gray-100 shadow-xl rounded-lg p-2 sm:p-3">
+          <p className="text-xs sm:text-sm text-gray-300 mb-0.5 sm:mb-1">{formattedDate}</p>
+          <p className="text-sm sm:text-base font-medium">
+            {formatAmount(payload[0].value as number)}
+          </p>
+          {chartData.length > 1 && (
+            <div className="mt-1 text-xs text-gray-400">
+              {netWorthChange.value >= 0 ? '↑' : '↓'} {Math.abs(netWorthChange.percentage).toFixed(1)}% from start
+            </div>
+          )}
+        </div>
+      );
+    }
+    return null;
+  }, [formatAmount, chartData.length, netWorthChange]);
 
   return (
     <div className="space-y-3 sm:space-y-4">
@@ -131,16 +152,16 @@ export const NetWorthChart = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-48 sm:w-56 bg-[#1A1F2C] border-[#33C3F0]/20">
-            {periods.map((period) => (
+            {["1M", "3M", "6M", "1Y", "ALL"].map((period) => (
               <DropdownMenuItem 
                 key={period}
-                onClick={() => setTimePeriod(period)}
+                onClick={() => setTimePeriod(period as TimePeriod)}
                 className={cn(
                   "cursor-pointer hover:bg-[#272D3D] focus:bg-[#272D3D] text-xs sm:text-sm py-1.5 sm:py-2",
                   timePeriod === period && "bg-[#33C3F0]/20 text-[#33C3F0]"
                 )}
               >
-                {getTimeRangeLabel(period)}
+                {getTimeRangeLabel(period as TimePeriod)}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -174,25 +195,13 @@ export const NetWorthChart = () => {
                   axisLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
                   tickLine={{ stroke: 'rgba(255, 255, 255, 0.4)' }}
                   tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}
-                  tickFormatter={formatValue}
+                  tickFormatter={formatAmount}
                   domain={['auto', 'auto']}
                   width={80}
                 />
                 <Tooltip
                   cursor={{ stroke: trendColor, strokeWidth: 1.5, strokeDasharray: '4 4' }}
-                  content={({ active, payload, label }) => {
-                    if (active && payload && payload.length) {
-                      return (
-                        <div className="bg-gray-950/90 backdrop-blur-lg border border-[#33C3F0]/20 text-gray-100 shadow-xl rounded-lg p-2 sm:p-3">
-                          <p className="text-xs sm:text-sm text-gray-300 mb-0.5 sm:mb-1">Date: {label}</p>
-                          <p className="text-sm sm:text-base font-medium">
-                            {formatAmount(payload[0].value as number)}
-                          </p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
+                  content={CustomTooltip}
                 />
                 <Area
                   type="monotone"

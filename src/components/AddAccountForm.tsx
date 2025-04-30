@@ -17,7 +17,7 @@ import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState, useEffect } from "react";
-import { useCurrency } from "@/context/CurrencyContext";
+import { useCurrency, availableCurrencies } from "@/context/CurrencyContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Import the actual enums for Zod validation
@@ -31,15 +31,16 @@ const liabilityCategoryValues = Object.keys(liabilityCategoryLabels) as [Liabili
 const assetSchema = z.object({
   name: z.string().trim().min(1, { message: "Name is required" }),
   balance: z.preprocess(
-    (val) => (val === undefined || val === null || val === '') ? NaN : parseFloat(String(val)), // Convert empty/null to NaN for initial check
+    (val) => (val === undefined || val === null || val === '') ? NaN : parseFloat(String(val)),
     z.number({ required_error: "Balance is required", invalid_type_error: "Balance must be a valid number" })
-     .positive({ message: "Balance must be zero or positive" }) // Allow 0 balance
-     .or(z.literal(0)) // Explicitly allow 0
-     .refine(val => !isNaN(val), { message: "Balance must be a valid number" }) // Ensure it's not NaN after parsing
+     .positive({ message: "Balance must be zero or positive" })
+     .or(z.literal(0))
+     .refine(val => !isNaN(val), { message: "Balance must be a valid number" })
   ),
-  category: z.enum(assetCategoryValues, { // Use z.enum with the extracted keys
+  category: z.enum(assetCategoryValues, {
     errorMap: () => ({ message: "Please select a valid category" }),
   }),
+  currency: z.string().min(1, { message: "Currency is required" }),
 });
 
 type AssetFormData = z.infer<typeof assetSchema>;
@@ -49,13 +50,14 @@ const liabilitySchema = z.object({
   balance: z.preprocess(
     (val) => (val === undefined || val === null || val === '') ? NaN : parseFloat(String(val)),
     z.number({ required_error: "Balance is required", invalid_type_error: "Balance must be a valid number" })
-     .positive({ message: "Balance must be zero or positive" }) // Allow 0 balance
-     .or(z.literal(0)) // Explicitly allow 0
+     .positive({ message: "Balance must be zero or positive" })
+     .or(z.literal(0))
      .refine(val => !isNaN(val), { message: "Balance must be a valid number" })
   ),
-  category: z.enum(liabilityCategoryValues, { // Use z.enum with the extracted keys
+  category: z.enum(liabilityCategoryValues, {
     errorMap: () => ({ message: "Please select a valid category" }),
   }),
+  currency: z.string().min(1, { message: "Currency is required" }),
 });
 
 type LiabilityFormData = z.infer<typeof liabilitySchema>;
@@ -63,7 +65,7 @@ type LiabilityFormData = z.infer<typeof liabilitySchema>;
 export const AddAccountForm = () => {
   const [activeTab, setActiveTab] = useState("asset");
   const { addAsset, addLiability, isPremium, setIsPremium, assets, liabilities } = useFinancial();
-  const { formatAmount } = useCurrency();
+  const { formatAmount, currency: mainCurrency } = useCurrency();
   
   // Track recently added accounts during the current session
   const [recentAssets, setRecentAssets] = useState<Asset[]>([]);
@@ -95,9 +97,9 @@ export const AddAccountForm = () => {
     resolver: zodResolver(assetSchema),
     defaultValues: {
       name: "",
-      // RHF requires 'undefined' for empty controlled number inputs if type="number"
       balance: undefined,
-      category: assetCategoryValues[0], // Default to the first category
+      category: assetCategoryValues[0],
+      currency: mainCurrency.code,
     },
   });
 
@@ -113,28 +115,16 @@ export const AddAccountForm = () => {
     defaultValues: {
       name: "",
       balance: undefined,
-      category: liabilityCategoryValues[0], // Default to the first category
+      category: liabilityCategoryValues[0],
+      currency: mainCurrency.code,
     },
   });
 
   // Handle asset form submission
   const onAssetSubmit: SubmitHandler<AssetFormData> = async (data) => {
     try {
-      // Zod ensures balance is a valid number here
-      addAsset(data.name, data.balance, data.category);
+      await addAsset(data.name, data.balance, data.category, data.currency);
       resetAssetForm();
-      
-      // Add to recent assets list (prepend to show newest at top)
-      const newAsset: Asset = {
-        id: Date.now().toString(), // Temporary ID will be updated when re-fetched from context
-        name: data.name,
-        balance: data.balance,
-        category: data.category,
-        createdAt: new Date().toISOString()
-      };
-      
-      // Keep only latest 5 assets
-      setRecentAssets(prev => [newAsset, ...prev].slice(0, 5));
       
       toast.success(`Asset "${data.name}" added successfully`);
     } catch (error) {
@@ -156,20 +146,8 @@ export const AddAccountForm = () => {
   // Handle liability form submission
   const onLiabilitySubmit: SubmitHandler<LiabilityFormData> = async (data) => {
     try {
-      addLiability(data.name, data.balance, data.category);
+      await addLiability(data.name, data.balance, data.category, data.currency);
       resetLiabilityForm();
-      
-      // Add to recent liabilities list (prepend to show newest at top)
-      const newLiability: Liability = {
-        id: Date.now().toString(), // Temporary ID will be updated when re-fetched from context
-        name: data.name,
-        balance: data.balance,
-        category: data.category,
-        createdAt: new Date().toISOString()
-      };
-      
-      // Keep only latest 5 liabilities
-      setRecentLiabilities(prev => [newLiability, ...prev].slice(0, 5));
       
       toast.success(`Liability "${data.name}" added successfully`);
     } catch (error) {
@@ -258,19 +236,19 @@ export const AddAccountForm = () => {
               {/* Form column - takes up 3/5 of space on medium screens and up */}
               <div className="md:col-span-3 space-y-4">
                 <form onSubmit={handleAssetSubmit(onAssetSubmit)} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <Label htmlFor="asset-name" className="text-sm font-medium text-gray-300">Name</Label>
-                      <Input
-                        id="asset-name"
-                        {...registerAsset("name")}
-                        placeholder="e.g., Main Checking Account"
-                        className={inputStyles}
-                        aria-invalid={assetErrors.name ? "true" : "false"}
-                      />
-                      {assetErrors.name && <p role="alert" className="text-xs text-red-400">{assetErrors.name.message}</p>}
-                    </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="asset-name" className="text-sm font-medium text-gray-300">Name</Label>
+                    <Input
+                      id="asset-name"
+                      {...registerAsset("name")}
+                      placeholder="e.g., Main Checking Account"
+                      className={inputStyles}
+                      aria-invalid={assetErrors.name ? "true" : "false"}
+                    />
+                    {assetErrors.name && <p role="alert" className="text-xs text-red-400">{assetErrors.name.message}</p>}
+                  </div>
 
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <Label htmlFor="asset-balance" className="text-sm font-medium text-gray-300">Current Balance</Label>
                       <Input
@@ -283,6 +261,36 @@ export const AddAccountForm = () => {
                         aria-invalid={assetErrors.balance ? "true" : "false"}
                       />
                       {assetErrors.balance && <p role="alert" className="text-xs text-red-400">{assetErrors.balance.message}</p>}
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label htmlFor="asset-currency" className="text-sm font-medium text-gray-300">Currency</Label>
+                      <Controller
+                        control={assetControl}
+                        name="currency"
+                        render={({ field }) => (
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
+                            <SelectTrigger
+                              id="asset-currency"
+                              className={selectTriggerStyles}
+                              aria-invalid={assetErrors.currency ? "true" : "false"}
+                            >
+                              <SelectValue placeholder="Select currency" />
+                            </SelectTrigger>
+                            <SelectContent className={selectContentStyles}>
+                              {availableCurrencies.map((currency) => (
+                                <SelectItem key={currency.code} value={currency.code} className={selectItemStyles}>
+                                  {currency.name} ({currency.symbol})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                      {assetErrors.currency && <p role="alert" className="text-xs text-red-400">{assetErrors.currency.message}</p>}
                     </div>
                   </div>
 
@@ -370,19 +378,19 @@ export const AddAccountForm = () => {
               {/* Form column */}
               <div className="md:col-span-3 space-y-4">
                 <form onSubmit={handleLiabilitySubmit(onLiabilitySubmit)} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <Label htmlFor="liability-name" className="text-sm font-medium text-gray-300">Name</Label>
-                      <Input
-                        id="liability-name"
-                        {...registerLiability("name")}
-                        placeholder="e.g., Visa Credit Card"
-                        className={inputStyles}
-                        aria-invalid={liabilityErrors.name ? "true" : "false"}
-                      />
-                      {liabilityErrors.name && <p role="alert" className="text-xs text-red-400">{liabilityErrors.name.message}</p>}
-                    </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="liability-name" className="text-sm font-medium text-gray-300">Name</Label>
+                    <Input
+                      id="liability-name"
+                      {...registerLiability("name")}
+                      placeholder="e.g., Visa Credit Card"
+                      className={inputStyles}
+                      aria-invalid={liabilityErrors.name ? "true" : "false"}
+                    />
+                    {liabilityErrors.name && <p role="alert" className="text-xs text-red-400">{liabilityErrors.name.message}</p>}
+                  </div>
 
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <Label htmlFor="liability-balance" className="text-sm font-medium text-gray-300">Current Balance</Label>
                       <Input
@@ -395,6 +403,36 @@ export const AddAccountForm = () => {
                         aria-invalid={liabilityErrors.balance ? "true" : "false"}
                       />
                       {liabilityErrors.balance && <p role="alert" className="text-xs text-red-400">{liabilityErrors.balance.message}</p>}
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label htmlFor="liability-currency" className="text-sm font-medium text-gray-300">Currency</Label>
+                      <Controller
+                        control={liabilityControl}
+                        name="currency"
+                        render={({ field }) => (
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
+                            <SelectTrigger
+                              id="liability-currency"
+                              className={selectTriggerStyles}
+                              aria-invalid={liabilityErrors.currency ? "true" : "false"}
+                            >
+                              <SelectValue placeholder="Select currency" />
+                            </SelectTrigger>
+                            <SelectContent className={selectContentStyles}>
+                              {availableCurrencies.map((currency) => (
+                                <SelectItem key={currency.code} value={currency.code} className={selectItemStyles}>
+                                  {currency.name} ({currency.symbol})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                      {liabilityErrors.currency && <p role="alert" className="text-xs text-red-400">{liabilityErrors.currency.message}</p>}
                     </div>
                   </div>
 

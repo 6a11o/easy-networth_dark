@@ -52,7 +52,7 @@ export const TopBar = () => {
       <div className="flex h-14 sm:h-16 items-center justify-between px-2 sm:px-4 md:px-8 max-w-7xl mx-auto">
         {/* Logo - updated with better styling */}
         <div className="flex items-center">
-          <Link to="/dashboard" className="flex items-center group">
+          <Link to="/" className="flex items-center group">
             <img src="/logo.svg" alt="Logo" className="h-5 w-5 sm:h-6 sm:w-6" />
             <h1 className="ml-2 sm:ml-3 text-sm sm:text-base font-semibold text-white">
               EASY NET WORTH

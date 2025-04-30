@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 // Define available currencies
@@ -12,6 +11,7 @@ export const availableCurrencies = [
   { code: "CNY", symbol: "¥", name: "Chinese Yuan" },
   { code: "INR", symbol: "₹", name: "Indian Rupee" },
   { code: "BRL", symbol: "R$", name: "Brazilian Real" },
+  { code: "AED", symbol: "د.إ", name: "UAE Dirham" },
 ];
 
 interface Currency {
