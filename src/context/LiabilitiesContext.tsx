@@ -4,6 +4,8 @@ import { Liability, LiabilityCategory } from '../types';
 import { PremiumFeatureError, ValidationError } from '../utils/errors';
 import { getTodayString } from '../utils/dateUtils';
 import { useBalanceHistory } from './BalanceHistoryContext';
+import { useCurrency } from './CurrencyContext';
+import { convertCurrency } from '../utils/currencyUtils';
 
 type LiabilitiesContextType = {
   liabilities: Liability[];
@@ -18,6 +20,7 @@ const LiabilitiesContext = createContext<LiabilitiesContextType | undefined>(und
 export const LiabilitiesProvider = ({ children }: { children: ReactNode }) => {
   const [liabilities, setLiabilities] = useState<Liability[]>([]);
   const { addBalanceEntry, removeAccountHistory } = useBalanceHistory();
+  const { currency: mainCurrency } = useCurrency();
   
   // Load liabilities from localStorage
   useEffect(() => {
@@ -52,6 +55,7 @@ export const LiabilitiesProvider = ({ children }: { children: ReactNode }) => {
       name: name.trim(),
       balance,
       category,
+      currency: mainCurrency.code,
       createdAt: new Date().toISOString()
     };
     
@@ -86,7 +90,10 @@ export const LiabilitiesProvider = ({ children }: { children: ReactNode }) => {
   };
   
   const getTotalLiabilities = () => {
-    return liabilities.reduce((sum, liability) => sum + liability.balance, 0);
+    return liabilities.reduce((sum, liability) => {
+      const convertedAmount = convertCurrency(liability.balance, liability.currency || mainCurrency.code, mainCurrency.code);
+      return sum + convertedAmount;
+    }, 0);
   };
   
   const value = {

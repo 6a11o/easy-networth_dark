@@ -93,7 +93,7 @@ export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProp
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl mx-auto w-[calc(100%-2rem)] sm:w-auto">
+      <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-md w-full">
         <DialogHeader>
           <DialogTitle>Update Balances</DialogTitle>
           <DialogDescription>

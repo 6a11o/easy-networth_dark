@@ -1,4 +1,4 @@
-import { Edit, Trash, LockIcon, Banknote, LineChart, Bitcoin, Home, PiggyBank, Briefcase, CreditCard, Landmark, Coins } from "lucide-react";
+import { Edit, Trash, LockIcon, Banknote, LineChart, Bitcoin, Home, PiggyBank, Briefcase, CreditCard, Landmark, Coins, SmilePlus } from "lucide-react";
 import { useFinancial } from "@/context/FinancialContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -223,12 +223,13 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
     const categoryLabels = isAsset ? assetCategoryLabels : liabilityCategoryLabels;
     const allAccounts = isAsset ? assets : liabilities;
     
-    // Always calculate the current accounts in category and their total
+    // Convert all balances to main currency before calculating percentages
+    const convertedBalance = convertCurrency(item.balance, item.currency, mainCurrency.code);
     const accountsInCategory = allAccounts.filter(acc => acc.category === item.category);
-    const totalInCategory = accountsInCategory.reduce((sum, acc) => sum + acc.balance, 0);
-    const percentOfCategory = totalInCategory > 0 ? (item.balance / totalInCategory) * 100 : 100;
+    const totalInCategory = accountsInCategory.reduce((sum, acc) => 
+      sum + convertCurrency(acc.balance, acc.currency, mainCurrency.code), 0);
+    const percentOfCategory = totalInCategory > 0 ? (convertedBalance / totalInCategory) * 100 : 100;
     
-    const convertedAmount = convertCurrency(item.balance, item.currency, mainCurrency.code);
     const color = getCategoryColor(item.category, isAsset);
     const icon = getCategoryIcon(item.category);
 
@@ -260,7 +261,7 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-sm font-bold text-white">{formatAmountWithCurrency(item.balance, item.currency)}</span>
               {item.currency !== mainCurrency.code && (
-                <span className="text-xs text-gray-400">{formatAmount(convertedAmount)} in {mainCurrency.code}</span>
+                <span className="text-xs text-gray-400">{formatAmount(convertedBalance)} in {mainCurrency.code}</span>
               )}
             </div>
           </div>
@@ -338,14 +339,26 @@ export const AccountsList = ({ type = "assets" }: AccountsListProps) => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-[#7A7F92] bg-[#1A1F2C]/40 rounded-lg border border-[#1A1F2C]/90 shadow-inner px-4 text-center">
-            <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-[#1A1F2C]/80 flex items-center justify-center mb-3 sm:mb-4 border border-[#33C3F0]/10">
-              <span className="text-2xl sm:text-3xl opacity-20">{isAssetType ? '+' : '−'}</span>
-            </div>
-            <p className="text-base sm:text-lg mb-0.5 sm:mb-1">No {isAssetType ? 'assets' : 'liabilities'} added yet.</p>
-            <p className="text-xs sm:text-sm mb-3 sm:mb-4">Add {isAssetType ? 'assets' : 'liabilities'} to track your net worth.</p>
-            <Button variant="outline" size="sm" className="border-[#33C3F0]/20 hover:bg-[#33C3F0]/10 text-[#33C3F0] text-sm">
-              Add {isAssetType ? 'Asset' : 'Liability'}
-            </Button>
+            {isAssetType ? (
+              <>
+                <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-[#1A1F2C]/80 flex items-center justify-center mb-3 sm:mb-4 border border-[#33C3F0]/10">
+                  <span className="text-2xl sm:text-3xl opacity-20">+</span>
+                </div>
+                <p className="text-base sm:text-lg mb-0.5 sm:mb-1">No assets added yet.</p>
+                <p className="text-xs sm:text-sm mb-3 sm:mb-4">Add assets to track your net worth.</p>
+                <Button variant="outline" size="sm" className="border-[#33C3F0]/20 hover:bg-[#33C3F0]/10 text-[#33C3F0] text-sm">
+                  Add Asset
+                </Button>
+              </>
+            ) : (
+              <>
+                <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-[#1A1F2C]/80 flex items-center justify-center mb-3 sm:mb-4 border border-green-400/10">
+                  <SmilePlus className="w-6 h-6 sm:w-8 sm:h-8 text-green-400/80" />
+                </div>
+                <p className="text-base sm:text-lg mb-0.5 sm:mb-1 text-green-400">Debt-free and in control. You're winning!</p>
+                <p className="text-xs sm:text-sm mb-3 sm:mb-4">Keep up the great work with your financial journey.</p>
+              </>
+            )}
           </div>
         )}
       </div>

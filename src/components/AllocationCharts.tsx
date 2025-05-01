@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useFinancial } from "@/context/FinancialContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import { assetCategoryColors, liabilityCategoryColors, assetCategoryLabels, liabilityCategoryLabels } from "@/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { convertCurrency } from '@/utils/currencyUtils';
 
 interface AllocationChartsProps {
@@ -145,7 +145,7 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
           strokeWidth={strokeWidth}
           strokeDasharray={strokeDasharray}
           strokeDashoffset={strokeDashoffset}
-          style={{ transform: "rotate(-90deg)", transformOrigin: "50% 50%" }}
+          style={{ transform: "rotate(-90deg)", transformOrigin: "50% 50%", transition: "all 0.3s ease-in-out" }}
         >
           <title>{`${entry.name}: ${formatAmount(entry.value)} (${entry.percent.toFixed(1)}%)`}</title> 
         </circle>
@@ -178,7 +178,7 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
               <div className="flex items-center mr-2 flex-1 min-w-0">
                 <div className="w-3 h-3 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: entry.color }}></div>
                 <span className="text-sm mr-1 truncate">{entry.name}</span> 
-                <span className="text-xs text-muted-foreground whitespace-nowrap">({entry.percent.toFixed(0)}%)</span>
+                <span className="text-xs text-muted-foreground whitespace-nowrap">({entry.percent.toFixed(1)}%)</span>
               </div>
               <span className="text-sm font-medium text-right ml-2 whitespace-nowrap">{formatAmount(entry.value)}</span>
             </div>
@@ -203,7 +203,7 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
               <div className="flex items-center mr-2 flex-1 min-w-0">
                 <div className="w-3 h-3 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: entry.color }}></div>
                 <span className="text-sm mr-1 truncate">{entry.name}</span> 
-                <span className="text-xs text-muted-foreground whitespace-nowrap">({entry.percent.toFixed(0)}%)</span>
+                <span className="text-xs text-muted-foreground whitespace-nowrap">({entry.percent.toFixed(1)}%)</span>
               </div>
               <span className="text-sm font-medium text-right ml-2 whitespace-nowrap">{formatAmount(entry.value)}</span>
             </div>
@@ -216,13 +216,8 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
   // Render function for Assets Chart - Removed Card wrapper and Header
   const renderAssetsChartContent = () => (
     <>
-      {/* <CardHeader className="pt-4 pb-2 px-0"> REMOVED THIS HEADER
-        <CardTitle className="text-lg font-medium">Asset Allocation</CardTitle>
-      </CardHeader> */}
-      {/* Use items-start for top alignment and justify-center for horizontal centering */}
       <CardContent className="p-0 pt-2 flex flex-col sm:flex-row items-start justify-center"> 
-         {/* Container for chart and labels */}
-        <div className="flex flex-col sm:flex-row items-start w-full justify-center sm:justify-between lg:justify-start"> 
+         <div className="flex flex-col sm:flex-row items-start w-full justify-center sm:justify-between lg:justify-start"> 
            <div className="flex justify-center sm:justify-start w-full sm:w-auto">
              {renderDonutSVG(assetChartData)}
            </div>
@@ -235,12 +230,7 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
   // Render function for Liabilities Card - Removed Card wrapper and Header
   const renderLiabilitiesChartContent = () => (
     <>
-      {/* <CardHeader className="pt-4 pb-2 px-0"> REMOVED THIS HEADER
-        <CardTitle className="text-lg font-medium">Liability Allocation</CardTitle>
-      </CardHeader> */}
-      {/* Use items-start for top alignment and justify-center for horizontal centering */}
-       <CardContent className="p-0 pt-2 flex flex-col sm:flex-row items-start justify-center"> 
-         {/* Container for chart and labels */}
+      <CardContent className="p-0 pt-2 flex flex-col sm:flex-row items-start justify-center"> 
          <div className="flex flex-col sm:flex-row items-start w-full justify-center sm:justify-between lg:justify-start"> 
            <div className="flex justify-center sm:justify-start w-full sm:w-auto">
              {renderDonutSVG(liabilityChartData)}
@@ -254,7 +244,7 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
   // Main component render logic
   if (displayType === 'assets') {
     return (
-      <Card className="bg-transparent border-none shadow-none"> {/* Use transparent card if only one type */}
+      <Card className="bg-transparent border-none shadow-none"> 
         {renderAssetsChartContent()}
       </Card>
     );
@@ -262,7 +252,7 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
 
   if (displayType === 'liabilities') {
     return (
-      <Card className="bg-transparent border-none shadow-none"> {/* Use transparent card if only one type */}
+      <Card className="bg-transparent border-none shadow-none"> 
         {renderLiabilitiesChartContent()}
       </Card>
     );
@@ -270,11 +260,11 @@ export const AllocationCharts = ({ displayType = 'both' }: AllocationChartsProps
 
   // Default: displayType === 'both' - Render side-by-side in a grid
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6"> {/* Use grid for side-by-side */}
-      <div> {/* Column for Assets */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6"> 
+      <div> 
         {renderAssetsChartContent()}
       </div>
-      <div> {/* Column for Liabilities */}
+      <div> 
         {renderLiabilitiesChartContent()}
       </div>
     </div>

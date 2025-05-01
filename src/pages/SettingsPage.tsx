@@ -4,13 +4,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
 import { useFinancial } from "@/context/FinancialContext";
+import { useCurrency, availableCurrencies } from "@/context/CurrencyContext";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Download } from "lucide-react";
+import { Download, ChevronDown } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const SettingsPage = () => {
   const { user } = useAuth();
   const { isPremium, setIsPremium, getHistoricalNetWorth } = useFinancial();
+  const { currency, setCurrency } = useCurrency();
   
   const [email, setEmail] = useState(user?.email || "");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -94,151 +103,248 @@ const SettingsPage = () => {
     toast.success("Premium subscription cancelled");
   };
   
+  const handleCurrencyChange = (currencyCode: string) => {
+    const selectedCurrency = availableCurrencies.find(curr => curr.code === currencyCode);
+    if (selectedCurrency) {
+      setCurrency(selectedCurrency);
+      toast.success("Currency updated successfully");
+    }
+  };
+  
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
+    <div className="container max-w-3xl mx-auto py-8 px-4">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
       </div>
       
-      <div className="grid gap-6">
-        {/* Profile Settings */}
-        <Card className="bg-card/50 backdrop-blur-sm border-white/10">
-          <CardHeader>
-            <CardTitle>Profile Settings</CardTitle>
-            <CardDescription>
-              Update your account information
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleUpdateProfile} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              
-              <Button type="submit">Save Changes</Button>
-            </form>
-          </CardContent>
-        </Card>
-        
-        {/* Data Export */}
-        <Card className="bg-card/50 backdrop-blur-sm border-white/10">
-          <CardHeader>
-            <CardTitle>Data Export</CardTitle>
-            <CardDescription>
-              Export your financial history data
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Download your historical net worth data as a CSV file for backup or analysis in other tools.
-              </p>
-              <Button
-                onClick={exportToCsv}
-                className="w-full flex items-center justify-center gap-2"
-                disabled={!getHistoricalNetWorth() || getHistoricalNetWorth().length === 0}
-              >
-                <Download className="h-4 w-4" />
-                Export History
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Change Password */}
-        <Card className="bg-card/50 backdrop-blur-sm border-white/10">
-          <CardHeader>
-            <CardTitle>Change Password</CardTitle>
-            <CardDescription>
-              Update your password
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleChangePassword} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="current-password">Current Password</Label>
-                <Input
-                  id="current-password"
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="new-password">New Password</Label>
-                <Input
-                  id="new-password"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm New Password</Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
-              
-              <Button type="submit">Change Password</Button>
-            </form>
-          </CardContent>
-        </Card>
-        
-        {/* Subscription */}
-        <Card className="bg-card/50 backdrop-blur-sm border-white/10">
-          <CardHeader>
-            <CardTitle>Subscription</CardTitle>
-            <CardDescription>
-              Manage your subscription
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="bg-secondary/30 p-4 rounded-md">
-                <div className="flex justify-between items-center">
+      <Accordion type="single" collapsible className="space-y-4">
+        {/* Currency Settings */}
+        <AccordionItem value="currency" className="border-none">
+          <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+            <AccordionTrigger className="w-full">
+              <CardHeader className="w-full">
+                <div className="flex items-center justify-between w-full">
                   <div>
-                    <h3 className="font-medium">
-                      {isPremium ? "Pro Plan" : "Free Trial"}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isPremium
-                        ? "Unlimited accounts and historical data tracking"
-                        : "Limited to 3 asset accounts, 2 liability accounts, and 3 historical data points"}
-                    </p>
+                    <CardTitle>Currency Settings</CardTitle>
+                    <CardDescription>
+                      Change your preferred currency
+                    </CardDescription>
                   </div>
-                  <div>
-                    <span className={isPremium ? "text-primary" : "text-muted-foreground"}>
-                      {isPremium ? "$19.99 (one-time)" : "Free"}
-                    </span>
-                  </div>
+                  <ChevronDown className="h-4 w-4" />
                 </div>
-              </div>
-              
-              {isPremium ? (
-                <Button variant="outline" onClick={handleCancelPremium} className="w-full">
-                  Cancel Pro Subscription
-                </Button>
-              ) : (
-                <Button onClick={handleUpgradeToPremium} className="w-full">
-                  Upgrade to Pro
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </CardHeader>
+            </AccordionTrigger>
+            <AccordionContent>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-3 bg-[#33C3F0]/10 rounded-md text-sm text-gray-300">
+                    <p>This is the main currency that will be used to display all your financial information.</p>
+                  </div>
+                  <RadioGroup 
+                    value={currency.code} 
+                    onValueChange={handleCurrencyChange}
+                    className="space-y-3"
+                  >
+                    {availableCurrencies.map((curr) => (
+                      <div key={curr.code} className="flex items-center space-x-2 border border-[#1A1F2C]/40 rounded-md p-3 bg-[#0F1119]/60 hover:bg-[#1A1F2C]/40 transition-colors">
+                        <RadioGroupItem value={curr.code} id={`currency-${curr.code}`} />
+                        <Label htmlFor={`currency-${curr.code}`} className="flex flex-1 cursor-pointer">
+                          <div className="flex items-center justify-between w-full">
+                            <div className="font-medium">{curr.name}</div>
+                            <div className="text-[#33C3F0] font-bold">{curr.symbol}</div>
+                          </div>
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </div>
+              </CardContent>
+            </AccordionContent>
+          </Card>
+        </AccordionItem>
+
+        {/* Profile Settings */}
+        <AccordionItem value="profile" className="border-none">
+          <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+            <AccordionTrigger className="w-full">
+              <CardHeader className="w-full">
+                <div className="flex items-center justify-between w-full">
+                  <div>
+                    <CardTitle>Profile Settings</CardTitle>
+                    <CardDescription>
+                      Update your account information
+                    </CardDescription>
+                  </div>
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+              </CardHeader>
+            </AccordionTrigger>
+            <AccordionContent>
+              <CardContent>
+                <form onSubmit={handleUpdateProfile} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <Button type="submit">Save Changes</Button>
+                </form>
+              </CardContent>
+            </AccordionContent>
+          </Card>
+        </AccordionItem>
+
+        {/* Security Settings */}
+        <AccordionItem value="security" className="border-none">
+          <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+            <AccordionTrigger className="w-full">
+              <CardHeader className="w-full">
+                <div className="flex items-center justify-between w-full">
+                  <div>
+                    <CardTitle>Security Settings</CardTitle>
+                    <CardDescription>
+                      Update your password
+                    </CardDescription>
+                  </div>
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+              </CardHeader>
+            </AccordionTrigger>
+            <AccordionContent>
+              <CardContent>
+                <form onSubmit={handleChangePassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="current-password">Current Password</Label>
+                    <Input
+                      id="current-password"
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="new-password">New Password</Label>
+                    <Input
+                      id="new-password"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirm New Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </div>
+                  
+                  <Button type="submit">Change Password</Button>
+                </form>
+              </CardContent>
+            </AccordionContent>
+          </Card>
+        </AccordionItem>
+
+        {/* Data Export */}
+        <AccordionItem value="data" className="border-none">
+          <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+            <AccordionTrigger className="w-full">
+              <CardHeader className="w-full">
+                <div className="flex items-center justify-between w-full">
+                  <div>
+                    <CardTitle>Data Export</CardTitle>
+                    <CardDescription>
+                      Export your financial history
+                    </CardDescription>
+                  </div>
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+              </CardHeader>
+            </AccordionTrigger>
+            <AccordionContent>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Download your historical net worth data as a CSV file for backup or analysis.
+                  </p>
+                  <Button
+                    onClick={exportToCsv}
+                    className="w-full flex items-center justify-center gap-2"
+                    disabled={!getHistoricalNetWorth() || getHistoricalNetWorth().length === 0}
+                  >
+                    <Download className="h-4 w-4" />
+                    Export History
+                  </Button>
+                </div>
+              </CardContent>
+            </AccordionContent>
+          </Card>
+        </AccordionItem>
+
+        {/* Subscription */}
+        <AccordionItem value="subscription" className="border-none">
+          <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+            <AccordionTrigger className="w-full">
+              <CardHeader className="w-full">
+                <div className="flex items-center justify-between w-full">
+                  <div>
+                    <CardTitle>Subscription</CardTitle>
+                    <CardDescription>
+                      Manage your subscription
+                    </CardDescription>
+                  </div>
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+              </CardHeader>
+            </AccordionTrigger>
+            <AccordionContent>
+              <CardContent>
+                <div className="space-y-4">
+                  {isPremium ? (
+                    <>
+                      <div className="p-3 bg-[#33C3F0]/10 rounded-md">
+                        <p className="text-sm text-gray-300">
+                          You are currently on the Premium plan. Enjoy all the premium features!
+                        </p>
+                      </div>
+                      <Button
+                        variant="destructive"
+                        className="w-full"
+                        onClick={handleCancelPremium}
+                      >
+                        Cancel Premium
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="p-3 bg-[#33C3F0]/10 rounded-md">
+                        <p className="text-sm text-gray-300">
+                          Upgrade to Premium to unlock advanced features and detailed analytics.
+                        </p>
+                      </div>
+                      <Button
+                        className="w-full"
+                        onClick={handleUpgradeToPremium}
+                      >
+                        Upgrade to Premium
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </AccordionContent>
+          </Card>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 };

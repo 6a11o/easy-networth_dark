@@ -33,6 +33,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { OnboardingFlow } from '@/components/OnboardingFlow';
 
 // Animation helper component for floating particles
 const FloatingParticle = ({ index }: { index: number }) => {
@@ -66,6 +67,7 @@ const Dashboard = () => {
   const [isMobile, setIsMobile] = useState(false);
   const { getNetWorth, getTotalAssets, getTotalLiabilities, getHistoricalNetWorth } = useFinancial();
   const { formatAmount } = useCurrency();
+  const [showOnboarding, setShowOnboarding] = useState(false);
   
   // Check if we're on mobile
   useEffect(() => {
@@ -126,6 +128,16 @@ const Dashboard = () => {
       document.head.appendChild(style);
     }
   }, []);
+
+  useEffect(() => {
+    if (totalAssets === 0 && totalLiabilities === 0) {
+      setShowOnboarding(true);
+    }
+  }, [getTotalAssets, getTotalLiabilities]);
+
+  if (showOnboarding) {
+    return <OnboardingFlow onComplete={() => setShowOnboarding(false)} />;
+  }
   
   return (
     <div className="flex">

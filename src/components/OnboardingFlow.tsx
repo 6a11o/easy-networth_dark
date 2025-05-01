@@ -6,11 +6,16 @@ import { NetWorthSummary } from "@/components/NetWorthSummary";
 import { useFinancial } from "@/context/FinancialContext";
 import { useCurrency, availableCurrencies } from "@/context/CurrencyContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { PlusCircle, TrendingUp, RefreshCw, CheckCircle, DollarSign } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { PlusCircle, TrendingUp, RefreshCw, CheckCircle, DollarSign, InfoIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export const OnboardingFlow = () => {
+interface OnboardingFlowProps {
+  onComplete: () => void;
+}
+
+export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
@@ -23,6 +28,7 @@ export const OnboardingFlow = () => {
     setIsOpen(false);
     localStorage.setItem('onboardingComplete', 'true');
     navigate('/dashboard');
+    onComplete();
   };
   
   const nextStep = () => {
@@ -40,45 +46,59 @@ export const OnboardingFlow = () => {
     switch (step) {
       case 1:
         return (
-          <>
-            <DialogHeader>
-              <DialogTitle className="text-xl font-bold">Welcome to Easy Net Worth!</DialogTitle>
-              <DialogDescription className="text-base">
-                Let's start by selecting your preferred currency.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-6">
-              <div className="flex items-center justify-center mb-6">
-                <div className="bg-[#33C3F0]/20 p-4 rounded-full">
-                  <DollarSign className="h-12 w-12 text-[#33C3F0]" />
-                </div>
-              </div>
-              <div className="max-h-[300px] overflow-y-auto pr-2 space-y-2">
-                <RadioGroup 
-                  value={currency.code} 
-                  onValueChange={handleCurrencyChange}
-                  className="space-y-3"
-                >
-                  {availableCurrencies.map((curr) => (
-                    <div key={curr.code} className="flex items-center space-x-2 border border-[#1A1F2C]/40 rounded-md p-3 bg-[#0F1119]/60 hover:bg-[#1A1F2C]/40 transition-colors">
-                      <RadioGroupItem value={curr.code} id={curr.code} />
-                      <Label htmlFor={curr.code} className="flex flex-1 cursor-pointer">
-                        <div className="flex items-center justify-between w-full">
-                          <div className="font-medium">{curr.name}</div>
-                          <div className="text-[#33C3F0] font-bold">{curr.symbol}</div>
-                        </div>
-                      </Label>
+          <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+            <CardHeader>
+              <CardTitle className="text-2xl">Welcome to Easy NetWorth!</CardTitle>
+              <CardDescription className="text-base">
+                Let's get started by setting up your preferred currency
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="bg-[#33C3F0]/10 p-4 rounded-lg border border-[#33C3F0]/20">
+                  <div className="flex gap-3">
+                    <InfoIcon className="h-5 w-5 text-[#33C3F0] flex-shrink-0 mt-0.5" />
+                    <div className="space-y-2 text-sm text-gray-300">
+                      <p>This will be the main currency used to display all your financial information across the dashboard.</p>
+                      <p>Don't worry - you can always change this later in your settings if needed.</p>
                     </div>
-                  ))}
-                </RadioGroup>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="currency-select" className="text-sm font-medium">
+                    Select Your Currency
+                  </Label>
+                  <Select
+                    value={currency.code}
+                    onValueChange={handleCurrencyChange}
+                  >
+                    <SelectTrigger id="currency-select" className="w-full">
+                      <SelectValue placeholder="Select a currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableCurrencies.map((curr) => (
+                        <SelectItem 
+                          key={curr.code} 
+                          value={curr.code}
+                          className="flex items-center justify-between"
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <span>{curr.name}</span>
+                            <span className="text-[#33C3F0] font-bold ml-2">{curr.symbol}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button onClick={() => setStep(2)} className="w-full">
+                  Continue
+                </Button>
               </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={nextStep} className="w-full">
-                Continue
-              </Button>
-            </DialogFooter>
-          </>
+            </CardContent>
+          </Card>
         );
       
       case 2:
@@ -91,11 +111,16 @@ export const OnboardingFlow = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">
+              <div className="flex items-center justify-center mb-6">
+                <div className="bg-[#33C3F0]/20 p-4 rounded-full">
+                  <PlusCircle className="h-12 w-12 text-[#33C3F0]" />
+                </div>
+              </div>
               <AddAccountForm />
             </div>
             <DialogFooter className="flex flex-col gap-2">
               <Button
-                onClick={() => setStep(4)}
+                onClick={() => setStep(3)}
                 className="w-full"
                 disabled={!hasAccounts}
               >
@@ -121,8 +146,8 @@ export const OnboardingFlow = () => {
             </DialogHeader>
             <div className="py-6">
               <div className="flex items-center justify-center mb-6">
-                <div className="bg-[#9b87f5]/20 p-4 rounded-full">
-                  <TrendingUp className="h-12 w-12 text-[#9b87f5]" />
+                <div className="bg-[#33C3F0]/20 p-4 rounded-full">
+                  <TrendingUp className="h-12 w-12 text-[#33C3F0]" />
                 </div>
               </div>
               <NetWorthSummary />
@@ -146,13 +171,18 @@ export const OnboardingFlow = () => {
             </DialogHeader>
             <div className="py-6">
               <div className="flex items-center justify-center mb-6">
-                <div className="bg-[#F97316]/20 p-4 rounded-full">
-                  <RefreshCw className="h-12 w-12 text-[#F97316]" />
+                <div className="bg-[#33C3F0]/20 p-4 rounded-full">
+                  <RefreshCw className="h-12 w-12 text-[#33C3F0]" />
                 </div>
               </div>
-              <p className="text-center mb-4">
-                Use the "Update Balances" button on your dashboard to keep your data current.
-              </p>
+              <div className="space-y-4 text-center">
+                <p className="text-sm text-gray-300">
+                  Use the "Update Balances" button on your dashboard to keep your data current.
+                </p>
+                <p className="text-sm text-gray-300">
+                  Regular updates help you track your financial progress and make better decisions.
+                </p>
+              </div>
             </div>
             <DialogFooter>
               <Button onClick={nextStep} className="w-full">
@@ -177,9 +207,14 @@ export const OnboardingFlow = () => {
                   <CheckCircle className="h-12 w-12 text-green-400" />
                 </div>
               </div>
-              <p className="text-center mb-4">
-                Explore your dashboard to see your net worth details, allocation charts, and more.
-              </p>
+              <div className="space-y-4 text-center">
+                <p className="text-sm text-gray-300">
+                  Your dashboard is now set up and ready to help you track your financial journey.
+                </p>
+                <p className="text-sm text-gray-300">
+                  Explore your dashboard to see your net worth details, allocation charts, and more.
+                </p>
+              </div>
             </div>
             <DialogFooter>
               <Button onClick={handleComplete} className="w-full">

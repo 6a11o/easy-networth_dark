@@ -42,110 +42,10 @@ type FinancialContextType = {
 // Create context with default values
 const FinancialContext = createContext<FinancialContextType | undefined>(undefined);
 
-// Sample data for demonstration
-const sampleAssets: Asset[] = [
-  {
-    id: '1',
-    name: 'Checking Account',
-    balance: 5000,
-    category: 'bank',
-    currency: 'USD',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: '2',
-    name: 'Investment Portfolio',
-    balance: 10000,
-    category: 'stocks',
-    currency: 'USD',
-    createdAt: new Date().toISOString()
-  }
-];
-
-const sampleLiabilities: Liability[] = [
-  {
-    id: '1',
-    name: 'Credit Card',
-    balance: 2000,
-    category: 'creditcard',
-    currency: 'USD',
-    createdAt: new Date().toISOString()
-  }
-];
-
-// Sample balance history
-const today = new Date();
-const oneMonthAgo = new Date();
-oneMonthAgo.setMonth(today.getMonth() - 1);
-const twoMonthsAgo = new Date();
-twoMonthsAgo.setMonth(today.getMonth() - 2);
-
-const sampleBalanceHistory: BalanceHistory[] = [
-  // Asset 1 history
-  {
-    id: uuidv4(),
-    accountId: '1',
-    date: twoMonthsAgo.toISOString().split('T')[0],
-    balance: 4000
-  },
-  {
-    id: uuidv4(),
-    accountId: '1',
-    date: oneMonthAgo.toISOString().split('T')[0],
-    balance: 4500
-  },
-  {
-    id: uuidv4(),
-    accountId: '1',
-    date: today.toISOString().split('T')[0],
-    balance: 5000
-  },
-  
-  // Asset 2 history
-  {
-    id: uuidv4(),
-    accountId: '2',
-    date: twoMonthsAgo.toISOString().split('T')[0],
-    balance: 12000
-  },
-  {
-    id: uuidv4(),
-    accountId: '2',
-    date: oneMonthAgo.toISOString().split('T')[0],
-    balance: 13500
-  },
-  {
-    id: uuidv4(),
-    accountId: '2',
-    date: today.toISOString().split('T')[0],
-    balance: 15000
-  },
-  
-  // Liability 1 history
-  {
-    id: uuidv4(),
-    accountId: '1', // Same ID as asset, but we know it's a liability from context
-    date: twoMonthsAgo.toISOString().split('T')[0],
-    balance: 3000
-  },
-  {
-    id: uuidv4(),
-    accountId: '1',
-    date: oneMonthAgo.toISOString().split('T')[0],
-    balance: 2500
-  },
-  {
-    id: uuidv4(),
-    accountId: '1',
-    date: today.toISOString().split('T')[0],
-    balance: 2000
-  }
-];
-
 const FinancialContextProvider = ({ children }: { children: ReactNode }) => {
-  const [assets, setAssets] = useState<Asset[]>(sampleAssets);
-  const [liabilities, setLiabilities] = useState<Liability[]>(sampleLiabilities);
-  const [balanceHistory, setBalanceHistory] = useState<BalanceHistory[]>(sampleBalanceHistory);
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [liabilities, setLiabilities] = useState<Liability[]>([]);
+  const [balanceHistory, setBalanceHistory] = useState<BalanceHistory[]>([]);
   const [isPremium, setIsPremium] = useState(false);
   const { currency: mainCurrency } = useCurrency();
   const { addAsset: addAssetFromAssetsContext, updateAsset, deleteAsset, getTotalAssets } = useAssets();
@@ -166,7 +66,7 @@ const FinancialContextProvider = ({ children }: { children: ReactNode }) => {
   }, [isPremium]);
   
   const getNetWorth = () => {
-    return getTotalAssets() - getTotalLiabilities();
+    return calculateTotalAssets() - calculateTotalLiabilities();
   };
   
   const calculateTotalAssets = () => {

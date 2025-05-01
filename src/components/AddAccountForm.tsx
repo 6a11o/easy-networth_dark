@@ -19,6 +19,7 @@ import { z } from 'zod';
 import { useState, useEffect } from "react";
 import { useCurrency, availableCurrencies } from "@/context/CurrencyContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Trash } from "lucide-react";
 
 // Import the actual enums for Zod validation
 import { AssetCategory as AssetCategoryEnum, LiabilityCategory as LiabilityCategoryEnum } from "@/types";
@@ -64,12 +65,28 @@ type LiabilityFormData = z.infer<typeof liabilitySchema>;
 
 export const AddAccountForm = () => {
   const [activeTab, setActiveTab] = useState("asset");
-  const { addAsset, addLiability, isPremium, setIsPremium, assets, liabilities } = useFinancial();
+  const { addAsset, addLiability, isPremium, setIsPremium, assets, liabilities, deleteAsset, deleteLiability } = useFinancial();
   const { formatAmount, currency: mainCurrency } = useCurrency();
   
   // Track recently added accounts during the current session
   const [recentAssets, setRecentAssets] = useState<Asset[]>([]);
   const [recentLiabilities, setRecentLiabilities] = useState<Liability[]>([]);
+
+  // Handle delete for recently added accounts
+  const handleDelete = (id: string, type: "asset" | "liability") => {
+    try {
+      if (type === "asset") {
+        deleteAsset(id);
+        setRecentAssets(prev => prev.filter(asset => asset.id !== id));
+      } else {
+        deleteLiability(id);
+        setRecentLiabilities(prev => prev.filter(liability => liability.id !== id));
+      }
+      toast.success(`${type === "asset" ? "Asset" : "Liability"} deleted successfully`);
+    } catch (error) {
+      toast.error(`Failed to delete ${type}`);
+    }
+  };
 
   // Initial load of assets and liabilities
   useEffect(() => {
@@ -344,7 +361,7 @@ export const AddAccountForm = () => {
                         {recentAssets.map((asset) => (
                           <div 
                             key={asset.id}
-                            className="flex justify-between items-center p-2 bg-gray-900/70 rounded border border-gray-700/40 hover:bg-gray-800/50 transition-colors"
+                            className="flex justify-between items-center p-2 bg-gray-900/70 rounded border border-gray-700/40 hover:bg-gray-800/50 transition-colors group"
                           >
                             <div className="flex items-center">
                               <div className="w-1.5 h-6 rounded-sm mr-2" style={{ backgroundColor: getCategoryColor(asset.category, true) }}></div>
@@ -355,9 +372,19 @@ export const AddAccountForm = () => {
                                 </p>
                               </div>
                             </div>
-                            <span className="text-sm font-medium text-green-400">
-                              {formatAmount(asset.balance)}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-green-400">
+                                {formatAmount(asset.balance)}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/10 hover:text-red-400"
+                                onClick={() => handleDelete(asset.id, "asset")}
+                              >
+                                <Trash className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -486,7 +513,7 @@ export const AddAccountForm = () => {
                         {recentLiabilities.map((liability) => (
                           <div 
                             key={liability.id}
-                            className="flex justify-between items-center p-2 bg-gray-900/70 rounded border border-gray-700/40 hover:bg-gray-800/50 transition-colors"
+                            className="flex justify-between items-center p-2 bg-gray-900/70 rounded border border-gray-700/40 hover:bg-gray-800/50 transition-colors group"
                           >
                             <div className="flex items-center">
                               <div className="w-1.5 h-6 rounded-sm mr-2" style={{ backgroundColor: getCategoryColor(liability.category, false) }}></div>
@@ -497,9 +524,19 @@ export const AddAccountForm = () => {
                                 </p>
                               </div>
                             </div>
-                            <span className="text-sm font-medium text-red-400">
-                              {formatAmount(liability.balance)}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-red-400">
+                                {formatAmount(liability.balance)}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/10 hover:text-red-400"
+                                onClick={() => handleDelete(liability.id, "liability")}
+                              >
+                                <Trash className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
                           </div>
                         ))}
                       </div>

@@ -4,6 +4,8 @@ import { Asset, AssetCategory } from '../types';
 import { PremiumFeatureError, ValidationError } from '../utils/errors';
 import { getTodayString } from '../utils/dateUtils';
 import { useBalanceHistory } from './BalanceHistoryContext';
+import { useCurrency } from './CurrencyContext';
+import { convertCurrency } from '../utils/currencyUtils';
 
 type AssetsContextType = {
   assets: Asset[];
@@ -18,6 +20,7 @@ const AssetsContext = createContext<AssetsContextType | undefined>(undefined);
 export const AssetsProvider = ({ children }: { children: ReactNode }) => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const { addBalanceEntry, removeAccountHistory } = useBalanceHistory();
+  const { currency: mainCurrency } = useCurrency();
   
   // Load assets from localStorage
   useEffect(() => {
@@ -52,6 +55,7 @@ export const AssetsProvider = ({ children }: { children: ReactNode }) => {
       name: name.trim(),
       balance,
       category,
+      currency: mainCurrency.code,
       createdAt: new Date().toISOString()
     };
     
@@ -86,7 +90,10 @@ export const AssetsProvider = ({ children }: { children: ReactNode }) => {
   };
   
   const getTotalAssets = () => {
-    return assets.reduce((sum, asset) => sum + asset.balance, 0);
+    return assets.reduce((sum, asset) => {
+      const convertedAmount = convertCurrency(asset.balance, asset.currency || mainCurrency.code, mainCurrency.code);
+      return sum + convertedAmount;
+    }, 0);
   };
   
   const value = {

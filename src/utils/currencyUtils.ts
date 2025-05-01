@@ -33,7 +33,7 @@ export const convertCurrency = (amount: number, fromCurrency: string, toCurrency
 
 export const formatAmountWithCurrency = (amount: number, currencyCode: string): string => {
   const currency = availableCurrencies.find(c => c.code === currencyCode);
-  if (!currency) return `${amount}`;
+  if (!currency) return `${amount.toFixed(2)}`;
   
   return `${currency.symbol}${amount.toLocaleString(undefined, {
     minimumFractionDigits: 2,
