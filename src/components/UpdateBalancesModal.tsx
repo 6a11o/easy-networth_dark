@@ -27,7 +27,7 @@ interface UpdateBalancesModalProps {
 export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProps) => {
   const [activeTab, setActiveTab] = useState("today");
   
-  const { assets, liabilities, updateBalances, isPremium } = useFinancial();
+  const { assets, liabilities, updateBalances, isPremium, setIsPremium } = useFinancial();
   
   // Today's balance state
   const [todayBalances, setTodayBalances] = useState<{ id: string; balance: number }[]>([]);
@@ -38,15 +38,17 @@ export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProp
   
   // Initialize balance states
   useEffect(() => {
-    // Initialize today's balances with current values
-    const initialTodayBalances = [
-      ...assets.map(asset => ({ id: asset.id, balance: asset.balance })),
-      ...liabilities.map(liability => ({ id: liability.id, balance: liability.balance }))
-    ];
-    setTodayBalances(initialTodayBalances);
-    
-    // Initialize historical balances with current values
-    setHistoricalBalances([...initialTodayBalances]);
+    if (isOpen) {
+      // Initialize today's balances with current values
+      const initialBalances = [
+        ...assets.map(asset => ({ id: asset.id, balance: asset.balance })),
+        ...liabilities.map(liability => ({ id: liability.id, balance: liability.balance }))
+      ];
+      setTodayBalances(initialBalances);
+      
+      // Initialize historical balances with current values
+      setHistoricalBalances([...initialBalances]);
+    }
   }, [assets, liabilities, isOpen]);
   
   // Handle today's balance changes
@@ -71,18 +73,42 @@ export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProp
     );
   };
   
+  // Handle premium upgrade
+  const handleUpgradeToPremium = () => {
+    setIsPremium(true);
+    toast.success("Upgraded to Premium! You now have access to all features.");
+    setActiveTab("historical");
+  };
+  
   // Handle submit
   const handleSubmit = () => {
     try {
+      if (activeTab === "historical" && !selectedDate) {
+        toast.error("Please select a date");
+        return;
+      }
+      
       // Get date in YYYY-MM-DD format
-      const date = selectedDate 
-        ? format(selectedDate, 'yyyy-MM-dd')
-        : format(new Date(), 'yyyy-MM-dd');
+      const date = activeTab === "today" 
+        ? format(new Date(), 'yyyy-MM-dd')
+        : format(selectedDate!, 'yyyy-MM-dd');
+      
+      // Validate historical date is not in the future
+      if (activeTab === "historical") {
+        const today = new Date();
+        if (selectedDate! > today) {
+          toast.error("Cannot add data for future dates");
+          return;
+        }
+      }
       
       // Use the appropriate balance set based on active tab
       const balances = activeTab === "today" ? todayBalances : historicalBalances;
       
-      updateBalances(date, balances);
+      // Update balances for each account individually
+      for (const item of balances) {
+        updateBalances(item.id, date, item.balance);
+      }
       
       toast.success(`Balances updated for ${activeTab === "today" ? "today" : format(selectedDate!, 'MMM d, yyyy')}`);
       onClose();
@@ -232,9 +258,9 @@ export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProp
               <div className="p-6 text-center">
                 <h3 className="text-lg font-medium mb-2">Premium Feature</h3>
                 <p className="text-muted-foreground mb-4">
-                  Upgrade to premium to unlock historical data tracking.
+                  Free accounts can only add up to 3 historical data points. Upgrade to premium for unlimited data tracking.
                 </p>
-                <Button>Upgrade to Premium</Button>
+                <Button onClick={handleUpgradeToPremium}>Upgrade to Premium</Button>
               </div>
             )}
           </TabsContent>

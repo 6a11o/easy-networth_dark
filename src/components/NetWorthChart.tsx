@@ -4,7 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { TimePeriod } from "@/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,11 +12,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCurrency } from "@/context/CurrencyContext";
+import { HistoricalDataModal } from "./HistoricalDataModal";
 
 export const NetWorthChart = () => {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("ALL");
-  const { getHistoricalNetWorth, getHistoricalDates } = useFinancial();
+  const { getHistoricalNetWorth, getHistoricalDates, isPremium } = useFinancial();
   const { currency, formatAmount } = useCurrency();
+  const [isHistoricalModalOpen, setIsHistoricalModalOpen] = useState(false);
   
   // Memoize the historical data
   const netWorthHistory = useMemo(() => getHistoricalNetWorth(), [getHistoricalNetWorth]);
@@ -120,6 +122,14 @@ export const NetWorthChart = () => {
     return null;
   }, [formatAmount, chartData.length, netWorthChange]);
 
+  const openHistoricalModal = () => {
+    setIsHistoricalModalOpen(true);
+  };
+
+  const closeHistoricalModal = () => {
+    setIsHistoricalModalOpen(false);
+  };
+
   return (
     <div className="space-y-3 sm:space-y-4">
       <div className="flex items-center justify-between">
@@ -217,15 +227,29 @@ export const NetWorthChart = () => {
         </div>
       ) : (
         <div className="h-[300px] sm:h-[400px] mt-4 sm:mt-6 luxury-shadow rounded-lg overflow-hidden">
-          <div className="w-full h-full bg-gradient-to-b from-[#121825]/80 to-[#0A0C14]/95 border border-[#1A1F2C]/50 rounded-lg flex items-center justify-center">
-            <p className="text-sm sm:text-base text-muted-foreground">
+          <div className="w-full h-full bg-gradient-to-b from-[#121825]/80 to-[#0A0C14]/95 border border-[#1A1F2C]/50 rounded-lg flex flex-col items-center justify-center text-center p-6">
+            <p className="text-sm sm:text-base text-white mb-6">
               {dates.length === 0
-                ? "No data available yet. Add assets or liabilities to see your net worth history."
-                : "Add more data points to see historical trends."}
+                ? "Add assets or liabilities to visualize your net worth over time."
+                : !isPremium 
+                  ? "Add historical data points to see your wealth growth. Free accounts can add up to 3 data points."
+                  : "Add historical data points to track and visualize your wealth journey."}
             </p>
+            <Button 
+              onClick={openHistoricalModal}
+              className="flex items-center gap-1.5"
+            >
+              <Plus className="h-4 w-4" />
+              Add Historical Data
+            </Button>
           </div>
         </div>
       )}
+      
+      <HistoricalDataModal 
+        isOpen={isHistoricalModalOpen}
+        onClose={closeHistoricalModal}
+      />
     </div>
   );
 };
