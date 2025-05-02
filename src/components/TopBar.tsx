@@ -50,21 +50,17 @@ export const TopBar = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#1A1F2C]/40 bg-[#0F1119]/90 backdrop-blur-md shadow-md">
       <div className="flex h-14 sm:h-16 items-center justify-between px-2 sm:px-4 md:px-8 max-w-7xl mx-auto">
-        {/* Logo - updated with new logo and transition effects */}
+        {/* Logo - updated with better styling */}
         <div className="flex items-center">
-          <Link to="/" className="flex items-center group transition-all duration-300 hover:opacity-80">
-            <img 
-              src="/logo.svg" 
-              alt="EasyNetWorth Logo" 
-              className="h-8 w-8 sm:h-9 sm:w-9 transition-transform duration-300 group-hover:scale-110" 
-            />
-            <h1 className="ml-2 sm:ml-3 text-sm sm:text-base font-semibold text-gradient animate-text-shine bg-gradient-to-r from-[#33C3F0] via-white to-[#66EACE] bg-clip-text text-transparent">
+          <Link to="/" className="flex items-center group">
+            <img src="/logo.svg" alt="Logo" className="h-5 w-5 sm:h-6 sm:w-6" />
+            <h1 className="ml-2 sm:ml-3 text-sm sm:text-base font-semibold text-white">
               EASY NET WORTH
             </h1>
           </Link>
         </div>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation - Updated Styling */}
         <nav className="hidden md:flex md:items-center md:space-x-2">
           {navItems.map((item) => (
             <Button
