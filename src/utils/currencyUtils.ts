@@ -1,4 +1,3 @@
-
 import { availableCurrencies } from '@/context/CurrencyContext';
 
 // This would typically be replaced with a real API call to get current exchange rates
@@ -40,31 +39,4 @@ export const formatAmountWithCurrency = (amount: number, currencyCode: string): 
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })}`;
-};
-
-// New function to animate a number from zero to target
-export const animateNumber = (
-  start: number,
-  end: number,
-  duration: number = 2000,
-  callback: (value: number) => void
-) => {
-  const startTime = performance.now();
-  
-  const updateNumber = (currentTime: number) => {
-    const elapsedTime = currentTime - startTime;
-    
-    if (elapsedTime >= duration) {
-      callback(end);
-      return;
-    }
-    
-    const progress = elapsedTime / duration;
-    const currentValue = Math.round(start + (end - start) * progress);
-    
-    callback(currentValue);
-    requestAnimationFrame(updateNumber);
-  };
-  
-  requestAnimationFrame(updateNumber);
-};
+}; 
