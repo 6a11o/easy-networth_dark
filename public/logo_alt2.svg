@@ -1,0 +1,40 @@
+
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rounded square background for modern tech feel -->
+  <rect x="36" y="36" width="440" height="440" rx="100" fill="url(#tech_gradient)" />
+  
+  <!-- Abstract financial line graph -->
+  <path d="M128 320 L192 240 L256 280 L320 200 L384 160" 
+        stroke="white" 
+        stroke-width="16"
+        stroke-linecap="round"
+        stroke-linejoin="round" />
+        
+  <!-- Highlight points -->
+  <circle cx="192" cy="240" r="12" fill="white" />
+  <circle cx="320" cy="200" r="12" fill="white" />
+  
+  <!-- Tech grid pattern -->
+  <path d="M128 128 L128 384" stroke="white" stroke-width="3" stroke-opacity="0.3" />
+  <path d="M192 128 L192 384" stroke="white" stroke-width="3" stroke-opacity="0.3" />
+  <path d="M256 128 L256 384" stroke="white" stroke-width="3" stroke-opacity="0.3" />
+  <path d="M320 128 L320 384" stroke="white" stroke-width="3" stroke-opacity="0.3" />
+  <path d="M384 128 L384 384" stroke="white" stroke-width="3" stroke-opacity="0.3" />
+  <path d="M128 128 L384 128" stroke="white" stroke-width="3" stroke-opacity="0.3" />
+  <path d="M128 192 L384 192" stroke="white" stroke-width="3" stroke-opacity="0.3" />
+  <path d="M128 256 L384 256" stroke="white" stroke-width="3" stroke-opacity="0.3" />
+  <path d="M128 320 L384 320" stroke="white" stroke-width="3" stroke-opacity="0.3" />
+  <path d="M128 384 L384 384" stroke="white" stroke-width="3" stroke-opacity="0.3" />
+  
+  <!-- Inner highlight -->
+  <rect x="128" y="128" width="256" height="256" stroke="white" stroke-width="6" stroke-opacity="0.5" rx="16" fill="none" />
+  
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="tech_gradient" x1="36" y1="36" x2="476" y2="476" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#33C3F0" />
+      <stop offset="0.5" stop-color="#49D6CE" />
+      <stop offset="1" stop-color="#66EACE" />
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,25 @@
+
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Circular background -->
+  <circle cx="256" cy="256" r="240" fill="url(#tech_gradient)" />
+  
+  <!-- Financial chart lines in minimalist style -->
+  <path d="M128 288 L192 192 L256 320 L320 160 L384 224" 
+        stroke="white" 
+        stroke-width="20"
+        stroke-linecap="round"
+        stroke-linejoin="round" />
+  
+  <!-- Currency symbol integrated into design -->
+  <circle cx="256" cy="256" r="80" stroke="white" stroke-width="12" stroke-opacity="0.4" fill="none" />
+  <path d="M256 192 L256 320" stroke="white" stroke-width="12" stroke-opacity="0.7" stroke-linecap="round" />
+  <path d="M224 224 L288 224" stroke="white" stroke-width="12" stroke-opacity="0.7" stroke-linecap="round" />
+  
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="tech_gradient" x1="60" y1="60" x2="452" y2="452" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#33C3F0" />
+      <stop offset="1" stop-color="#66EACE" />
+    </linearGradient>
+  </defs>
+</svg>
