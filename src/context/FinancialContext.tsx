@@ -1,88 +1,163 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { AssetsProvider, useAssets } from './AssetsContext';
-import { LiabilitiesProvider, useLiabilities } from './LiabilitiesContext';
-import { BalanceHistoryProvider, useBalanceHistory } from './BalanceHistoryContext';
 import { v4 as uuidv4 } from 'uuid';
-import { Asset, Liability, AssetCategory, LiabilityCategory, BalanceHistory } from '../types';
-import { getTodayString, isValidDateString, compareDates } from '../utils/dateUtils';
-import { PremiumFeatureError, ValidationError } from '../utils/errors';
-import { convertCurrency } from '../utils/currencyUtils';
-import { useCurrency } from './CurrencyContext';
 
-// Context type definitions
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export type AssetCategory =
+  | 'bank'
+  | 'cash'
+  | 'investments'
+  | 'property'
+  | 'crypto'
+  | 'other';
+
+export type LiabilityCategory =
+  | 'credit_card'
+  | 'loan'
+  | 'mortgage'
+  | 'other';
+
+export type Asset = {
+  id: string;
+  name: string;
+  balance: number;
+  category: AssetCategory;
+  currency: string;
+  createdAt: string;
+};
+
+export type Liability = {
+  id: string;
+  name: string;
+  balance: number;
+  category: LiabilityCategory;
+  currency: string;
+  createdAt: string;
+};
+
+export type SnapshotAccount = {
+  id: string;
+  name: string;
+  type: 'asset' | 'liability';
+  balance: number;
+  currency: string;
+  category: string;
+};
+
+export type Snapshot = {
+  id: string;
+  date: string;
+  totalAssets: number;
+  totalLiabilities: number;
+  netWorth: number;
+  accounts: SnapshotAccount[];
+};
+
+// ─── Context type ─────────────────────────────────────────────────────────────
+
 type FinancialContextType = {
-  // Core financial calculations
-  getNetWorth: () => number;
-  getHistoricalNetWorth: (startDate?: string, endDate?: string) => { date: string; netWorth: number }[];
-  
-  // Assets management
+  // Assets
   assets: Asset[];
   addAsset: (name: string, balance: number, category: AssetCategory, currency: string) => void;
   updateAsset: (id: string, data: Partial<Asset>) => void;
   deleteAsset: (id: string) => void;
   getTotalAssets: () => number;
-  
-  // Liabilities management
+
+  // Liabilities
   liabilities: Liability[];
   addLiability: (name: string, balance: number, category: LiabilityCategory, currency: string) => void;
   updateLiability: (id: string, data: Partial<Liability>) => void;
   deleteLiability: (id: string) => void;
   getTotalLiabilities: () => number;
-  
-  // Balance history
-  balanceHistory: BalanceHistory[];
-  updateBalances: (accountId: string, date: string, balance: number) => void;
-  getHistoricalDates: () => string[];
-  
-  // Premium status
+
+  // Net worth
+  getNetWorth: () => number;
+
+  // Snapshots — the core mechanic
+  snapshots: Snapshot[];
+  createSnapshot: () => void;
+  deleteSnapshot: (id: string) => void;
+  getHistoricalNetWorth: (startDate?: string, endDate?: string) => { date: string; netWorth: number; totalAssets: number; totalLiabilities: number }[];
+
+  // Premium
   isPremium: boolean;
   setIsPremium: (status: boolean) => void;
+
+  // Legacy compatibility (kept so existing components don't break)
+  balanceHistory: Snapshot[];
+  updateBalances: (accountId: string, date: string, balance: number) => void;
+  getHistoricalDates: () => string[];
 };
 
-// Create context with default values
+// ─── Storage keys ─────────────────────────────────────────────────────────────
+
+const STORAGE_KEYS = {
+  assets: 'enw_assets',
+  liabilities: 'enw_liabilities',
+  snapshots: 'enw_snapshots',
+  isPremium: 'enw_isPremium',
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function loadFromStorage<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveToStorage<T>(key: string, value: T): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    console.error('Failed to save to localStorage:', key);
+  }
+}
+
+// ─── Context ──────────────────────────────────────────────────────────────────
+
 const FinancialContext = createContext<FinancialContextType | undefined>(undefined);
 
-const FinancialContextProvider = ({ children }: { children: ReactNode }) => {
-  const [assets, setAssets] = useState<Asset[]>([]);
-  const [liabilities, setLiabilities] = useState<Liability[]>([]);
-  const [balanceHistory, setBalanceHistory] = useState<BalanceHistory[]>([]);
-  const [isPremium, setIsPremium] = useState(false);
-  const { currency: mainCurrency } = useCurrency();
-  const { addAsset: addAssetFromAssetsContext, updateAsset, deleteAsset, getTotalAssets } = useAssets();
-  const { addLiability: addLiabilityFromLiabilitiesContext, updateLiability: updateLiabilityFromLiabilitiesContext, deleteLiability: deleteLiabilityFromLiabilitiesContext, getTotalLiabilities } = useLiabilities();
-  const { addBalanceEntry, getHistoricalDates, getAccountHistory } = useBalanceHistory();
-  
-  // Load premium status from localStorage
-  useEffect(() => {
-    const storedPremium = localStorage.getItem('isPremium');
-    if (storedPremium) {
-      setIsPremium(JSON.parse(storedPremium));
-    }
-  }, []);
-  
-  // Save premium status to localStorage
-  useEffect(() => {
-    localStorage.setItem('isPremium', JSON.stringify(isPremium));
-  }, [isPremium]);
-  
-  const getNetWorth = () => {
-    return calculateTotalAssets() - calculateTotalLiabilities();
-  };
-  
-  const calculateTotalAssets = () => {
-    return assets.reduce((total, asset) => {
-      const convertedAmount = convertCurrency(asset.balance, asset.currency, mainCurrency.code);
-      return total + convertedAmount;
-    }, 0);
-  };
-  
-  const calculateTotalLiabilities = () => {
-    return liabilities.reduce((total, liability) => {
-      const convertedAmount = convertCurrency(liability.balance, liability.currency, mainCurrency.code);
-      return total + convertedAmount;
-    }, 0);
-  };
-  
+export const FinancialProvider = ({ children }: { children: ReactNode }) => {
+  const [assets, setAssets] = useState<Asset[]>(() =>
+    loadFromStorage<Asset[]>(STORAGE_KEYS.assets, [])
+  );
+
+  const [liabilities, setLiabilities] = useState<Liability[]>(() =>
+    loadFromStorage<Liability[]>(STORAGE_KEYS.liabilities, [])
+  );
+
+  const [snapshots, setSnapshots] = useState<Snapshot[]>(() =>
+    loadFromStorage<Snapshot[]>(STORAGE_KEYS.snapshots, [])
+  );
+
+  const [isPremium, setIsPremiumState] = useState<boolean>(() =>
+    loadFromStorage<boolean>(STORAGE_KEYS.isPremium, false)
+  );
+
+  // Persist whenever state changes
+  useEffect(() => { saveToStorage(STORAGE_KEYS.assets, assets); }, [assets]);
+  useEffect(() => { saveToStorage(STORAGE_KEYS.liabilities, liabilities); }, [liabilities]);
+  useEffect(() => { saveToStorage(STORAGE_KEYS.snapshots, snapshots); }, [snapshots]);
+  useEffect(() => { saveToStorage(STORAGE_KEYS.isPremium, isPremium); }, [isPremium]);
+
+  // ─── Calculations ───────────────────────────────────────────────────────────
+
+  const getTotalAssets = (): number =>
+    assets.reduce((sum, a) => sum + a.balance, 0);
+
+  const getTotalLiabilities = (): number =>
+    liabilities.reduce((sum, l) => sum + l.balance, 0);
+
+  const getNetWorth = (): number =>
+    getTotalAssets() - getTotalLiabilities();
+
+  // ─── Assets ─────────────────────────────────────────────────────────────────
+
   const addAsset = (name: string, balance: number, category: AssetCategory, currency: string) => {
     const newAsset: Asset = {
       id: uuidv4(),
@@ -90,11 +165,21 @@ const FinancialContextProvider = ({ children }: { children: ReactNode }) => {
       balance,
       category,
       currency,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
     setAssets(prev => [...prev, newAsset]);
   };
-  
+
+  const updateAsset = (id: string, data: Partial<Asset>) => {
+    setAssets(prev => prev.map(a => (a.id === id ? { ...a, ...data } : a)));
+  };
+
+  const deleteAsset = (id: string) => {
+    setAssets(prev => prev.filter(a => a.id !== id));
+  };
+
+  // ─── Liabilities ────────────────────────────────────────────────────────────
+
   const addLiability = (name: string, balance: number, category: LiabilityCategory, currency: string) => {
     const newLiability: Liability = {
       id: uuidv4(),
@@ -102,105 +187,127 @@ const FinancialContextProvider = ({ children }: { children: ReactNode }) => {
       balance,
       category,
       currency,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
     setLiabilities(prev => [...prev, newLiability]);
   };
-  
+
+  const updateLiability = (id: string, data: Partial<Liability>) => {
+    setLiabilities(prev => prev.map(l => (l.id === id ? { ...l, ...data } : l)));
+  };
+
+  const deleteLiability = (id: string) => {
+    setLiabilities(prev => prev.filter(l => l.id !== id));
+  };
+
+  // ─── Snapshots ──────────────────────────────────────────────────────────────
+
+  const createSnapshot = () => {
+    const totalAssets = getTotalAssets();
+    const totalLiabilities = getTotalLiabilities();
+    const netWorth = totalAssets - totalLiabilities;
+
+    const snapshotAccounts: SnapshotAccount[] = [
+      ...assets.map(a => ({
+        id: a.id,
+        name: a.name,
+        type: 'asset' as const,
+        balance: a.balance,
+        currency: a.currency,
+        category: a.category,
+      })),
+      ...liabilities.map(l => ({
+        id: l.id,
+        name: l.name,
+        type: 'liability' as const,
+        balance: l.balance,
+        currency: l.currency,
+        category: l.category,
+      })),
+    ];
+
+    const newSnapshot: Snapshot = {
+      id: uuidv4(),
+      date: new Date().toISOString(),
+      totalAssets,
+      totalLiabilities,
+      netWorth,
+      accounts: snapshotAccounts,
+    };
+
+    setSnapshots(prev => [...prev, newSnapshot]);
+  };
+
+  const deleteSnapshot = (id: string) => {
+    setSnapshots(prev => prev.filter(s => s.id !== id));
+  };
+
   const getHistoricalNetWorth = (startDate?: string, endDate?: string) => {
-    const dates = getHistoricalDates();
-    
-    // Validate and sort dates chronologically
-    const sortedDates = [...dates].sort((a, b) => {
-      if (!isValidDateString(a) || !isValidDateString(b)) {
-        throw new ValidationError('Invalid date format in historical data');
-      }
-      return compareDates(a, b);
-    });
-    
-    // Filter dates based on range if provided
-    let filteredDates = sortedDates;
+    let filtered = [...snapshots].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
     if (startDate) {
-      if (!isValidDateString(startDate)) {
-        throw new ValidationError('Invalid start date format');
-      }
-      filteredDates = filteredDates.filter(date => date >= startDate);
+      filtered = filtered.filter(s => new Date(s.date) >= new Date(startDate));
     }
     if (endDate) {
-      if (!isValidDateString(endDate)) {
-        throw new ValidationError('Invalid end date format');
-      }
-      filteredDates = filteredDates.filter(date => date <= endDate);
+      filtered = filtered.filter(s => new Date(s.date) <= new Date(endDate));
     }
-    
-    // Calculate net worth for each date
-    return filteredDates.map(date => {
-      // Calculate total assets value for this date
-      const assetsValue = assets.reduce((sum, asset) => {
-        const history = getAccountHistory(asset.id, undefined, date);
-        if (history.length === 0) {
-          // If no history for this date, use the most recent previous balance
-          const allHistory = getAccountHistory(asset.id);
-          const previousEntry = allHistory
-            .filter(entry => entry.date < date)
-            .sort((a, b) => compareDates(b.date, a.date))[0];
-          return sum + (previousEntry?.balance || 0);
-        }
-        const latestEntry = history[history.length - 1];
-        return sum + (latestEntry?.balance || 0);
-      }, 0);
-      
-      // Calculate total liabilities value for this date
-      const liabilitiesValue = liabilities.reduce((sum, liability) => {
-        const history = getAccountHistory(liability.id, undefined, date);
-        if (history.length === 0) {
-          // If no history for this date, use the most recent previous balance
-          const allHistory = getAccountHistory(liability.id);
-          const previousEntry = allHistory
-            .filter(entry => entry.date < date)
-            .sort((a, b) => compareDates(b.date, a.date))[0];
-          return sum + (previousEntry?.balance || 0);
-        }
-        const latestEntry = history[history.length - 1];
-        return sum + (latestEntry?.balance || 0);
-      }, 0);
-      
-      return {
-        date,
-        netWorth: assetsValue - liabilitiesValue
-      };
-    });
+
+    return filtered.map(s => ({
+      date: s.date,
+      netWorth: s.netWorth,
+      totalAssets: s.totalAssets,
+      totalLiabilities: s.totalLiabilities,
+    }));
   };
-  
+
+  // ─── Premium ────────────────────────────────────────────────────────────────
+
+  const setIsPremium = (status: boolean) => {
+    setIsPremiumState(status);
+  };
+
+  // ─── Legacy compatibility ───────────────────────────────────────────────────
+
+  const updateBalances = (_accountId: string, _date: string, _balance: number) => {
+    // No-op — replaced by createSnapshot
+  };
+
+  const getHistoricalDates = (): string[] =>
+    snapshots.map(s => s.date);
+
+  // ─── Context value ──────────────────────────────────────────────────────────
+
   const value: FinancialContextType = {
-    // Core financial calculations
-    getNetWorth,
-    getHistoricalNetWorth,
-    
-    // Assets management
     assets,
     addAsset,
     updateAsset,
     deleteAsset,
-    getTotalAssets: calculateTotalAssets,
-    
-    // Liabilities management
+    getTotalAssets,
+
     liabilities,
     addLiability,
-    updateLiability: updateLiabilityFromLiabilitiesContext,
-    deleteLiability: deleteLiabilityFromLiabilitiesContext,
-    getTotalLiabilities: calculateTotalLiabilities,
-    
-    // Balance history
-    balanceHistory,
-    updateBalances: addBalanceEntry,
-    getHistoricalDates,
-    
-    // Premium status
+    updateLiability,
+    deleteLiability,
+    getTotalLiabilities,
+
+    getNetWorth,
+
+    snapshots,
+    createSnapshot,
+    deleteSnapshot,
+    getHistoricalNetWorth,
+
     isPremium,
-    setIsPremium
+    setIsPremium,
+
+    // Legacy
+    balanceHistory: snapshots,
+    updateBalances,
+    getHistoricalDates,
   };
-  
+
   return (
     <FinancialContext.Provider value={value}>
       {children}
@@ -208,28 +315,10 @@ const FinancialContextProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Combined provider that includes all financial contexts
-export const FinancialProvider = ({ children }: { children: ReactNode }) => {
-  return (
-    <BalanceHistoryProvider>
-      <AssetsProvider>
-        <LiabilitiesProvider>
-          <FinancialContextProvider>
-            {children}
-          </FinancialContextProvider>
-        </LiabilitiesProvider>
-      </AssetsProvider>
-    </BalanceHistoryProvider>
-  );
-};
-
-// Custom hook for using the context
 export const useFinancial = () => {
   const context = useContext(FinancialContext);
-  
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useFinancial must be used within a FinancialProvider');
   }
-  
   return context;
 };
