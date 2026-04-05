@@ -204,13 +204,6 @@ const Dashboard = () => {
   <RefreshCw className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#33C3F0]" />
   Update Balances
 </Button>
-<Button
-  onClick={createSnapshot}
-  className="w-full sm:w-auto bg-[#33C3F0] hover:bg-[#1AAFDE] text-black font-bold border-0 text-xs sm:text-sm shadow-lg"
->
-  <PlusCircle className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
-  New Entry
-</Button>
               </div>
             </div>
 
