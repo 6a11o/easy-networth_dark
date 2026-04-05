@@ -65,7 +65,7 @@ const Dashboard = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isRecapOpen, setIsRecapOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { getNetWorth, getTotalAssets, getTotalLiabilities, getHistoricalNetWorth } = useFinancial();
+  const { getNetWorth, getTotalAssets, getTotalLiabilities, getHistoricalNetWorth, createSnapshot, snapshots } = useFinancial();
   const { formatAmount } = useCurrency();
   const [showOnboarding, setShowOnboarding] = useState(false);
   
@@ -198,12 +198,19 @@ const Dashboard = () => {
               )}
               <div className="flex flex-col sm:flex-row gap-2 mt-3 sm:mt-4 w-full sm:w-auto">
                 <Button
-                  onClick={() => setIsUpdateModalOpen(true)}
-                  className="w-full sm:w-auto bg-[#1A1F2C]/80 hover:bg-[#272D3D] text-white border border-[#33C3F0]/20 backdrop-blur-sm shadow-md text-xs sm:text-sm"
-                >
-                  <RefreshCw className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#33C3F0]" />
-                  Update Balances
-                </Button>
+  onClick={() => setIsUpdateModalOpen(true)}
+  className="w-full sm:w-auto bg-[#1A1F2C]/80 hover:bg-[#272D3D] text-white border border-[#33C3F0]/20 backdrop-blur-sm shadow-md text-xs sm:text-sm"
+>
+  <RefreshCw className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#33C3F0]" />
+  Update Balances
+</Button>
+<Button
+  onClick={createSnapshot}
+  className="w-full sm:w-auto bg-[#33C3F0] hover:bg-[#1AAFDE] text-black font-bold border-0 text-xs sm:text-sm shadow-lg"
+>
+  <PlusCircle className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+  New Entry
+</Button>
               </div>
             </div>
 
