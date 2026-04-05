@@ -9,14 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useFinancial } from "@/context/FinancialContext";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
-import { format } from "date-fns";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { useFinancial } from "@/context/FinancialContext";
 import { toast } from "sonner";
 
 interface UpdateBalancesModalProps {
@@ -25,250 +19,115 @@ interface UpdateBalancesModalProps {
 }
 
 export const UpdateBalancesModal = ({ isOpen, onClose }: UpdateBalancesModalProps) => {
-  const [activeTab, setActiveTab] = useState("today");
-  
-  const { assets, liabilities, updateBalances, isPremium, setIsPremium } = useFinancial();
-  
-  // Today's balance state
-  const [todayBalances, setTodayBalances] = useState<{ id: string; balance: number }[]>([]);
-  
-  // Historical data state
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [historicalBalances, setHistoricalBalances] = useState<{ id: string; balance: number }[]>([]);
-  
-  // Initialize balance states
+  const { assets, liabilities, updateAsset, updateLiability, createSnapshot } = useFinancial();
+
+  const [assetBalances, setAssetBalances] = useState<{ id: string; balance: number }[]>([]);
+  const [liabilityBalances, setLiabilityBalances] = useState<{ id: string; balance: number }[]>([]);
+
+  // Load current balances when modal opens
   useEffect(() => {
     if (isOpen) {
-      // Initialize today's balances with current values
-      const initialBalances = [
-        ...assets.map(asset => ({ id: asset.id, balance: asset.balance })),
-        ...liabilities.map(liability => ({ id: liability.id, balance: liability.balance }))
-      ];
-      setTodayBalances(initialBalances);
-      
-      // Initialize historical balances with current values
-      setHistoricalBalances([...initialBalances]);
+      setAssetBalances(assets.map(a => ({ id: a.id, balance: a.balance })));
+      setLiabilityBalances(liabilities.map(l => ({ id: l.id, balance: l.balance })));
     }
-  }, [assets, liabilities, isOpen]);
-  
-  // Handle today's balance changes
-  const handleTodayBalanceChange = (id: string, value: string) => {
-    const numValue = value === "" ? 0 : parseFloat(value);
-    
-    setTodayBalances(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, balance: numValue } : item
-      )
-    );
+  }, [isOpen, assets, liabilities]);
+
+  const handleAssetChange = (id: string, value: string) => {
+    const num = value === "" ? 0 : parseFloat(value);
+    setAssetBalances(prev => prev.map(a => a.id === id ? { ...a, balance: num } : a));
   };
-  
-  // Handle historical balance changes
-  const handleHistoricalBalanceChange = (id: string, value: string) => {
-    const numValue = value === "" ? 0 : parseFloat(value);
-    
-    setHistoricalBalances(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, balance: numValue } : item
-      )
-    );
+
+  const handleLiabilityChange = (id: string, value: string) => {
+    const num = value === "" ? 0 : parseFloat(value);
+    setLiabilityBalances(prev => prev.map(l => l.id === id ? { ...l, balance: num } : l));
   };
-  
-  // Handle premium upgrade
-  const handleUpgradeToPremium = () => {
-    setIsPremium(true);
-    toast.success("Upgraded to Premium! You now have access to all features.");
-    setActiveTab("historical");
-  };
-  
-  // Handle submit
-  const handleSubmit = () => {
-    try {
-      if (activeTab === "historical" && !selectedDate) {
-        toast.error("Please select a date");
-        return;
-      }
-      
-      // Get date in YYYY-MM-DD format
-      const date = activeTab === "today" 
-        ? format(new Date(), 'yyyy-MM-dd')
-        : format(selectedDate!, 'yyyy-MM-dd');
-      
-      // Validate historical date is not in the future
-      if (activeTab === "historical") {
-        const today = new Date();
-        if (selectedDate! > today) {
-          toast.error("Cannot add data for future dates");
-          return;
-        }
-      }
-      
-      // Use the appropriate balance set based on active tab
-      const balances = activeTab === "today" ? todayBalances : historicalBalances;
-      
-      // Update balances for each account individually
-      for (const item of balances) {
-        updateBalances(item.id, date, item.balance);
-      }
-      
-      toast.success(`Balances updated for ${activeTab === "today" ? "today" : format(selectedDate!, 'MMM d, yyyy')}`);
-      onClose();
-    } catch (error: any) {
-      toast.error(error.message);
+
+  const handleSave = () => {
+    // Update all asset balances
+    for (const item of assetBalances) {
+      updateAsset(item.id, { balance: item.balance });
     }
+
+    // Update all liability balances
+    for (const item of liabilityBalances) {
+      updateLiability(item.id, { balance: item.balance });
+    }
+
+    // Save snapshot immediately after updating
+    createSnapshot();
+
+    toast.success("Balances updated and entry saved.");
+    onClose();
   };
-  
+
+  const hasAccounts = assets.length > 0 || liabilities.length > 0;
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-md w-full">
+      <DialogContent className="max-w-md w-full">
         <DialogHeader>
           <DialogTitle>Update Balances</DialogTitle>
           <DialogDescription>
-            Update your account balances for today or add historical data.
+            Enter your current balances. A new entry will be saved automatically.
           </DialogDescription>
         </DialogHeader>
-        
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-2 mb-4">
-            <TabsTrigger value="today">Today's Balance</TabsTrigger>
-            <TabsTrigger value="historical" disabled={!isPremium && assets.length + liabilities.length > 0}>
-              Historical Data
-              {!isPremium && <span className="ml-1 text-xs text-yellow-300 font-medium">Premium</span>}
-            </TabsTrigger>
-          </TabsList>
-          
-          {/* Today's Balance Tab */}
-          <TabsContent value="today">
-            <div className="space-y-5 max-h-[min(60vh,500px)] overflow-y-auto pr-2">
-              {/* Assets */}
+
+        {!hasAccounts ? (
+          <div className="py-6 text-center text-muted-foreground text-sm">
+            No accounts found. Add accounts first from the Accounts page.
+          </div>
+        ) : (
+          <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-1">
+
+            {/* Assets */}
+            {assets.length > 0 && (
               <div className="space-y-3">
-                <h3 className="font-medium text-primary text-base">Assets</h3>
-                {assets.length > 0 ? (
-                  assets.map(asset => (
-                    <div key={asset.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                      <Label className="flex-grow">{asset.name}</Label>
-                      <Input
-                        type="number"
-                        value={todayBalances.find(b => b.id === asset.id)?.balance || 0}
-                        onChange={(e) => handleTodayBalanceChange(asset.id, e.target.value)}
-                        className="w-full sm:w-32"
-                      />
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground">No assets found.</p>
-                )}
-              </div>
-              
-              {/* Liabilities */}
-              <div className="space-y-3">
-                <h3 className="font-medium text-primary text-base">Liabilities</h3>
-                {liabilities.length > 0 ? (
-                  liabilities.map(liability => (
-                    <div key={liability.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                      <Label className="flex-grow">{liability.name}</Label>
-                      <Input
-                        type="number"
-                        value={todayBalances.find(b => b.id === liability.id)?.balance || 0}
-                        onChange={(e) => handleTodayBalanceChange(liability.id, e.target.value)}
-                        className="w-full sm:w-32"
-                      />
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground">No liabilities found.</p>
-                )}
-              </div>
-            </div>
-          </TabsContent>
-          
-          {/* Historical Data Tab */}
-          <TabsContent value="historical">
-            {isPremium ? (
-              <>
-                <div className="mb-5">
-                  <Label>Select Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal mt-2",
-                          !selectedDate && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={setSelectedDate}
-                        initialFocus
-                        disabled={(date) => date > new Date()}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                
-                <div className="space-y-5 max-h-[min(50vh,400px)] overflow-y-auto pr-2">
-                  {/* Assets */}
-                  <div className="space-y-3">
-                    <h3 className="font-medium text-primary text-base">Assets</h3>
-                    {assets.length > 0 ? (
-                      assets.map(asset => (
-                        <div key={asset.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                          <Label className="flex-grow">{asset.name}</Label>
-                          <Input
-                            type="number"
-                            value={historicalBalances.find(b => b.id === asset.id)?.balance || 0}
-                            onChange={(e) => handleHistoricalBalanceChange(asset.id, e.target.value)}
-                            className="w-full sm:w-32"
-                          />
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-sm text-muted-foreground">No assets found.</p>
-                    )}
+                <h3 className="font-medium text-green-400 text-sm uppercase tracking-wide">Assets</h3>
+                {assets.map(asset => (
+                  <div key={asset.id} className="flex items-center justify-between gap-4">
+                    <Label className="flex-grow text-sm text-[#CBD5E1]">{asset.name}</Label>
+                    <Input
+                      type="number"
+                      value={assetBalances.find(a => a.id === asset.id)?.balance ?? 0}
+                      onChange={e => handleAssetChange(asset.id, e.target.value)}
+                      className="w-36 text-right"
+                    />
                   </div>
-                  
-                  {/* Liabilities */}
-                  <div className="space-y-3">
-                    <h3 className="font-medium text-primary text-base">Liabilities</h3>
-                    {liabilities.length > 0 ? (
-                      liabilities.map(liability => (
-                        <div key={liability.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                          <Label className="flex-grow">{liability.name}</Label>
-                          <Input
-                            type="number"
-                            value={historicalBalances.find(b => b.id === liability.id)?.balance || 0}
-                            onChange={(e) => handleHistoricalBalanceChange(liability.id, e.target.value)}
-                            className="w-full sm:w-32"
-                          />
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-sm text-muted-foreground">No liabilities found.</p>
-                    )}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="p-6 text-center">
-                <h3 className="text-lg font-medium mb-2">Premium Feature</h3>
-                <p className="text-muted-foreground mb-4">
-                  Free accounts can only add up to 3 historical data points. Upgrade to premium for unlimited data tracking.
-                </p>
-                <Button onClick={handleUpgradeToPremium}>Upgrade to Premium</Button>
+                ))}
               </div>
             )}
-          </TabsContent>
-        </Tabs>
-        
-        <DialogFooter className="sm:justify-end gap-2 pt-2">
+
+            {/* Liabilities */}
+            {liabilities.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-medium text-red-400 text-sm uppercase tracking-wide">Liabilities</h3>
+                {liabilities.map(liability => (
+                  <div key={liability.id} className="flex items-center justify-between gap-4">
+                    <Label className="flex-grow text-sm text-[#CBD5E1]">{liability.name}</Label>
+                    <Input
+                      type="number"
+                      value={liabilityBalances.find(l => l.id === liability.id)?.balance ?? 0}
+                      onChange={e => handleLiabilityChange(liability.id, e.target.value)}
+                      className="w-36 text-right"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+          </div>
+        )}
+
+        <DialogFooter className="gap-2 pt-2">
           <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSubmit}>Save Changes</Button>
+          {hasAccounts && (
+            <Button
+              onClick={handleSave}
+              className="bg-[#33C3F0] hover:bg-[#1AAFDE] text-black font-bold"
+            >
+              Save Entry
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
